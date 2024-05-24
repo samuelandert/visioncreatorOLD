@@ -1,0 +1,10 @@
+query Countries($filter: countries_CountryFilterInput)
+@rbac(requireMatchAll: [authenticated]) {
+  countries_countries(filter: $filter) {
+    code
+    name
+    capital
+    currencies
+    phone
+  }
+}

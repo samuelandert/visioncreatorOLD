@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.ico" />
+		<link rel="manifest" href="/manifest.json">
+		<meta name="viewport" content="initial-scale=1, width=device-width"></meta>
+		%sveltekit.head%
+	</head>
+	<script>
+		global = window;
+		window.process = {
+			env: {
+				NODE_ENV: 'development'
+			}
+		}	
+	</script>
+	<body data-sveltekit-preload-data="hover" data-theme="slube-theme">
+		<div style="display: contents" class="h-full overflow-hidden">%sveltekit.body%</div>
+	</body>
+</html>

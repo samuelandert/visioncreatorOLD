@@ -1,0 +1,28 @@
+{
+  "name": "composer",
+  "version": "1.8.0",
+  "description": "Automatically detect and import components or modules",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --no-warnings --experimental-vm-modules ./node_modules/jest/bin/jest"
+  },
+  "keywords": [
+    "vite",
+    "sveltekit"
+  ],
+  "author": "samuelandert",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@rollup/pluginutils": "^4.1.0",
+    "estree-walker": "^2.0.2",
+    "magic-string": "^0.26.1",
+    "svelte": "^4.0.5"
+  },
+  "peerDependencies": {
+    "@sveltejs/kit": "1.30.4"
+  },
+  "devDependencies": {
+    "jest": "^27.5.1"
+  }
+}

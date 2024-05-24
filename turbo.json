@@ -1,0 +1,40 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".svelte-kit/**",
+        ".vercel/**",
+        "generated-wundergraph/**",
+        "generated/**",
+        "composer/**"
+      ]
+    },
+    "app#build": {
+      "dependsOn": [
+        "^api#build",
+        "^composer#build"
+      ],
+      "outputs": [
+        ".svelte-kit/**",
+        "composer/**"
+      ]
+    },
+    "lint": {
+      "outputs": []
+    },
+    "dev": {
+      "cache": false
+    },
+    "start": {
+      "cache": false
+    }
+  },
+  "globalEnv": [
+    "NODE_ENV",
+    "WG_ALLOWED_ORIGIN"
+  ]
+}
