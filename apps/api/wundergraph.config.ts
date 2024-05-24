@@ -41,7 +41,7 @@ configureWunderGraphApplication({
     allowedOrigins:
       process.env.NODE_ENV === "production"
         ? [
-          "https://flywunder.vercel.app",
+          "https://next.visioncreator.works",
         ]
         : [
           "http://localhost:3000",
