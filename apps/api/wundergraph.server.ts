@@ -1,12 +1,17 @@
 import { configureWunderGraphServer } from '@wundergraph/sdk/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE;
-const supabase = createClient(supabaseUrl, supabaseKey);
-
 class MyContext {
-	supabase = supabase;
+	supabase: ReturnType<typeof createClient>;
+
+	constructor() {
+		const supabaseUrl = process.env.SUPABASE_URL;
+		const supabaseKey = process.env.SUPABASE_SERVICE_ROLE;
+		if (!supabaseUrl || !supabaseKey) {
+			throw new Error("Supabase URL and Key must be provided.");
+		}
+		this.supabase = createClient(supabaseUrl, supabaseKey);
+	}
 }
 
 declare module '@wundergraph/sdk/server' {
@@ -17,14 +22,6 @@ declare module '@wundergraph/sdk/server' {
 
 export default configureWunderGraphServer(() => ({
 	hooks: {
-		queries: {
-			Countries: {
-				preResolve: async ({ operations, context }) => {
-					// Example usage of context
-					console.log(context.supabase);
-				},
-			},
-		},
 		authentication: {
 			mutatingPostAuthentication: async ({ user }) => {
 				if (user.roles === null) {
