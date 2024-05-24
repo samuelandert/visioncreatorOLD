@@ -30,7 +30,7 @@ configureWunderGraphApplication({
       providers: [
         {
           userInfoEndpoint: process.env.NODE_ENV === 'production'
-            ? 'https://flywunder.vercel.app/auth/userinfo'
+            ? 'https://next.visioncreator.works/auth/userinfo'
             : 'http://localhost:3000/auth/userinfo',
         },
       ],
@@ -54,7 +54,7 @@ configureWunderGraphApplication({
       process.env.GITPOD_WORKSPACE_ID !== undefined,
   },
   options: {
-    publicNodeUrl: process.env.NODE_ENV === 'production' ? 'https://flywunder.fly.dev' : 'http://localhost:9991'
+    publicNodeUrl: process.env.NODE_ENV === 'production' ? 'https://next-visioncreator.fly.dev' : 'http://localhost:9991'
   },
   authorization: {
     roles: ["authenticated"],
