@@ -1,4 +1,4 @@
-<!-- src/routes/account/Avatar.svelte -->
+<!-- src/routes/me/Avatar.svelte -->
 <script lang="ts">
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import { createEventDispatcher } from 'svelte';
@@ -78,7 +78,7 @@
 	<input type="hidden" name="avatarUrl" value={url} />
 
 	<div style="width: {size}em;">
-		<label class="button primary block" for="single">
+		<label class="block button primary" for="single">
 			{uploading ? 'Uploading ...' : 'Upload'}
 		</label>
 		<input
