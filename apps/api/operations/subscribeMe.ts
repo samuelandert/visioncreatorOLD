@@ -20,7 +20,7 @@ export default createOperation.subscription({
             .single();
 
         if (initialData.data) {
-            yield { data: initialData.data };
+            yield initialData.data;
         } else if (initialData.error) {
             console.error('Error fetching initial data:', initialData.error);
             throw new Error('Failed to fetch initial data');
@@ -28,7 +28,6 @@ export default createOperation.subscription({
 
         const profiles = context.supabase.channel('custom-all-channel')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, (payload) => {
-                console.log('Change received!', payload);
                 latestPayload = payload.new;
             })
             .subscribe();
@@ -36,7 +35,7 @@ export default createOperation.subscription({
         try {
             while (true) {
                 if (latestPayload) {
-                    yield { data: latestPayload };
+                    yield latestPayload;
                     latestPayload = null;
                 }
                 await new Promise(resolve => setTimeout(resolve, 1000));
