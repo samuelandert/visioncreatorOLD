@@ -4,7 +4,7 @@
 #
 
 app = 'next-visioncreator'
-primary_region = 'arn'
+primary_region = 'fra'
 
 [build]
 
@@ -20,6 +20,7 @@ primary_region = 'arn'
   protocol = ''
   internal_port = 9991
   ports = []
+  regions = ['fra'] 
 
 [[vm]]
   memory = '1gb'

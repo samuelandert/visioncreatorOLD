@@ -12,8 +12,8 @@
 	initializeStores();
 	const drawerStore = getDrawerStore();
 
-	let { supabase, session } = data;
-	$: ({ supabase, session } = data);
+	let { supabase, session, queryClient } = data;
+	$: ({ supabase, session, queryClient } = data);
 
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((event, _session) => {
@@ -29,7 +29,7 @@
 	}
 </script>
 
-<QueryClientProvider client={data.queryClient}>
+<QueryClientProvider client={queryClient}>
 	<Drawer bgDrawer="bg-white" height="h-auto">
 		<ComposeView view={$drawerStore.meta} />
 	</Drawer>
