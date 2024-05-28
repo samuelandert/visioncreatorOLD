@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { createQuery, createMutation } from '$lib/wundergraph';
+	import { createQuery, createMutation, createSubscription } from '$lib/wundergraph';
 
 	export let data;
 	let loading = false;
@@ -15,6 +15,13 @@
 			userid: session.user.id
 		},
 		liveQuery: true
+	});
+
+	const getUserDetailsSubscription = createSubscription({
+		operationName: 'subscribeMe',
+		input: {
+			userid: session.user.id
+		}
 	});
 
 	const updateNameMutation = createMutation({
@@ -40,11 +47,13 @@
 {#if $getUserDetailsQuery.isLoading}
 	<p>Loading user details...</p>
 {:else if $getUserDetailsQuery.error}
-	{$getUserDetailsQuery.error.message}
-{:else if $getUserDetailsQuery.data}
+	<p>Error: {$getUserDetailsQuery.error?.message}</p>
+{:else}
 	<div class="m-10">
-		<p class="pb-2 text-2xl">Welcome {$getUserDetailsQuery.data.fullName}</p>
-		<p class="pb-8">ID: {$getUserDetailsQuery.data.id}</p>
+		<p class="pb-2 text-2xl">
+			Welcome {$getUserDetailsQuery.data?.fullName}
+		</p>
+		<p class="pb-8">ID: {$getUserDetailsQuery.data?.id}</p>
 		<form method="post" action="?/signout" use:enhance={handleSignOut}>
 			<button
 				class="px-4 py-2 font-bold text-white bg-red-500 rounded hover:bg-red-700"
@@ -57,6 +66,10 @@
 			disabled={loading}>Update Name</button
 		>
 	</div>
-{:else}
-	Nothing to see here
+	{#if $getUserDetailsSubscription.data}
+		<div>
+			<h2>Subscription Data:</h2>
+			<p>Full Name: {JSON.stringify($getUserDetailsSubscription.data)}</p>
+		</div>
+	{/if}
 {/if}
