@@ -69,7 +69,7 @@
 	{#if $getUserDetailsSubscription.data}
 		<div>
 			<h2>Subscription Data:</h2>
-			<p>Full Name: {JSON.stringify($getUserDetailsSubscription.data)}</p>
+			<p>{JSON.stringify($getUserDetailsSubscription.data.data)}</p>
 		</div>
 	{/if}
 {/if}
