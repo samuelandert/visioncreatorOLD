@@ -10,29 +10,25 @@ export default createOperation.mutation({
             console.error('Authorization Error: User ID does not match.');
             throw new AuthorizationError({ message: 'User ID does not match.' });
         }
-
-        console.log("------USERID-----------", input.userid)
-
         console.log('Authorization successful');
 
         const { data, error } = await context.supabase
             .from('profiles')
             .update({ full_name: input.fullName })
             .eq('id', input.userid)
-            .select('full_name, id');
+            .select();
 
         if (error) {
-            console.error('Error updating user full name:', error);
-            console.error('Detailed error info:', JSON.stringify(error, null, 2));
-            throw new Error(`Failed to update user full name: ${error.message}`);
+            console.log(`Error: ${error.message}`);
+            return;
         }
 
-        if (data === null || data.length === 0) {
-            console.error('No data returned from update operation, possible no match for ID');
-            throw new Error('No data returned from update operation, check ID validity');
+        if (data.length === 0) {
+            console.log('No user found with the specified ID, or no changes were made.');
+            return;
         }
 
-        console.log('Update successful, user full name updated:', data);
+        console.log('Name updated successfully!');
         return { success: true, data };
     }
 });

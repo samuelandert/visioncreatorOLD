@@ -44,7 +44,7 @@
 {:else if $getUserDetailsQuery.data}
 	<div class="m-10">
 		<p class="pb-2 text-2xl">Welcome {$getUserDetailsQuery.data.fullName}</p>
-		<p class="pb-8">Welcome {$getUserDetailsQuery.data.id}</p>
+		<p class="pb-8">ID: {$getUserDetailsQuery.data.id}</p>
 		<form method="post" action="?/signout" use:enhance={handleSignOut}>
 			<button
 				class="px-4 py-2 font-bold text-white bg-red-500 rounded hover:bg-red-700"
