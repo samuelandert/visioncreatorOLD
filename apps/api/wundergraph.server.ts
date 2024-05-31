@@ -1,16 +1,25 @@
 import { configureWunderGraphServer } from '@wundergraph/sdk/server';
 import { createClient } from '@supabase/supabase-js';
+import { Nango } from '@nangohq/node';
 
 class MyContext {
-	supabase: ReturnType<typeof createClient>;
+	supabase: ReturnType<typeof createClient>
+	nango: Nango;
 
 	constructor() {
 		const supabaseUrl = process.env.SUPABASE_URL;
 		const supabaseKey = process.env.SUPABASE_SERVICE_ROLE;
-		if (!supabaseUrl || !supabaseKey) {
-			throw new Error("Supabase URL and Key must be provided.");
+		const nangoHost = process.env.NANGO_HOST;
+		const nangoSecretKey = process.env.NANGO_SECRET_KEY;
+
+		if (!supabaseUrl || !supabaseKey || !nangoHost || !nangoSecretKey) {
+			throw new Error("Supabase URL, Key, Nango Host, and Secret Key must be provided.");
 		}
 		this.supabase = createClient(supabaseUrl, supabaseKey);
+		this.nango = new Nango({
+			host: nangoHost,
+			secretKey: nangoSecretKey
+		});
 	}
 }
 

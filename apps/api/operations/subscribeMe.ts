@@ -4,6 +4,10 @@ export default createOperation.subscription({
     input: z.object({
         userid: z.string(),
     }),
+    requireAuthentication: true,
+    rbac: {
+        requireMatchAll: ['authenticated'],
+    },
     handler: async function* ({ context, input, user }) {
 
         let latestPayload;

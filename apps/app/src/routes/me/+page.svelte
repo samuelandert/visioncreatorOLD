@@ -5,6 +5,7 @@
 
 	export let data;
 	let loading = false;
+	let file: File | null = null;
 
 	let { session } = data;
 	$: ({ session } = data);
@@ -34,6 +35,36 @@
 			await $updateNameMutation.mutateAsync({ userid: session.user.id, fullName: newName });
 		}
 	};
+
+	const uploadAvatarMutation = createMutation({
+		operationName: 'uploadProfileImage',
+		input: {
+			file,
+			userid: session.user.id
+		}
+	});
+
+    async function handleFileUpload() {
+        if (file && session.user.id) {
+            loading = true;
+            const filePath = `${session.user.id}`;
+            const { error } = await data.supabase.storage.from('avatars').upload(filePath, file);
+            if (error) {
+                console.error('Upload error:', error.message);
+            } else {
+                console.log('File uploaded successfully');
+                await $uploadAvatarMutation.mutateAsync({ userid: session.user.id, filePath });
+            }
+            loading = false;
+        }
+    }
+
+    function handleFileChange(event) {
+        const input = event.target as HTMLInputElement;
+        if (input.files?.length) {
+            file = input.files[0];
+        }
+    }
 </script>
 
 {#if $subscribeMe.isLoading}
@@ -45,7 +76,6 @@
 		<p class="pb-2 text-2xl">
 			Welcome {$subscribeMe.data?.full_name}
 		</p>
-
 		<p>ID: {$subscribeMe.data?.id}</p>
 		Website: {$subscribeMe.data?.website}
 
@@ -60,5 +90,8 @@
 			on:click={handleUpdateName}
 			disabled={loading}>Update Name</button
 		>
+		<div class="mb-6" />
+		<input type="file" on:change={handleFileChange} />
+		<button on:click={handleFileUpload} disabled={loading || !file}>Upload Profile Image</button>
 	</div>
 {/if}

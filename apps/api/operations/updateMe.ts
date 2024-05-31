@@ -5,6 +5,10 @@ export default createOperation.mutation({
         userid: z.string(),
         fullName: z.string(),
     }),
+    requireAuthentication: true,
+    rbac: {
+        requireMatchAll: ['authenticated'],
+    },
     handler: async ({ context, input, user }) => {
         if (input.userid !== user?.customClaims?.id) {
             console.error('Authorization Error: User ID does not match.');
@@ -19,13 +23,13 @@ export default createOperation.mutation({
             .select();
 
         if (error) {
-            console.log(`Error: ${error.message}`);
-            return;
+            console.error(`Error: ${error.message}`);
+            return { success: false, error: error.message };
         }
 
         if (data.length === 0) {
             console.log('No user found with the specified ID, or no changes were made.');
-            return;
+            return { success: false, error: 'No user found or no changes made.' };
         }
 
         console.log('Name updated successfully!');
