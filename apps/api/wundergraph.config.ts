@@ -3,7 +3,7 @@ import {
   cors,
   EnvironmentVariable,
   introspect,
-  templates
+  templates,
 } from '@wundergraph/sdk';
 import server from './wundergraph.server';
 import operations from './wundergraph.operations';

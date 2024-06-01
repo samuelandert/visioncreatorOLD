@@ -6,10 +6,8 @@ export type OperationErrors = {
 	listTodos: ListTodosErrors;
 	subscribeMe: SubscribeMeErrors;
 	updateMe: UpdateMeErrors;
-	uploadProfileImage: UploadProfileImageErrors;
 };
 
 export type ListTodosErrors = ClientOperationErrors;
 export type SubscribeMeErrors = ClientOperationErrors;
 export type UpdateMeErrors = ClientOperationErrors;
-export type UploadProfileImageErrors = ClientOperationErrors;

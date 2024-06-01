@@ -16,7 +16,7 @@
     "@supabase/supabase-js": "^2.43.2",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tanstack/svelte-query": "^4.36.1",
-    "@wundergraph/svelte-query": "^0.3.18",
+    "@wundergraph/svelte-query": "^0.3.33",
     "@xstate/svelte": "^2.1.0",
     "composer": "*",
     "ethers": "5.7.2",
