@@ -19,11 +19,18 @@ export async function GET({ request }) {
     if (!decoded.sub) {
       throw error(401, 'Invalid JWT: Subject missing');
     }
+    // Initialize roles array from the token
+    const roles = decoded.role ? [decoded.role] : [];
+
+    // Check if the subject is one of the hardcoded admin IDs
+    if (['b9af00aa-9f32-4ed1-b025-f6b49c09e7c5', 'b9f206ab-7d0b-4bca-a4df-b7ccf7445a14'].includes(decoded.sub)) {
+      roles.push('admin');
+    }
     const user = {
       id: decoded.sub,
       name: decoded.full_name || 'Unknown',
       email: decoded.email,
-      roles: [decoded.role]
+      roles
     };
 
     console.log(user)

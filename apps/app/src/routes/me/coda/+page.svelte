@@ -1,6 +1,4 @@
-Coming soon
-
-<!-- <script lang="ts">
+<script lang="ts">
 	import { createQuery } from '$lib/wundergraph';
 
 	const getTodos = createQuery({
@@ -38,4 +36,4 @@ Coming soon
 			<p>No todos found.</p>
 		{/if}
 	</div>
-</div> -->
+</div>
