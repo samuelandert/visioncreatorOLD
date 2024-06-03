@@ -34,19 +34,14 @@
 		<ComposeView view={$drawerStore.meta} />
 	</Drawer>
 
-	{#if session}
-		<nav class="p-4 text-white bg-gray-800">
-			<ul class="flex space-x-4">
-				<li><a href="/" class="hover:text-gray-300">Home</a></li>
-				<li><a href="/me/countries" class="hover:text-gray-300">Countries</a></li>
-				<li><a href="/me/edit" class="hover:text-gray-300">Edit</a></li>
-				<li><a href="/me/coda" class="hover:text-gray-300">Coda</a></li>
-				<li><a href="/me/slube" class="hover:text-gray-300">Slube</a></li>
-			</ul>
-		</nav>
-	{/if}
-
 	<AppShell>
 		<slot />
 	</AppShell>
 </QueryClientProvider>
+
+<footer class="fixed inset-x-0 bottom-0 p-4 text-xs text-center text-white">
+	<a href="/me" class="mx-2">Login</a>
+	<a href="/data-privacy" class="mx-2">Datenschutz</a>
+	<a href="/terms-of-service" class="mx-2">AGB</a>
+	<a href="/imprint" class="mx-2">Impressum</a>
+</footer>
