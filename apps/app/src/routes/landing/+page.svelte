@@ -150,7 +150,8 @@
 					Bin ich bereit endlich mein volles Lebenspotenzial zu entfalten und jeden Tag mit einem
 					Strahlen und Lächeln durch den Tag zu gehen?
 				</div>
-
+			</div>
+			<div class="absolute flex justify-around w-full text-4xl text-white bottom-20">
 				<button
 					type="button"
 					class="mt-10 btn bg-gradient-to-br variant-gradient-secondary-primary btn-xl"
@@ -164,6 +165,8 @@
 					placeholder="Mein Name ist?"
 					style="background: rgba(255, 255, 255, 0.2); padding: 0.5rem 1rem; font-size: 2rem; color: white; border: 1px solid white; border-radius: 2rem; outline: none;"
 				/>
+			</div>
+			<div class="absolute flex justify-around w-full text-2xl text-white bottom-20">
 				<button
 					type="button"
 					class="mt-10 btn bg-gradient-to-br variant-gradient-secondary-primary btn-xl"
@@ -176,6 +179,8 @@
 				<p class="mb-4 text-xl text-white">
 					Lass uns in deine Zukunft schauen und in dein neues Leben eintauchen
 				</p>
+			</div>
+			<div class="absolute flex justify-around w-full text-2xl text-white bottom-20">
 				<button
 					type="button"
 					class="mt-10 btn bg-gradient-to-br variant-gradient-secondary-primary btn-xl"
@@ -189,7 +194,7 @@
 				<button
 					type="button"
 					class="mt-10 btn bg-gradient-to-br variant-gradient-secondary-primary btn-xl"
-					>Anmelden!</button
+					>Anmelden</button
 				>
 				<!-- <a
 					href="https://coda.io/form/d6V5RkP54ce?InspiredByVisionID={visionID}&vorname={name}&newsletter=true"
