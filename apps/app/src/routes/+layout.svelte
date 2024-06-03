@@ -6,14 +6,16 @@
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { client } from '$lib/wundergraph';
+	import { Auth } from '@supabase/auth-ui-svelte';
+	import { ThemeSupa } from '@supabase/auth-ui-shared';
 
 	export let data: LayoutData;
 
 	initializeStores();
 	const drawerStore = getDrawerStore();
 
-	let { supabase, session, queryClient } = data;
-	$: ({ supabase, session, queryClient } = data);
+	let { supabase, session, queryClient, url } = data;
+	$: ({ supabase, session, queryClient, url } = data);
 
 	onMount(() => {
 		const { data } = supabase.auth.onAuthStateChange((event, _session) => {
@@ -31,7 +33,21 @@
 
 <QueryClientProvider client={queryClient}>
 	<Drawer bgDrawer="bg-white" height="h-auto">
-		<ComposeView view={$drawerStore.meta} />
+		{#if $drawerStore.meta}
+			<ComposeView view={$drawerStore.meta} />
+		{:else}
+			<div class="max-w-xl mx-auto my-4">
+				<Auth
+					supabaseClient={supabase}
+					view="magic_link"
+					redirectTo={`${url}/auth/callback`}
+					showLinks={false}
+					appearance={{
+						theme: ThemeSupa
+					}}
+				/>
+			</div>
+		{/if}
 	</Drawer>
 
 	<AppShell>
