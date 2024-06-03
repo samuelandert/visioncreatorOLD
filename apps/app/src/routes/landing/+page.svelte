@@ -1,5 +1,6 @@
 <script>
 	import { onMount, afterUpdate } from 'svelte';
+
 	import { page } from '$app/stores';
 
 	let typingSound, backgroundMusic;
@@ -137,18 +138,12 @@
 	<div class="overlay">
 		{#if state === 1}
 			<div class="max-w-5xl mx-auto text-center">
-				<p class="my-4 text-6xl font-bold text-white">IN MIR STECK MEHR!</p>
-				<p class="max-w-2xl mx-auto mb-4 text-3xl text-white">
-					{#if name}
-						{name}, jetzt oder nie! Worauf warte ich noch?
-					{:else}
-						Worauf warte ich noch?
-					{/if}
-				</p>
+				<h1 class="my-4 text-6xl font-bold text-white h1">In mir steckt mehr!</h1>
 
 				<div class="max-w-2xl mx-auto mb-2 text-lg text-center text-white">
-					Bin ich bereit endlich mein volles Lebenspotenzial zu entfalten und jeden Tag mit einem
-					Strahlen und Lächeln durch den Tag zu gehen?
+					<p class="text-3xl">Worauf warte ich noch?</p>
+					<br />Bin ich bereit endlich, mein volles Lebenspotenzial zu entfalten und jeden Tag mit
+					einem Strahlen und Lächeln durchs Leben zu gehen?
 				</div>
 			</div>
 			<div class="absolute flex justify-around w-full text-4xl text-white bottom-20">

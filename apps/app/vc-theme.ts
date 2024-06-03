@@ -5,18 +5,18 @@ export const vcTheme: CustomThemeConfig = {
     properties: {
         // =~= Theme Properties =~=
         "--theme-font-family-base": `'Poppins', sans-serif`,
-        "--theme-font-family-heading": `'Poppins', sans-serif`,
+        "--theme-font-family-heading": `'Aclonica', sans-serif`,
         "--theme-font-color-base": "var(--color-surface-800)",
         "--theme-font-color-dark": "var(--color-tertiary-300)",
         "--theme-rounded-base": "9999px",
         "--theme-rounded-container": "8px",
         "--theme-border-base": "1px",
         // =~= Theme On-X Colors =~=
-        "--on-primary": "var(--color-surface-700)",
-        "--on-secondary": "var(--color-surface-700)",
-        "--on-tertiary": "var(--color-surface-700)",
-        "--on-success": "var(--color-surface-700)",
-        "--on-warning": "var(--color-surface-700)",
+        "--on-primary": "var(--color-surface-800)",
+        "--on-secondary": "var(--color-surface-800)",
+        "--on-tertiary": "var(--color-surface-800)",
+        "--on-success": "var(--color-surface-800)",
+        "--on-warning": "var(--color-surface-800)",
         "--on-error": "var(--color-tertiary-300)",
         "--on-surface": "var(--color-tertiary-300)",
         // =~= Theme Colors  =~=
@@ -64,28 +64,28 @@ export const vcTheme: CustomThemeConfig = {
         "--color-success-700": "94 144 93", // #5e905d
         "--color-success-800": "75 115 74", // #4b734a
         "--color-success-900": "61 94 61", // #3d5e3d
-        // warning | #d69f6b 
-        "--color-warning-50": "249 241 233", // #f9f1e9
-        "--color-warning-100": "247 236 225", // #f7ece1
-        "--color-warning-200": "245 231 218", // #f5e7da
-        "--color-warning-300": "239 217 196", // #efd9c4
-        "--color-warning-400": "226 188 151", // #e2bc97
-        "--color-warning-500": "214 159 107", // #d69f6b
-        "--color-warning-600": "193 143 96", // #c18f60
-        "--color-warning-700": "161 119 80", // #a17750
-        "--color-warning-800": "128 95 64", // #805f40
-        "--color-warning-900": "105 78 52", // #694e34
-        // error | #b45082 
-        "--color-error-50": "244 229 236", // #f4e5ec
-        "--color-error-100": "240 220 230", // #f0dce6
-        "--color-error-200": "236 211 224", // #ecd3e0
-        "--color-error-300": "225 185 205", // #e1b9cd
-        "--color-error-400": "203 133 168", // #cb85a8
-        "--color-error-500": "180 80 130", // #b45082
-        "--color-error-600": "162 72 117", // #a24875
-        "--color-error-700": "135 60 98", // #873c62
-        "--color-error-800": "108 48 78", // #6c304e
-        "--color-error-900": "88 39 64", // #582740
+        // warning | #d79a60 
+        "--color-warning-50": "249 240 231", // #f9f0e7
+        "--color-warning-100": "247 235 223", // #f7ebdf
+        "--color-warning-200": "245 230 215", // #f5e6d7
+        "--color-warning-300": "239 215 191", // #efd7bf
+        "--color-warning-400": "227 184 144", // #e3b890
+        "--color-warning-500": "215 154 96", // #d79a60
+        "--color-warning-600": "194 139 86", // #c28b56
+        "--color-warning-700": "161 116 72", // #a17448
+        "--color-warning-800": "129 92 58", // #815c3a
+        "--color-warning-900": "105 75 47", // #694b2f
+        // error | #b05e7b 
+        "--color-error-50": "243 231 235", // #f3e7eb
+        "--color-error-100": "239 223 229", // #efdfe5
+        "--color-error-200": "235 215 222", // #ebd7de
+        "--color-error-300": "223 191 202", // #dfbfca
+        "--color-error-400": "200 142 163", // #c88ea3
+        "--color-error-500": "176 94 123", // #b05e7b
+        "--color-error-600": "158 85 111", // #9e556f
+        "--color-error-700": "132 71 92", // #84475c
+        "--color-error-800": "106 56 74", // #6a384a
+        "--color-error-900": "86 46 60", // #562e3c
         // surface | #1a2366 
         "--color-surface-50": "221 222 232", // #dddee8
         "--color-surface-100": "209 211 224", // #d1d3e0
@@ -97,6 +97,5 @@ export const vcTheme: CustomThemeConfig = {
         "--color-surface-700": "20 26 77", // #141a4d
         "--color-surface-800": "16 21 61", // #10153d
         "--color-surface-900": "13 17 50", // #0d1132
-
     }
 }
