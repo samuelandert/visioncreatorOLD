@@ -6,8 +6,6 @@
 
 	const drawerStore = getDrawerStore();
 
-	export let data;
-
 	let typingSound, backgroundMusic;
 	if (typeof window !== 'undefined') {
 		typingSound = new Audio('typing.mp3');
@@ -21,6 +19,8 @@
 
 	let name;
 	let visionID = 0;
+
+	let isMuted = false;
 
 	let urlParamName, urlParamVisionid;
 	$: {
@@ -38,14 +38,9 @@
 			visionID = localStorage.getItem('visionID');
 		}
 	}
-	function openDrawer() {
-		drawerStore.open({
-			position: 'bottom'
-		});
-	}
 
 	let paragraphs = [
-		'31. Dezember 2030 - Uhrzeit - 23:00',
+		'21. März 2031 - Uhrzeit - 23:21',
 		'Liebes Tagebuch, heute strahlen und blitzen meine Augen vor Freude.',
 		'Ich führe ein Leben, indem ich Tag täglich entscheiden kann',
 		'in welche sinnstiftende Arbeit ich meine wertvolle Lebenszeit investiere.',
@@ -55,8 +50,8 @@
 		'ein ereignisreiches und gutes Leben führen lassen',
 		'Ich bin dankbar und glücklich darüber, dass ich 2024 Visioncreator geworden bin.',
 		'Es ist eine geile Community und wir haben viel Spaß zusammen.',
-		'Jeder von uns investiert jeden Tag 1€',
-		'in gesellschaftsbewegende Visionen an denen wir alle beteiligt sind',
+		'Jeder von uns investiert jeden Tag 1€ in sich selbst',
+		'und damit in gesellschaftsbewegende Großvisionen an denen wir alle beteiligt sind',
 		'Wir haben es geschafft jeden Monat ein Community-Startup',
 		'aus unserer Mitte heraus zu finanzieren und so das Leben ',
 		'auf unserem Planeten Tag für Tag für jeden Menschen immer lebenswerter zu machen',
@@ -99,6 +94,12 @@
 		localStorage.setItem('name', name);
 		backgroundMusic.play();
 		typeWriter();
+	};
+
+	const toggleMute = () => {
+		isMuted = !isMuted;
+		typingSound.muted = isMuted;
+		backgroundMusic.muted = isMuted;
 	};
 
 	if (typeof window !== 'undefined') {
@@ -189,26 +190,45 @@
 				<button
 					type="button"
 					class="mt-10 btn bg-gradient-to-br variant-gradient-secondary-primary btn-xl"
-					on:click={next}>Auf gehts!</button
+					on:click={next}
 				>
+					<span>Starte Video</span>
+					<span><Icon icon="icon-park-solid:play" class="w-10 h-10" /></span>
+				</button>
 			</div>
 		{:else}
-			<h1 class="centered-text">{centeredText}</h1>
+			<div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-full mt-[-4rem]">
+				<button
+					class="flex flex-col items-center justify-center text-tertiary-200"
+					on:click={toggleMute}
+				>
+					{#if isMuted}
+						<span class="flex flex-col items-center justify-center">
+							<Icon icon="ion:volume-high-outline" class="w-12 h-12 mt-2" />
+							play sound
+						</span>
+					{:else}
+						<span class="flex flex-col items-center justify-center">
+							<Icon icon="ion:volume-mute-outline" class="w-12 h-12 mt-2" />
+							mute
+						</span>
+					{/if}
+				</button>
+			</div>
+
+			<h1 class="fixed transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 centered-text">
+				{centeredText}
+			</h1>
 
 			<div class="absolute flex justify-around w-full text-2xl text-white bottom-20">
 				<button
 					type="button"
 					class="mt-10 btn bg-gradient-to-br variant-gradient-secondary-primary btn-xl"
-					on:click={openDrawer}>Anmelden</button
+					on:click={() =>
+						drawerStore.open({
+							position: 'bottom'
+						})}>Jetzt auf Warteliste setzen</button
 				>
-				<!-- <a
-					href="https://coda.io/form/d6V5RkP54ce?InspiredByVisionID={visionID}&vorname={name}&newsletter=true"
-					class="mb-2 text-3xl text-white"
-				>
-					<button class="px-4 py-2 mt-2 text-white bg-teal-500 rounded-2xl"
-						>Ich will mehr wissen</button
-					>
-				</a> -->
 			</div>
 		{/if}
 	</div>
