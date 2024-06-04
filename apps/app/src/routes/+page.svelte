@@ -144,10 +144,10 @@
 	<div class="overlay">
 		<div class="@container">
 			<div
-				class="min-h-screen flex flex-col justify-end text-center items-center mx-auto max-w-xl @4xl:max-w-6xl p-2 gap-4 pb-16"
+				class="min-h-screen flex flex-col justify-end text-center items-center mx-auto max-w-xl @4xl:max-w-6xl p-2 gap-4 pb-12 @3xl:pb-16"
 			>
 				{#if state === 1}
-					<div class="w-20 @3xl:w-36">
+					<div class="w-20 @3xl:w-36 opacity-70">
 						<img src="logo.png" alt="visioncreator" />
 					</div>
 					<h1
@@ -197,7 +197,7 @@
 					</button>
 				{:else}
 					<h1
-						class=" fixed transform -translate-x-1/2 -translate-y-1/2 top-2/3 left-1/2 h-48 text-lg @md:text-xl @2xl:text-2xl @4xl:text-3xl @5xl:text-4xl leading-relaxed"
+						class="fixed transform -translate-x-1/2 -translate-y-1/2 top-2/3 left-1/2 h-48 text-lg @md:text-xl @2xl:text-2xl @4xl:text-3xl @5xl:text-4xl leading-relaxed"
 					>
 						{centeredText}
 					</h1>
@@ -207,12 +207,12 @@
 					>
 						{#if isMuted}
 							<span class="flex flex-col items-center justify-center">
-								<Icon icon="ion:volume-high-outline" class="w-12 h-12 mt-2" />
+								<Icon icon="ion:volume-high-outline" class="w-8 h-8 mt-2 @3xl:w-12 @3xl:h-12" />
 								play sound
 							</span>
 						{:else}
 							<span class="flex flex-col items-center justify-center">
-								<Icon icon="ion:volume-mute-outline" class="w-12 h-12 mt-2" />
+								<Icon icon="ion:volume-mute-outline" class="w-8 h-8 mt-2 @3xl:w-12 @3xl:h-12" />
 								mute
 							</span>
 						{/if}
