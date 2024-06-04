@@ -140,97 +140,94 @@
 	<video autoplay loop muted class="background-video">
 		<source src="wald.mp4" type="video/mp4" />
 	</video>
-	<div class="absolute z-10 flex justify-around w-full text-3xl top-32">
-		<div class="text-center">
-			<img class="transparent-image" src="logo.png" alt="visioncreator" width="150px" />
-		</div>
-	</div>
 
 	<div class="overlay">
-		{#if state === 1}
-			<div class="max-w-5xl mx-auto text-center">
-				<h1 class="my-4 text-6xl font-bold text-white h1">In mir steckt mehr!</h1>
-
-				<div class="max-w-2xl mx-auto mb-2 text-lg text-center text-white">
-					<p class="text-3xl">Worauf warte ich noch?</p>
-					<br />Bin ich bereit endlich, mein volles Lebenspotenzial zu entfalten und jeden Tag mit
-					einem Strahlen und Lächeln durchs Leben zu gehen?
-				</div>
+		<div class="@container">
+			<div
+				class="min-h-screen flex flex-col justify-end text-center items-center mx-auto max-w-xl @4xl:max-w-6xl p-2 gap-4 pb-16"
+			>
+				{#if state === 1}
+					<div class="w-20 @3xl:w-36">
+						<img src="logo.png" alt="visioncreator" />
+					</div>
+					<h1
+						class="h1 text-4xl @md:text-5xl @4xl:text-6xl @5xl:text-7xl @6xl:text-8xl @7xl:text-9xl"
+					>
+						Es ist an der Zeit...
+					</h1>
+					<div class="text-sm @md:text-lg @4xl:text-xl @5xl:text-2xl">
+						...mein volles Lebenspotenzial zu entfalten und jeden Tag mit einem Strahlen und Lächeln
+						durchs Leben zu gehen.
+					</div>
+					<div class="text-2xl @4xl:text-3xl @5xl:text-4xl @6xl:text-5xl font-normal">
+						Jetzt oder nie!
+					</div>
+					<button
+						type="button"
+						class="btn bg-gradient-to-br variant-gradient-secondary-primary btn-md @3xl:btn-lg"
+						on:click={next}>Ich bin bereit</button
+					>
+				{:else if state === 2}
+					<input
+						bind:value={name}
+						placeholder="Mein Name ist?"
+						style="background: rgba(255, 255, 255, 0.2); padding: 0.5rem 1rem; font-size: 1.6rem; color: white; border: 1px solid white; border-radius: 2rem; outline: none;"
+					/>
+					<button
+						type="button"
+						class="btn bg-gradient-to-br variant-gradient-secondary-primary btn-md @3xl:btn-lg"
+						on:click={next}>Lass mich träumen</button
+					>
+				{:else if state === 3}
+					<h2
+						class="h2 mb-2 text-4xl @md:text-5xl @4xl:text-6xl @5xl:text-7xl @6xl:text-8xl @7xl:text-9xl text-white"
+					>
+						Schön das du da bist {localStorage.getItem('name')}!
+					</h2>
+					<p class="mb-4 text-sm @md:text-lg @4xl:text-xl @5xl:text-2xl">
+						Lass uns in deine Zukunft schauen und in dein neues Leben eintauchen
+					</p>
+					<button
+						type="button"
+						class="btn bg-gradient-to-br variant-gradient-secondary-primary btn-md @3xl:btn-lg"
+						on:click={next}
+					>
+						<span>Starte Video</span>
+						<span><Icon icon="icon-park-solid:play" class="w-6 h-6 @3xl:w-7 @3xl:h-7" /></span>
+					</button>
+				{:else}
+					<h1
+						class=" fixed transform -translate-x-1/2 -translate-y-1/2 top-2/3 left-1/2 h-48 text-lg @md:text-xl @2xl:text-2xl @4xl:text-3xl @5xl:text-4xl leading-relaxed"
+					>
+						{centeredText}
+					</h1>
+					<button
+						class="flex flex-col items-center justify-center text-tertiary-200"
+						on:click={toggleMute}
+					>
+						{#if isMuted}
+							<span class="flex flex-col items-center justify-center">
+								<Icon icon="ion:volume-high-outline" class="w-12 h-12 mt-2" />
+								play sound
+							</span>
+						{:else}
+							<span class="flex flex-col items-center justify-center">
+								<Icon icon="ion:volume-mute-outline" class="w-12 h-12 mt-2" />
+								mute
+							</span>
+						{/if}
+					</button>
+					<button
+						type="button"
+						class="btn bg-gradient-to-br variant-gradient-secondary-primary btn-md @3xl:btn-lg"
+						on:click={() =>
+							drawerStore.open({
+								position: 'bottom'
+							})}>Jetzt auf Warteliste setzen</button
+					>
+				{/if}
 			</div>
-			<div class="absolute flex justify-around w-full text-4xl text-white bottom-20">
-				<button
-					type="button"
-					class="mt-10 btn bg-gradient-to-br variant-gradient-secondary-primary btn-xl"
-					on:click={next}>Ich bin bereit</button
-				>
-			</div>
-		{:else if state === 2}
-			<div style="display: flex; flex-direction: column; align-items: center; ">
-				<input
-					bind:value={name}
-					placeholder="Mein Name ist?"
-					style="background: rgba(255, 255, 255, 0.2); padding: 0.5rem 1rem; font-size: 2rem; color: white; border: 1px solid white; border-radius: 2rem; outline: none;"
-				/>
-			</div>
-			<div class="absolute flex justify-around w-full text-2xl text-white bottom-20">
-				<button
-					type="button"
-					class="mt-10 btn bg-gradient-to-br variant-gradient-secondary-primary btn-xl"
-					on:click={next}>Lass mich träumen</button
-				>
-			</div>
-		{:else if state === 3}
-			<div style="display: flex; flex-direction: column; align-items: center;">
-				<p class="mb-2 text-3xl text-white">Schön das du da bist {localStorage.getItem('name')}!</p>
-				<p class="mb-4 text-xl text-white">
-					Lass uns in deine Zukunft schauen und in dein neues Leben eintauchen
-				</p>
-			</div>
-			<div class="absolute flex justify-around w-full text-2xl text-white bottom-20">
-				<button
-					type="button"
-					class="mt-10 btn bg-gradient-to-br variant-gradient-secondary-primary btn-xl"
-					on:click={next}
-				>
-					<span>Starte Video</span>
-					<span><Icon icon="icon-park-solid:play" class="w-10 h-10" /></span>
-				</button>
-			</div>
-		{:else}
-			<div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-full mt-[-4rem]">
-				<button
-					class="flex flex-col items-center justify-center text-tertiary-200"
-					on:click={toggleMute}
-				>
-					{#if isMuted}
-						<span class="flex flex-col items-center justify-center">
-							<Icon icon="ion:volume-high-outline" class="w-12 h-12 mt-2" />
-							play sound
-						</span>
-					{:else}
-						<span class="flex flex-col items-center justify-center">
-							<Icon icon="ion:volume-mute-outline" class="w-12 h-12 mt-2" />
-							mute
-						</span>
-					{/if}
-				</button>
-			</div>
-
-			<h1 class="fixed transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 centered-text">
-				{centeredText}
-			</h1>
-
-			<div class="absolute flex justify-around w-full text-2xl text-white bottom-20">
-				<button
-					type="button"
-					class="mt-10 btn bg-gradient-to-br variant-gradient-secondary-primary btn-xl"
-					on:click={() =>
-						drawerStore.open({
-							position: 'bottom'
-						})}>Jetzt auf Warteliste setzen</button
-				>
-			</div>
-		{/if}
+		</div>
 	</div>
 
 	<!-- <div class="absolute w-full text-white bottom-10">
@@ -255,13 +252,10 @@
 	input::placeholder {
 		color: #d1d5db;
 	}
-	.transparent-image {
-		opacity: 0.9;
-	}
 
 	.video-container {
 		position: relative;
-		width: 100%;
+		width: 100vw;
 		height: 100vh;
 		overflow: hidden;
 		padding: 0;
@@ -270,8 +264,8 @@
 
 	.background-video {
 		position: absolute;
-		width: 100%;
-		height: 100%;
+		width: 100vw;
+		height: 100vh;
 		object-fit: cover;
 	}
 
@@ -279,17 +273,10 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		width: 100%;
-		height: 100%;
-		background: rgba(3, 4, 57, 0.3);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.centered-text {
-		color: white;
-		text-align: center;
-		font-size: 2em;
+		right: 0;
+		bottom: 0;
+		width: 100vw;
+		height: 100vh;
+		background: linear-gradient(to top, rgba(6, 7, 56, 0.8), rgba(220, 196, 44, 0));
 	}
 </style>

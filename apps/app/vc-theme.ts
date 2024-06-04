@@ -4,8 +4,8 @@ export const vcTheme: CustomThemeConfig = {
     name: 'vc-theme',
     properties: {
         // =~= Theme Properties =~=
-        "--theme-font-family-base": `'Poppins', sans-serif`,
-        "--theme-font-family-heading": `'Aclonica', sans-serif`,
+        "--theme-font-family-base": `'Rethink', sans-serif`,
+        "--theme-font-family-heading": `'VisioncreatorFamily', sans-serif`,
         "--theme-font-color-base": "var(--color-surface-800)",
         "--theme-font-color-dark": "var(--color-tertiary-300)",
         "--theme-rounded-base": "9999px",

@@ -7,7 +7,6 @@
 	import { onMount } from 'svelte';
 	import { client } from '$lib/wundergraph';
 	import { Auth } from '@supabase/auth-ui-svelte';
-	import { vcTheme } from '$lib/themes/vc-theme';
 
 	export let data: LayoutData;
 
@@ -33,7 +32,7 @@
 		default: {
 			colors: {
 				brand: '#e9c96e',
-				brandAccent: '#afafaf',
+				brandAccent: '#f0d99a',
 				brandButtonText: 'black',
 				defaultButtonBackground: '#080808',
 				defaultButtonBorder: 'black',

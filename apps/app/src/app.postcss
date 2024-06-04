@@ -6,46 +6,157 @@
 html,
 body {
 	@apply h-full w-full overflow-hidden;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 @font-face {
-	font-family: 'Aclonica';
-	font-weight: 400; /* Regular */
+	font-family: 'VisioncreatorFamily';
+	font-weight: normal;
 	font-style: normal;
-	src: url('/fonts/Aclonica/Aclonica-Regular.ttf');
+	src: url('/fonts/VisioncreatorFamily/VisioncreatorFamilyRegular.woff') format('woff'),
+		url('/fonts/VisioncreatorFamily/VisioncreatorFamilyRegular.woff2') format('woff2'),
+		url('/fonts/VisioncreatorFamily/VisioncreatorFamilyRegular.ttf') format('ttf');
 }
 
 @font-face {
-	font-family: 'Poppins';
-	font-weight: 400; /* Regular */
+	font-family: 'Rethink';
+	font-weight: 100;
 	font-style: normal;
-	src: url('/fonts/Poppins/Poppins-Regular.ttf');
+	src: url('/fonts/Rethink/RethinkSans.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans.woff2') format('woff2');
 }
 
 @font-face {
-	font-family: 'Poppins';
-	font-weight: 400; /* Regular */
+	font-family: 'Rethink';
+	font-weight: 200;
+	font-style: normal;
+	src: url('/fonts/Rethink/RethinkSans.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'Rethink';
+	font-weight: 300;
+	font-style: normal;
+	src: url('/fonts/Rethink/RethinkSans.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Rethink';
+	font-weight: 400;
+	font-style: normal;
+	src: url('/fonts/Rethink/RethinkSans.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Rethink';
+	font-weight: 500;
+	font-style: normal;
+	src: url('/fonts/Rethink/RethinkSans.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Rethink';
+	font-weight: 600;
+	font-style: normal;
+	src: url('/fonts/Rethink/RethinkSans.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Rethink';
+	font-weight: 700;
+	font-style: normal;
+	src: url('/fonts/Rethink/RethinkSans.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Rethink';
+	font-weight: 800;
+	font-style: normal;
+	src: url('/fonts/Rethink/RethinkSans.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Rethink';
+	font-weight: 900;
+	font-style: normal;
+	src: url('/fonts/Rethink/RethinkSans.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Rethink';
+	font-weight: 100;
 	font-style: italic;
-	src: url('/fonts/Poppins/Poppins-Italic.ttf');
+	src: url('/fonts/Rethink/RethinkSans-Italic.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans-Italic.woff2') format('woff2');
 }
 
 @font-face {
-	font-family: 'Poppins';
-	font-weight: 500; /* Medium */
-	font-style: normal;
-	src: url('/fonts/Poppins/Poppins-Medium.ttf');
+	font-family: 'Rethink';
+	font-weight: 200;
+	font-style: italic;
+	src: url('/fonts/Rethink/RethinkSans-Italic.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans-Italic.woff2') format('woff2');
 }
 
 @font-face {
-	font-family: 'Poppins';
-	font-weight: 600; /* SemiBold */
-	font-style: normal;
-	src: url('/fonts/Poppins/Poppins-SemiBold.ttf');
+	font-family: 'Rethink';
+	font-weight: 300;
+	font-style: italic;
+	src: url('/fonts/Rethink/RethinkSans-Italic.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans-Italic.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'Rethink';
+	font-weight: 400;
+	font-style: italic;
+	src: url('/fonts/Rethink/RethinkSans-Italic.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans-Italic.woff2') format('woff2');
 }
 
 @font-face {
-	font-family: 'Poppins';
-	font-weight: 700; /* Bold */
-	font-style: normal;
-	src: url('/fonts/Poppins/Poppins-Bold.ttf');
+	font-family: 'Rethink';
+	font-weight: 500;
+	font-style: italic;
+	src: url('/fonts/Rethink/RethinkSans-Italic.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans-Italic.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Rethink';
+	font-weight: 600;
+	font-style: italic;
+	src: url('/fonts/Rethink/RethinkSans-Italic.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans-Italic.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Rethink';
+	font-weight: 700;
+	font-style: italic;
+	src: url('/fonts/Rethink/RethinkSans-Italic.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans-Italic.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Rethink';
+	font-weight: 800;
+	font-style: italic;
+	src: url('/fonts/Rethink/RethinkSans-Italic.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans-Italic.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Rethink';
+	font-weight: 900;
+	font-style: italic;
+	src: url('/fonts/Rethink/RethinkSans-Italic.ttf') format('truetype'),
+		url('/fonts/Rethink/RethinkSans-Italic.woff2') format('woff2');
 }
