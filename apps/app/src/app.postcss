@@ -5,9 +5,13 @@
 
 html,
 body {
-	@apply h-full w-full overflow-hidden;
+	@apply overflow-hidden;
+	padding-bottom: env(safe-area-inset-bottom);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	height: 100dvh;
+	width: 100dvw;
+	overflow: hidden;
 }
 
 @font-face {

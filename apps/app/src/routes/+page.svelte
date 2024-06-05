@@ -67,6 +67,10 @@
 	];
 	let state = 1;
 
+	let firstSentence = paragraphs[0]; // Store the first sentence
+	let firstSentenceDisplayed = ''; // To hold the typed out first sentence
+	let isFirstSentenceComplete = false;
+
 	const next = () => {
 		if (state === 1) {
 			// transition from state 1 to state 2
@@ -105,14 +109,29 @@
 	if (typeof window !== 'undefined') {
 		typeWriter = async () => {
 			if (!isStarted) return;
-			const text = paragraphs[currentParagraph].replace('xyz', localStorage.getItem('name'));
+			let text;
+			if (currentParagraph === 0 && !isFirstSentenceComplete) {
+				text = firstSentence.replace('xyz', localStorage.getItem('name'));
+			} else {
+				text = paragraphs[currentParagraph].replace('xyz', localStorage.getItem('name'));
+			}
+
 			for (let i = 0; i < text.length; i++) {
-				centeredText = text.substring(0, i + 1);
+				if (currentParagraph === 0) {
+					firstSentenceDisplayed = text.substring(0, i + 1);
+				} else {
+					centeredText = text.substring(0, i + 1);
+				}
 				typingSound.play();
 				await new Promise((resolve) => setTimeout(resolve, 65));
 			}
 			typingSound.pause();
 			typingSound.currentTime = 0;
+
+			if (currentParagraph === 0) {
+				isFirstSentenceComplete = true; // Mark the first sentence as complete
+			}
+
 			if (currentParagraph < paragraphs.length - 1) {
 				await new Promise((resolve) => setTimeout(resolve, 1500));
 				centeredText = '';
@@ -141,13 +160,13 @@
 		<source src="wald.mp4" type="video/mp4" />
 	</video>
 
-	<div class="overlay">
-		<div class="@container">
+	<div class="h-full overlay">
+		<div class="@container h-full">
 			<div
-				class="min-h-screen flex flex-col justify-end text-center items-center mx-auto max-w-xl @4xl:max-w-6xl p-2 gap-4 pb-12 @3xl:pb-16"
+				class="min-h-full flex flex-col justify-end text-center items-center mx-auto max-w-xl @4xl:max-w-6xl p-2 gap-4 pb-12 @3xl:pb-16"
 			>
 				{#if state === 1}
-					<div class="w-20 @3xl:w-36 opacity-70">
+					<div class="w-32 @3xl:w-48 opacity-70">
 						<img src="logo.png" alt="visioncreator" />
 					</div>
 					<h1
@@ -159,7 +178,7 @@
 						...mein volles Lebenspotenzial zu entfalten und jeden Tag mit einem Strahlen und Lächeln
 						durchs Leben zu gehen.
 					</div>
-					<div class="text-2xl @4xl:text-3xl @5xl:text-4xl @6xl:text-5xl font-normal">
+					<div class="text-2xl @4xl:text-3xl @5xl:text-4xl @6xl:text-5xl font-normal mb-4">
 						Jetzt oder nie!
 					</div>
 					<button
@@ -196,25 +215,28 @@
 						<span><Icon icon="icon-park-solid:play" class="w-6 h-6 @3xl:w-7 @3xl:h-7" /></span>
 					</button>
 				{:else}
-					<h1
-						class="fixed transform -translate-x-1/2 -translate-y-1/2 top-2/3 left-1/2 h-48 text-lg @md:text-xl @2xl:text-2xl @4xl:text-3xl @5xl:text-4xl leading-relaxed"
+					<h2
+						class="h2 text-2xl fixed transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-48 @md:text-3xl @2xl:text-4xl @4xl:text-5xl @5xl:text-6xl leading-relaxed w-4/5 md:w-9/10 max-w-full"
+					>
+						{firstSentenceDisplayed}
+					</h2>
+					<p
+						class="fixed transform -translate-x-1/2 -translate-y-1/2 top-2/3 left-1/2 h-48 text-lg @md:text-xl @2xl:text-2xl @4xl:text-3xl @5xl:text-4xl leading-relaxed w-4/5 md:w-9/10 max-w-full"
 					>
 						{centeredText}
-					</h1>
+					</p>
 					<button
-						class="flex flex-col items-center justify-center text-tertiary-200"
+						class="flex flex-col items-center justify-center w-full h-auto p-4 text-tertiary-600"
 						on:click={toggleMute}
+						style="background: transparent; border: none; cursor: pointer; z-index: 1000; outline: none;"
+						on:focus={{ outline: 'none' }}
 					>
 						{#if isMuted}
-							<span class="flex flex-col items-center justify-center">
-								<Icon icon="ion:volume-high-outline" class="w-8 h-8 mt-2 @3xl:w-12 @3xl:h-12" />
-								play sound
-							</span>
+							<Icon icon="ion:volume-high-outline" class="w-10 h-10 @3xl:w-14 @3xl:h-14" />
+							<span class="text-sm mt-1 @3xl:text-base">play sound</span>
 						{:else}
-							<span class="flex flex-col items-center justify-center">
-								<Icon icon="ion:volume-mute-outline" class="w-8 h-8 mt-2 @3xl:w-12 @3xl:h-12" />
-								mute
-							</span>
+							<Icon icon="ion:volume-mute-outline" class="w-10 h-10 @3xl:w-14 @3xl:h-14" />
+							<span class="text-sm mt-1 @3xl:text-base">mute</span>
 						{/if}
 					</button>
 					<button
@@ -255,18 +277,20 @@
 
 	.video-container {
 		position: relative;
-		width: 100vw;
-		height: 100vh;
-		overflow: hidden;
+		width: 100%;
+		height: 100%; /* Full viewport height */
+		overflow: hidden; /* No scrolling */
 		padding: 0;
 		margin: 0;
 	}
 
 	.background-video {
 		position: absolute;
-		width: 100vw;
-		height: 100vh;
-		object-fit: cover;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover; /* Cover the full area without stretching */
 	}
 
 	.overlay {
@@ -275,8 +299,11 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		width: 100vw;
-		height: 100vh;
+		width: 100%;
+		height: 100%;
 		background: linear-gradient(to top, rgba(6, 7, 56, 0.8), rgba(220, 196, 44, 0));
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
 	}
 </style>
