@@ -3,7 +3,7 @@ import type { Config } from 'tailwindcss'
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
 import { skeleton } from '@skeletonlabs/tw-plugin'
-import { vcTheme } from './vc-theme'
+import { vcTheme } from './src/lib/themes/vcTheme'
 
 export default {
 	darkMode: 'selector',
