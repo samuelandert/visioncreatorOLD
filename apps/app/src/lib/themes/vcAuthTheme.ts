@@ -3,21 +3,23 @@ export const vcAuthTheme = {
         colors: {
             brand: '#e9c96e',
             brandAccent: '#f0d99a',
-            brandButtonText: 'black',
-            defaultButtonBackground: '#080808',
-            defaultButtonBorder: 'black',
-            defaultButtonText: 'white',
-            dividerBackground: 'black',
+            brandButtonText: '#141a4d',
             inputBackground: 'transparent',
-            inputBorder: 'gray',
-            inputText: 'white',
-            inputPlaceholder: 'gray'
+            inputBorder: '#f0ede5',
+            inputBorderHover: '#f0ede5',
+            inputBorderFocus: '#f0ede5',
+            inputText: '#f0ede5',
+            inputPlaceholder: '#a49e8f',
+            messageTextDanger: '#b05e7b',
+            messageText: '#e9c96e',
+            anchorTextColor: '#f0ede5',
+            anchorTextHoverColor: '#a49e8f',
         },
         fonts: {
             bodyFontFamily: `'Poppins', sans-serif`,
             buttonFontFamily: `'Poppins', sans-serif`,
             inputFontFamily: `'Poppins', sans-serif`,
-            labelFontFamily: `'Aclonica', sans-serif`
+            labelFontFamily: `'VisioncreatorFamily', sans-serif`
         },
         radii: {
             borderRadiusButton: '100px',
@@ -37,8 +39,8 @@ export const vcAuthTheme = {
         },
         fontSizes: {
             baseBodySize: '16px',
-            baseInputSize: '18px',
-            baseLabelSize: '20px',
+            baseInputSize: '20px',
+            baseLabelSize: '24px',
             baseButtonSize: '18px'
         },
         borderWidths: {

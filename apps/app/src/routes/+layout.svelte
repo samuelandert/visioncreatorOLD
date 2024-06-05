@@ -8,6 +8,7 @@
 	import { client } from '$lib/wundergraph';
 	import { Auth } from '@supabase/auth-ui-svelte';
 	import { vcAuthTheme } from '$lib/themes/vcAuthTheme';
+	import * as vcAuthLocalization from '$lib/themes/vcAuthLocalization.json';
 
 	export let data: LayoutData;
 
@@ -37,6 +38,15 @@
 			<ComposeView view={$drawerStore.meta} />
 		{:else}
 			<div class="max-w-xl mx-auto mt-10 mb-16">
+				<div
+					class="flex flex-col items-center justify-center p-8 mt-12 text-center rounded-lg shadow-md bg-surface-700"
+				>
+					<div class="h2 text-3xl font-bold mb-2.5">Wartelisten Newsletter</div>
+					<p class="max-w-2xl text-lg">
+						Erfahre wöchentliche Updates, wie wir uns entwickeln und wo du auf deiner Warteliste
+						stehst, bis du von uns Eingeladen wirst.
+					</p>
+				</div>
 				<Auth
 					supabaseClient={supabase}
 					view="magic_link"
@@ -45,6 +55,9 @@
 					theme="dark"
 					appearance={{
 						theme: vcAuthTheme
+					}}
+					localization={{
+						variables: vcAuthLocalization
 					}}
 				/>
 			</div>
