@@ -30,8 +30,6 @@ export const vcAuthTheme = {
             spaceSmall: '6px',
             spaceMedium: '10px',
             spaceLarge: '20px',
-            labelBottomMargin: '8px',
-            anchorBottomMargin: '4px',
             emailInputSpacing: '4px',
             socialAuthSpacing: '4px',
             buttonPadding: '10px 15px',

@@ -41,13 +41,47 @@
 {:else if $subscribeMe.isError}
 	<p>Error: {$subscribeMe.error?.message}</p>
 {:else}
-	<div class="m-10">
-		<p class="pb-2 text-2xl">
-			Welcome {$subscribeMe.data?.full_name}
-		</p>
-		<p>ID: {$subscribeMe.data?.id}</p>
-		Website: {$subscribeMe.data?.website}
+	<div class="@container">
+		<div class="flex items-center justify-center m-4 @3xl:m-10">
+			<div class="w-full max-w-6xl shadow-xl bg-surface-800 rounded-3xl">
+				<div
+					class="relative text-center bg-center bg-cover rounded-t-3xl"
+					style="background-image: url('/sun.jpeg');"
+				>
+					<div class="absolute inset-0 bg-opacity-40 bg-surface-900" />
 
+					<div class="relative z-10 flex flex-col items-center text-tertiary-300">
+						<div class="px-6 py-2 font-bold text-white bg-transparent text-md rounded-t-3xl">
+							Profile
+						</div>
+						<div class="flex flex-col items-center p-8">
+							<img
+								src="https://source.unsplash.com/random/100x100"
+								alt="Profile Image"
+								class="w-24 h-24 mb-6 border-4 rounded-full border-surface-900"
+							/>
+							<h1 class="text-2xl text-5xl font-bold y">
+								Welcome {$subscribeMe.data?.full_name}
+							</h1>
+							<p>ID: {$subscribeMe.data?.id}</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="flex flex-col items-center p-8">
+					<div class="flex justify-between w-full mt-4">
+						<div class="text-center">
+							<p class="mb-2 text-gray-400">Leaderboard Position</p>
+							<p class="text-3xl font-semibold text-white">#5</p>
+						</div>
+						<div class="text-center">
+							<p class="mb-2 text-gray-400">Monthly Income</p>
+							<p class="text-3xl font-semibold text-white">$5,000</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<form method="post" class="py-6" action="?/signout" use:enhance={handleSignOut}>
 			<button
 				class="px-4 py-2 font-bold text-white bg-red-500 rounded hover:bg-red-700"
@@ -59,6 +93,5 @@
 			on:click={handleUpdateName}
 			disabled={loading}>Update Name</button
 		>
-		<div class="mb-6" />
 	</div>
 {/if}
