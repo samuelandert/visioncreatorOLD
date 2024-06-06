@@ -156,7 +156,7 @@
 </script>
 
 <div class="video-container">
-	<video autoplay loop muted class="background-video">
+	<video autoplay loop muted playsinline class="background-video">
 		<source src="wald.mp4" type="video/mp4" />
 	</video>
 
