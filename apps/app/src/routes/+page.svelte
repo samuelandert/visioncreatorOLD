@@ -301,7 +301,7 @@
 		bottom: 0;
 		width: 100%;
 		height: 100%;
-		background: linear-gradient(to top, rgba(6, 7, 56, 0.8), rgba(220, 196, 44, 0));
+		background: linear-gradient(to top, rgba(4, 5, 53, 0.842), rgba(235, 213, 72, 0.131));
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
