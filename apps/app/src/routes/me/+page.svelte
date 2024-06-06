@@ -2,9 +2,11 @@
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { createMutation, createSubscription } from '$lib/wundergraph';
+	import { writable } from 'svelte/store';
 
 	export let data;
 	let loading = false;
+	let modalOpen = writable(false);
 
 	let { session } = data;
 	$: ({ session } = data);
@@ -34,6 +36,10 @@
 			await $updateNameMutation.mutateAsync({ userid: session.user.id, fullName: newName });
 		}
 	};
+
+	function toggleModal() {
+		modalOpen.update((n) => !n);
+	}
 </script>
 
 {#if $subscribeMe.isLoading}
@@ -69,7 +75,7 @@
 				</div>
 
 				<div class="flex flex-col items-center p-8">
-					<div class="flex justify-between w-full mt-4">
+					<div class="flex justify-between w-full">
 						<div class="text-center">
 							<p class="mb-2 text-gray-400">Leaderboard Position</p>
 							<p class="text-3xl font-semibold text-white">#5</p>
@@ -82,16 +88,30 @@
 				</div>
 			</div>
 		</div>
-		<form method="post" class="py-6" action="?/signout" use:enhance={handleSignOut}>
-			<button
-				class="px-4 py-2 font-bold text-white bg-red-500 rounded hover:bg-red-700"
-				disabled={loading}>Sign Out</button
-			>
-		</form>
-		<button
-			class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
-			on:click={handleUpdateName}
-			disabled={loading}>Update Name</button
-		>
+	</div>
+{/if}
+
+<button
+	class="fixed z-40 flex items-center justify-center text-4xl transform translate-x-1/2 rounded-full text-primary-900 right-1/2 bottom-5 bg-primary-500 w-14 h-14"
+	on:click={toggleModal}>+</button
+>
+
+{#if $modalOpen}
+	<div class="fixed inset-0 flex items-end justify-center mx-4 mb-24">
+		<div class="w-full max-w-6xl p-8 rounded-3xl bg-surface-700">
+			<div class="flex space-x-4">
+				<form method="post" action="?/signout" use:enhance={handleSignOut}>
+					<button
+						class="px-4 py-2 font-bold rounded-full text-error-900 bg-error-500 hover:bg-error-400"
+						disabled={loading}>Sign Out</button
+					>
+				</form>
+				<button
+					class="px-4 py-2 font-bold rounded-full text-warning-900 bg-warning-500 hover:bg-warning-400"
+					on:click={handleUpdateName}
+					disabled={loading}>Update Name</button
+				>
+			</div>
+		</div>
 	</div>
 {/if}
