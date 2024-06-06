@@ -27,7 +27,7 @@
   </style>
   <stack name="head" />
 </head>
-<body class="m-0 p-0 w-full [word-break:break-word] [-webkit-font-smoothing:antialiased] {{ page.bodyClass || '' }}">
+<body class="m-0 p-0 w-full [word-break:break-word] [-webkit-font-smoothing:antialiased] {{ page.bodyClass || '' }} bg-surface-900">
   <if condition="page.preheader">
     <div class="hidden">
       {{{ page.preheader }}}
@@ -35,6 +35,11 @@
     </div>
   </if>
   <div role="article" aria-roledescription="email" aria-label="{{{ page.title || '' }}}" lang="{{ page.language || 'en' }}">
+    <div class="my-12 text-center sm:my-8">
+      <a href="https://visioncreator.works">
+        <img src="https://next.visioncreator.works/logo.png" width="100" alt="Visioncreator">
+      </a>
+    </div>
     <content />
   </div>
 </body>

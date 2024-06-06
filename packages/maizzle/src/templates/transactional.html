@@ -1,47 +1,39 @@
 ---
 title: "Confirm your email address"
 preheader: "Please confirm your email address in order to activate your account."
-bodyClass: bg-slate-50
+confirmURL: '{{ .ConfirmationURL }}'
+name: '{{ .Data }}'
 ---
 
 <x-main>
-  <div class="bg-slate-50 sm:px-4 font-sans">
+  <div class="font-sans text-center sm:px-4">
     <table align="center">
       <tr>
         <td class="w-[552px] max-w-full">
-          <div class="my-12 sm:my-8 text-center">
-            <a href="https://maizzle.com">
-              <img src="images/maizzle.png" width="70" alt="Maizzle">
-            </a>
-          </div>
 
           <table class="w-full">
             <tr>
-              <td class="p-12 sm:px-6 text-base text-slate-700 bg-white rounded shadow-sm">
-                <h1 class="m-0 mb-6 text-2xl sm:leading-8 text-black font-semibold">
-                  Hello,
+              <td class="p-12 text-base rounded shadow-sm bg-surface-800 sm:px-6 text-tertiary-300">
+                <h1 class="m-0 mb-6 text-2xl font-semibold text-tertiary-300 sm:leading-8">
+                  Is it you we're looking for?
                 </h1>
 
                 <p class="m-0 leading-6">
-                  Is it you we're looking for?
-                  <br>
-                  <br>
                   Please confirm your email address by clicking the button below:
                 </p>
 
                 <x-spacer height="24px" />
 
-                <x-button href="https://maizzle.com">
-                  Confirm email address &rarr;
+                <x-button href="{{ page.confirmURL }}">
+                  Magic Sign In Link &rarr;
                 </x-button>
-
-                <x-divider space-y="32px" class="bg-slate-200" />
+                <x-divider space-y="32px" class="bg-surface-400" />
 
                 <p class="m-0">
-                  If you didn't sign up for Maizzle, you can safely ignore this email.
+                  If you didn't sign up for Visioncreator, you can safely ignore this email.
                   <br>
                   <br>
-                  Thanks, <br />The Maizzle Team
+                  Thanks, <br />The Visioncreator Team
                 </p>
               </td>
             </tr>
@@ -49,22 +41,15 @@ bodyClass: bg-slate-50
               <td class="leading-12">&zwj;</td>
             </tr>
             <tr>
-              <td class="text-center text-slate-600 text-xs px-6">
+              <td class="px-6 text-xs text-center text-surface-300">
                 <p class="m-0 mb-4 uppercase">
-                  Powered by Maizzle
+                  Powered by Visioncreator GmbH
                 </p>
 
                 <p class="m-0 italic">
-                  Quickly build HTML emails with Tailwind CSS
+                  Become your true self
                 </p>
 
-                <p class="cursor-default">
-                  <a href="https://maizzle.com/docs/" class="text-indigo-700 [text-decoration:none] hover:![text-decoration:underline]">Docs</a>
-                  &bull;
-                  <a href="https://github.com/maizzle" class="text-indigo-700 [text-decoration:none] hover:![text-decoration:underline]">Github</a>
-                  &bull;
-                  <a href="https://twitter.com/maizzlejs" class="text-indigo-700 [text-decoration:none] hover:![text-decoration:underline]">Twitter</a>
-                </p>
               </td>
             </tr>
           </table>
