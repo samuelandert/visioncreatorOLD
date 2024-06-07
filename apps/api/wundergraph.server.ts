@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Nango } from '@nangohq/node';
 
 class MyContext {
-	supabase: ReturnType<typeof createClient>
+	supabase: ReturnType<typeof createClient>;
 	nango: Nango;
 
 	constructor() {
@@ -15,11 +15,16 @@ class MyContext {
 		if (!supabaseUrl || !supabaseKey || !nangoHost || !nangoSecretKey) {
 			throw new Error("Supabase URL, Key, Nango Host, and Secret Key must be provided.");
 		}
+
 		this.supabase = createClient(supabaseUrl, supabaseKey);
 		this.nango = new Nango({
 			host: nangoHost,
 			secretKey: nangoSecretKey
 		});
+	}
+
+	async cleanup() {
+		await this.supabase.removeAllChannels();
 	}
 }
 
@@ -51,7 +56,7 @@ export default configureWunderGraphServer(() => ({
 				return new MyContext();
 			},
 			release: async (ctx) => {
-				// Cleanup if necessary
+				await ctx.cleanup();
 			},
 		},
 	},
