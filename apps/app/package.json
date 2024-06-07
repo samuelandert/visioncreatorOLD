@@ -60,7 +60,7 @@
     "unplugin-svelte-components": "^0.2.10",
     "vite": "^5.2.13",
     "vite-plugin-dynamic-import": "^1.5.0",
-    "vite-plugin-tailwind-purgecss": "0.1.3",
+    "vite-plugin-tailwind-purgecss": "0.3.3",
     "vitest": "^0.32.2"
   },
   "type": "module"
