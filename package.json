@@ -16,11 +16,11 @@
     "turbo": "^2.0.3"
   },
   "engines": {
-    "node": ">=22.2.0"
+    "node": ">=20.12.2"
   },
-  "packageManager": "npm@10.7.0",
+  "packageManager": "npm@10.5.0",
   "volta": {
-    "node": "22.2.0",
-    "npm": "10.7.0"
+    "node": "20.12.2",
+    "npm": "10.5.0"
   }
 }
