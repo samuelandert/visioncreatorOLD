@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { QueryClient } from '@tanstack/svelte-query';
 	import { onDestroy } from 'svelte';
-	import { isEqual } from 'lodash';
+	import lodash from 'lodash';
+	const { isEqual } = lodash;
 	export let queryClient: QueryClient;
 	export let view: any;
 
@@ -41,4 +42,4 @@
 	});
 </script>
 
-<div use:composeAction={view} class="grid h-full w-full" />
+<div use:composeAction={view} class="grid w-full h-full" />

@@ -14,6 +14,7 @@
     "@supabase/auth-ui-svelte": "^0.2.9",
     "@supabase/ssr": "^0.3.0",
     "@supabase/supabase-js": "^2.43.2",
+    "@sveltejs/vite-plugin-svelte": "^3.1.1",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tanstack/svelte-query": "^4.36.1",
@@ -33,8 +34,8 @@
   "devDependencies": {
     "@skeletonlabs/skeleton": "2.10.0",
     "@skeletonlabs/tw-plugin": "0.4.0",
-    "@sveltejs/adapter-vercel": "^3.0.3",
-    "@sveltejs/kit": "^1.20.4",
+    "@sveltejs/adapter-vercel": "^5.3.1",
+    "@sveltejs/kit": "^2.5.10",
     "@tailwindcss/forms": "0.5.7",
     "@tailwindcss/typography": "0.5.13",
     "@types/jsonwebtoken": "^9.0.6",
@@ -57,7 +58,7 @@
     "typescript": "^5.0.0",
     "unplugin-auto-import": "^0.16.6",
     "unplugin-svelte-components": "^0.2.10",
-    "vite": "^4.4.2",
+    "vite": "^5.2.13",
     "vite-plugin-dynamic-import": "^1.5.0",
     "vite-plugin-tailwind-purgecss": "0.1.3",
     "vitest": "^0.32.2"

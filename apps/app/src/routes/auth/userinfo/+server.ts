@@ -1,6 +1,7 @@
 import { env } from '$env/dynamic/private'
 import { error } from '@sveltejs/kit';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+const { verify } = jwt;
 
 export async function GET({ request }) {
   const authHeader = request.headers.get('Authorization');
@@ -14,7 +15,7 @@ export async function GET({ request }) {
   }
 
   try {
-    const decoded = jwt.verify(token, env.SECRET_SUPABASE_JWT_SECRET) as JwtPayload;
+    const decoded = verify(token, env.SECRET_SUPABASE_JWT_SECRET)
 
     if (!decoded.sub) {
       throw error(401, 'Invalid JWT: Subject missing');
