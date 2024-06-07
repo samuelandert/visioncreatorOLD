@@ -1,4 +1,5 @@
 {
+  "name": "maizzle",
   "private": true,
   "scripts": {
     "dev": "maizzle serve",
