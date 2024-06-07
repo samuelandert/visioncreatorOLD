@@ -54,7 +54,7 @@ configureWunderGraphApplication({
       process.env.GITPOD_WORKSPACE_ID !== undefined,
   },
   options: {
-    publicNodeUrl: process.env.NODE_ENV === 'production' ? 'https://next-visioncreator.fly.dev' : 'http://localhost:9991'
+    publicNodeUrl: process.env.NODE_ENV === 'production' ? 'https://visioncreator.fly.dev' : 'http://localhost:9991'
   },
   authorization: {
     roles: ["admin", "authenticated"],
