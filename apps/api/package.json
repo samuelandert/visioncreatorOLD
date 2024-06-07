@@ -3,9 +3,9 @@
 	"version": "1.0.0",
 	"description": "",
 	"scripts": {
-		"dev": "wunderctl up --wundergraph-dir .",
-		"build": "wunderctl generate --wundergraph-dir .",
-		"start": "wunderctl start --wundergraph-dir=."
+		"dev": "wunderctl up --wundergraph-dir ./.wundergraph",
+		"build": "wunderctl generate --wundergraph-dir ./.wundergraph",
+		"start": "wunderctl start --wundergraph-dir ./.wundergraph"
 	},
 	"author": "",
 	"license": "ISC",

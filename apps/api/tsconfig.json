@@ -14,6 +14,6 @@
 		"isolatedModules": true,
 		"noEmit": true
 	},
-	"include": ["**/*.ts"],
+	"include": ["**/*.ts", ".wundergraph/wundergraph.config.ts", ".wundergraph/wundergraph.operations.ts", ".wundergraph/wundergraph.server.ts"],
 	"exclude": ["node_modules"]
 }

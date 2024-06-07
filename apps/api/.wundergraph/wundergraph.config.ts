@@ -21,7 +21,7 @@ configureWunderGraphApplication({
     codeGenerators: [
       {
         templates: [templates.typescript.client],
-        path: '../../packages/generated-wundergraph'
+        path: '../../../packages/generated-wundergraph'
       }
     ],
   },

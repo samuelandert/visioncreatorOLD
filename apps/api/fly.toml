@@ -1,10 +1,9 @@
-# fly.toml app configuration file generated for next-visioncreator on 2024-05-24T11:26:53+02:00
+# fly.toml app configuration file generated for visioncreator on 2024-06-07T17:33:16+02:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'next-visioncreator'
-primary_region = 'fra'
+app = 'visioncreator'
 
 [build]
 
@@ -20,7 +19,6 @@ primary_region = 'fra'
   protocol = ''
   internal_port = 9991
   ports = []
-  regions = ['fra'] 
 
 [[vm]]
   memory = '1gb'
