@@ -46,9 +46,9 @@ export default createOperation.subscription({
             })
             .subscribe();
 
-        // Continuously yield the latest data
         try {
             while (true) {
+                profilesData.sort((a, b) => b.invites - a.invites); // Sort ascending by invites
                 yield profilesData;
                 await new Promise(resolve => setTimeout(resolve, 1000)); // Adjust the timeout as needed
             }
