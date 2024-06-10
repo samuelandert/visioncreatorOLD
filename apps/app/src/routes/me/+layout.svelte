@@ -1,10 +1,4 @@
-<script>
-	import { goto } from '$app/navigation';
-</script>
-
-<div class="fixed top-0 bottom-0 left-0 w-screen h-screen p-0 m-0">
-	<slot />
-</div>
+<slot />
 
 <!-- <nav class="fixed bottom-0 left-0 right-0 flex justify-center mx-auto shadow-md">
 	<div class="w-full max-w-6xl pb-1.5 bg-blue-950 rounded-t-3xl sm:p-0.5">
