@@ -3,8 +3,8 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { createMutation, createSubscription } from '$lib/wundergraph';
 	import { writable } from 'svelte/store';
-	import { createAvatar } from '@dicebear/core';
-	import { lorelei } from '@dicebear/collection';
+	import Time, { dayjs } from 'svelte-time';
+	import 'dayjs/locale/de';
 
 	export let data;
 	let loading = false;
@@ -49,46 +49,23 @@
 		}
 	}
 
-	let avatar = generateAvatar(session.user.id);
+	dayjs.locale('de');
 
-	let leaderboardData = [
-		{ id: 'user1', name: 'Alice', invites: 5 },
-		{ id: 'user2', name: 'Bob', invites: 3 },
-		{ id: 'user3', name: 'Samuel', invites: 2 },
-		{ id: 'user4', name: 'Charlie', invites: 1 },
-		{ id: 'user5', name: 'Dave', invites: 0 }
-	];
+	let futureDate = dayjs().add(8, 'hour').toISOString();
 
-	leaderboardData = leaderboardData.map((user) => ({
-		...user,
-		profileImg: generateAvatar(user.id)
-	}));
+	let linkCopied = writable(false);
 
-	export function generateAvatar(seed: string): string {
-		return createAvatar(lorelei, {
-			size: 128,
-			seed: seed,
-			mouth: [
-				'happy01',
-				'happy02',
-				'happy03',
-				'happy04',
-				'happy05',
-				'happy06',
-				'happy07',
-				'happy08',
-				'happy09',
-				'happy10',
-				'happy11',
-				'happy12',
-				'happy13',
-				'happy14',
-				'happy15',
-				'happy16',
-				'happy17',
-				'happy18'
-			]
-		}).toDataUriSync();
+	async function copyInvitationLink() {
+		const link = `https://localhost:3000/?visionid=${session.user.id}`;
+		try {
+			await navigator.clipboard.writeText(link);
+			linkCopied.set(true);
+			setTimeout(() => {
+				linkCopied.set(false);
+			}, 1000);
+		} catch (err) {
+			alert('Failed to copy the link.');
+		}
 	}
 </script>
 
@@ -143,35 +120,41 @@
 				</div>
 			{/if}
 		</div>
-
 		<div
-			class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto rounded-3xl bg-surface-800 flex flex-col items-center justify-center space-y-4`}
+			class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto text-center rounded-3xl bg-surface-800 flex flex-col items-center justify-center space-y-4`}
 		>
-			<h2 class="text-xl">Entfalte dein volles Lebenspotenzial und werde Visioncreator.</h2>
+			<h2 class="text-lg @3xl:text-2xl">
+				Entfalte dein volles Lebenspotenzial und werde Visioncreator.
+			</h2>
 
-			<p class="text-center">
+			<p class="text-xs @3xl:text-base">
 				nur die motiviertesten <span class="text-xl">3</span> Menschen werden in der nächsten Runde
 				in den Kreis der Visioncreator aufgenommen.<br />Du bist gerade an Platz
 				<span class="text-xl">5</span>
-				und damit <br /><span class="text-3xl"
+				und damit <br /><span class="text-xl @3xl:text-3xl"
 					>nur noch <span class="text-primary-500">2</span> Inspirationen</span
-				> <br />von deinem neuen Leben entfernt.
+				> <br />von deinem neuen Leben in Fülle entfernt.
 			</p>
 
-			<div class="text-center">
-				<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">25.06.2024</p>
-				<p class="text-tertiary-600 text-sm @3xl:text-md">Countdown bis zur nächsten Runde</p>
+			<div class="">
+				<p class="text-tertiary-600 text-sm @3xl:text-md">Start nächste Runde</p>
+
+				<div class="text-3xl @3xl:text-4xl font-semibold text-tertiary-300">
+					<Time timestamp={futureDate} relative live />
+				</div>
 			</div>
 
-			<p class="text-center">
-				Steige in der Warteliste auf, <br /> indem du Menschen inspirst den Visioncreator Newsletter
+			<p class="text-xs @3xl:text-base text-tertiary-400">
+				Steige in der Warteliste auf, <br /> indem du Menschen inspirierst den Visioncreator Newsletter
 				zu abonnieren
 			</p>
 			<div class="flex flex-row items-center space-x-2">
-				<button type="button" class="btn btn-sm @3xl:btn-md variant-filled-primary"
-					>Einladung kopieren</button
+				<button
+					type="button"
+					class="btn btn-sm @3xl:btn-lg variant-filled-primary"
+					on:click={copyInvitationLink}>Einladung kopieren</button
 				>
-				<button type="button" class="btn btn-sm @3xl:btn-md variant-ghost-primary">QR-Code</button>
+				<button type="button" class="btn btn-sm @3xl:btn-lg variant-ghost-primary">QR-Code</button>
 			</div>
 		</div>
 
@@ -198,20 +181,27 @@
 								}}
 							/>
 
-							<p class="flex-1 px-4 text-xl @3xl:text-2xl text-tertiary-400">{name}</p>
+							<div class="flex-1 px-4 text-xl @3xl:text-2xl text-tertiary-400">
+								{name}
+							</div>
+
 							<div class="flex justify-between px-4 @3xl:px-6 space-x-4 max-h-12">
+								<!-- <div class="flex items-center justify-center">
+									<span class="badge variant-filled-secondary">Visioncreator</span>
+								</div> -->
 								<div class="flex flex-col items-center text-right">
 									<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
 										{invites}
 									</p>
 									<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">invites</p>
 								</div>
-								<div class="flex flex-col items-center text-right">
+
+								<!-- <div class="flex flex-col items-center text-right">
 									<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
 										{index + 1}
 									</p>
 									<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">rank</p>
-								</div>
+								</div> -->
 							</div>
 						</li>
 					{/each}
