@@ -116,10 +116,12 @@
 							Profile
 						</div>
 						<div class="flex flex-col items-center p-8">
-							<img
-								src={avatar}
-								alt="Profile"
-								class="w-24 h-24 mb-2 border-4 rounded-full bg-tertiary-500 border-tertiary-200"
+							<Avatar
+								me={{
+									data: { seed: $subMe.data?.id },
+									design: { highlight: true },
+									size: 'lg'
+								}}
 							/>
 							<h1 class="text-2xl @3xl:text-5xl font-bold h1">
 								Welcome {$subMe.data?.full_name}
@@ -154,16 +156,17 @@
 					{#each $subLeaderboard.data as { name, id, invites }, index}
 						<li
 							class={`flex items-center justify-between rounded-4xl  ${
-								name === 'Samuel' ? 'bg-surface-600' : 'bg-surface-700'
+								id === session.user.id ? 'bg-surface-600' : 'bg-surface-700'
 							}`}
 						>
-							<img
-								src={generateAvatar(id)}
-								alt="Profile Image"
-								class={`w-12 h-12 @3xl:h-14 @3xl:w-14 rounded-full ${
-									name === 'Samuel' ? 'bg-tertiary-500' : 'bg-surface-400'
-								}`}
+							<Avatar
+								me={{
+									data: { seed: id },
+									design: { highlight: id === session.user.id },
+									size: 'sm'
+								}}
 							/>
+
 							<p class="flex-1 px-4 text-xl @3xl:text-2xl text-tertiary-400">{name}</p>
 							<div class="flex justify-between px-4 @3xl:px-6 space-x-4 max-h-12">
 								<div class="flex flex-col items-center text-right">
@@ -183,38 +186,6 @@
 					{/each}
 				</ul>
 			{/if}
-			<!-- <ul class="space-y-2 @3xl:space-y-4">
-				{#each leaderboardData as { name, profileImg, invites }, index}
-					<li
-						class={`flex items-center justify-between rounded-4xl  ${
-							name === 'Samuel' ? 'bg-surface-600' : 'bg-surface-700'
-						}`}
-					>
-						<img
-							src={profileImg}
-							alt="Profile Image"
-							class={`w-12 h-12 @3xl:h-14 @3xl:w-14 rounded-full ${
-								name === 'Samuel' ? 'bg-tertiary-500' : 'bg-surface-400'
-							}`}
-						/>
-						<p class="flex-1 px-4 text-xl @3xl:text-2xl text-tertiary-400">{name}</p>
-						<div class="flex justify-between px-4 @3xl:px-6 space-x-4 max-h-12">
-							<div class="flex flex-col items-center text-right">
-								<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
-									{invites}
-								</p>
-								<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">invites</p>
-							</div>
-							<div class="flex flex-col items-center text-right">
-								<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
-									{index + 1}
-								</p>
-								<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">rank</p>
-							</div>
-						</div>
-					</li>
-				{/each}
-			</ul> -->
 		</div>
 	</div>
 </div>

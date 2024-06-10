@@ -2,7 +2,11 @@
 	import { createAvatar } from '@dicebear/core';
 	import { lorelei } from '@dicebear/collection';
 
-	export let seed: string;
+	export let me: {
+		data: { seed: string };
+		design: { highlight: boolean };
+		size: 'sm' | 'md' | 'lg';
+	};
 
 	function generateAvatar(seed: string): string {
 		return createAvatar(lorelei, {
@@ -31,11 +35,12 @@
 		}).toDataUriSync();
 	}
 
-	let avatarSrc = generateAvatar(seed);
+	$: avatar = generateAvatar(me.data.seed);
+	$: bgColorClass = me.design.highlight ? 'bg-tertiary-400' : 'bg-surface-500';
+	$: sizeClass =
+		me.size === 'lg'
+			? 'w-24 h-24 mb-2 border-4 rounded-full'
+			: 'w-12 h-12 @3xl:h-14 @3xl:w-14 rounded-full';
 </script>
 
-<img
-	src={avatarSrc}
-	alt="Profile"
-	class="w-24 h-24 mb-2 border-4 rounded-full bg-tertiary-500 border-tertiary-200"
-/>
+<img src={avatar} alt="Profile" class={`${sizeClass} ${bgColorClass} border-tertiary-200`} />
