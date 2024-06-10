@@ -77,12 +77,12 @@
 				<div class="flex flex-col items-center p-4 @3xl:p-8">
 					<div class="flex justify-between w-full">
 						<div class="text-center">
-							<p class=" text-gray-400 text-sm @3xl:text-2xl">Leaderboard</p>
+							<p class=" text-gray-400 text-sm @3xl:text-lg">Leaderboard</p>
 							<p class="text-xl @3xl:text-3xl font-semibold text-white">#5</p>
 						</div>
 						<div class="text-center">
-							<p class="text-gray-400">Monthly Income</p>
-							<p class="text-xl @3xl:text-3xl font-semibold text-white">$5,000</p>
+							<p class=" text-gray-400 text-sm @3xl:text-lg">Monthly Income</p>
+							<p class="text-xl @3xl:text-3xl font-semibold text-white">125€</p>
 						</div>
 					</div>
 				</div>
