@@ -91,7 +91,7 @@
 {:else if $subscribeMe.isError}
 	<p>Error: {$subscribeMe.error?.message}</p>
 {:else}
-	<div class="@container">
+	<div class="@container overflow-y-scroll h-screen">
 		<div class="flex flex-col items-center justify-center w-full p-4 space-y-4 @3xl:space-y-8">
 			<div class="w-full max-w-6xl shadow-xl bg-surface-800 rounded-3xl">
 				<div
