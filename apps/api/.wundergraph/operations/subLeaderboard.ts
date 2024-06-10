@@ -17,7 +17,8 @@ export default createOperation.subscription({
         if (initialData.data) {
             profilesData = initialData.data.map(profile => ({
                 id: profile.id,
-                name: profile.full_name
+                name: profile.full_name,
+                invites: Math.floor(Math.random() * 11) // Generates a random number between 0 and 10
             }));
             yield profilesData;
         } else if (initialData.error) {
@@ -32,12 +33,14 @@ export default createOperation.subscription({
                 if (index !== -1) {
                     profilesData[index] = {
                         id: payload.new.id,
-                        name: payload.new.full_name
+                        name: payload.new.full_name,
+                        invites: Math.floor(Math.random() * 11) // Update with a new random number of invites
                     };
                 } else {
                     profilesData.push({
                         id: payload.new.id,
-                        name: payload.new.full_name
+                        name: payload.new.full_name,
+                        invites: Math.floor(Math.random() * 11) // New profile with random invites
                     });
                 }
             })
