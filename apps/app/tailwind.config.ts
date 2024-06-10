@@ -31,6 +31,12 @@ export default {
 				wider: '.05em',
 				widest: '.1em',
 			},
+			borderRadius: {
+				'4xl': '2rem',
+				'5xl': '2.5rem',
+				'6xl': '3rem',
+				'7xl': '3.5rem',
+			},
 		},
 	},
 	plugins: [
