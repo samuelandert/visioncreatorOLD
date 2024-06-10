@@ -135,7 +135,7 @@
 				</div>
 			</div>
 			<div class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto rounded-3xl bg-surface-800`}>
-				<ul class="space-y-4">
+				<ul class="space-y-2 @3xl:space-y-4">
 					{#each leaderboardData as { name, profileImg, invites }, index}
 						<li
 							class={`flex items-center justify-between rounded-4xl  ${
