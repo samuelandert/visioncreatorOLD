@@ -49,7 +49,7 @@
 		{ id: 'user1', name: 'Alice', invites: 5 },
 		{ id: 'user2', name: 'Bob', invites: 3 },
 		{ id: 'user3', name: 'Samuel', invites: 2 },
-		{ id: 'user3', name: 'Charlie', invites: 1 },
+		{ id: 'user4', name: 'Charlie', invites: 1 },
 		{ id: 'user5', name: 'Dave', invites: 0 }
 	];
 
@@ -91,7 +91,7 @@
 {:else if $subscribeMe.isError}
 	<p>Error: {$subscribeMe.error?.message}</p>
 {:else}
-	<div class="@container overflow-y-scroll h-screen">
+	<div class={`@container overflow-y-scroll h-screen ${$modalOpen ? 'blur-md' : ''}`}>
 		<div class="flex flex-col items-center justify-center w-full p-4 space-y-4 @3xl:space-y-8">
 			<div class="w-full max-w-6xl shadow-xl bg-surface-800 rounded-3xl">
 				<div
@@ -108,7 +108,7 @@
 							<img
 								src={avatar}
 								alt="Profile"
-								class="w-24 h-24 mb-2 border-4 rounded-full bg-tertiary-500 border-surface-900"
+								class="w-24 h-24 mb-2 border-4 rounded-full bg-tertiary-500 border-tertiary-200"
 							/>
 							<h1 class="text-2xl @3xl:text-5xl font-bold h1">
 								Welcome {$subscribeMe.data?.full_name}
@@ -120,16 +120,16 @@
 
 				<div class="flex items-center justify-evenly p-4 @3xl:p-8 space-x-4">
 					<div class="text-center">
+						<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">#3</p>
 						<p class="text-tertiary-700 text-sm @3xl:text-lg">Leaderboard</p>
-						<p class="text-xl @3xl:text-3xl font-semibold text-tertiary-400">#3</p>
 					</div>
 					<div class="text-center">
+						<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">125€/m</p>
 						<p class="text-tertiary-700 text-sm @3xl:text-lg">Stream Potenzial</p>
-						<p class="text-xl @3xl:text-3xl font-semibold text-tertiary-400">125€/m</p>
 					</div>
 				</div>
 			</div>
-			<div class={`w-full max-w-6xl p-4 overflow-auto rounded-3xl bg-surface-800`}>
+			<div class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto rounded-3xl bg-surface-800`}>
 				<ul class="space-y-4">
 					{#each leaderboardData as { name, profileImg, invites }, index}
 						<li
@@ -168,13 +168,13 @@
 {/if}
 
 <button
-	class="fixed z-40 flex items-center justify-center text-4xl transform translate-x-1/2 rounded-full text-primary-900 right-1/2 bottom-5 bg-primary-500 w-14 h-14"
+	class="fixed z-40 flex items-center justify-center text-4xl transform translate-x-1/2 rounded-full text-primary-900 right-1/2 bottom-4 bg-primary-500 w-14 h-14"
 	on:click={toggleModal}>+</button
 >
 
 {#if $modalOpen}
 	<div class="fixed inset-0 flex items-end justify-center mx-4 mb-24">
-		<div class="w-full max-w-6xl p-8 rounded-3xl bg-surface-700">
+		<div class="w-full max-w-6xl p-4 @3xl:p-8 rounded-3xl bg-surface-600">
 			<div class="flex space-x-4">
 				<form method="post" action="?/signout" use:enhance={handleSignOut}>
 					<button
