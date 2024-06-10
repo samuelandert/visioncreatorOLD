@@ -144,7 +144,7 @@
 									name === 'Samuel' ? 'bg-tertiary-500' : 'bg-surface-400'
 								}`}
 							/>
-							<p class="flex-1 px-4 text-2xl text-tertiary-400">{name}</p>
+							<p class="flex-1 px-4 text-xl @3xl:text-2xl text-tertiary-400">{name}</p>
 							<div class="flex justify-between px-4 @3xl:px-6 space-x-4 max-h-12">
 								<div class="flex flex-col items-center text-right">
 									<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
