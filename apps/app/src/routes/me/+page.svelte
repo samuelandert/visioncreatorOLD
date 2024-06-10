@@ -20,6 +20,10 @@
 		}
 	});
 
+	const subLeaderboard = createSubscription({
+		operationName: 'subLeaderboard'
+	});
+
 	const updateNameMutation = createMutation({
 		operationName: 'updateMe'
 	});
@@ -88,17 +92,19 @@
 	}
 </script>
 
-{#if $subscribeMe.isLoading}
-	<p>Loading user details...</p>
-{:else if $subscribeMe.isError}
-	<p>Error: {$subscribeMe.error?.message}</p>
-{:else}
-	<div
-		class={`@container overflow-y-scroll h-screen ${$modalOpen ? 'blur-md' : ''}`}
-		style="-webkit-overflow-scrolling: touch;"
-	>
-		<div class="flex flex-col items-center justify-center w-full p-4 space-y-4 @3xl:space-y-8">
-			<div class="w-full max-w-6xl shadow-xl bg-surface-800 rounded-3xl">
+<div
+	class={`@container overflow-y-scroll h-screen ${$modalOpen ? 'blur-md' : ''}`}
+	style="-webkit-overflow-scrolling: touch;"
+>
+	<div class="flex flex-col items-center justify-center w-full p-4 space-y-4 @3xl:space-y-8">
+		<div class="w-full max-w-6xl shadow-xl bg-surface-800 rounded-3xl">
+			{#if $subscribeMe.isLoading}
+				<p class="flex items-center justify-center w-full p-10 h-72">Loading user details...</p>
+			{:else if $subscribeMe.isError}
+				<p class="flex items-center justify-center w-full p-10 h-72 text-error-500">
+					Error: {$subscribeMe.error?.message}
+				</p>
+			{:else}
 				<div
 					class="relative text-center bg-center bg-cover rounded-t-3xl"
 					style="background-image: url('/sun.jpeg');"
@@ -133,44 +139,54 @@
 						<p class="text-tertiary-700 text-sm @3xl:text-lg">Stream Potenzial</p>
 					</div>
 				</div>
-			</div>
-			<div class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto rounded-3xl bg-surface-800`}>
-				<ul class="space-y-2 @3xl:space-y-4">
-					{#each leaderboardData as { name, profileImg, invites }, index}
-						<li
-							class={`flex items-center justify-between rounded-4xl  ${
-								name === 'Samuel' ? 'bg-surface-600' : 'bg-surface-700'
+			{/if}
+		</div>
+
+		<div class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto rounded-3xl bg-surface-800`}>
+			{#if $subLeaderboard.isLoading}
+				<p class="flex items-center justify-center w-full p-10 h-72">Loading user details...</p>
+			{:else if $subLeaderboard.isError}
+				<p class="flex items-center justify-center w-full p-10 h-72 text-error-500">
+					Error: {$subLeaderboard.error?.message}
+				</p>
+			{:else}
+				<pre>{JSON.stringify($subLeaderboard.data, null, 2)}</pre>
+			{/if}
+			<!-- <ul class="space-y-2 @3xl:space-y-4">
+				{#each leaderboardData as { name, profileImg, invites }, index}
+					<li
+						class={`flex items-center justify-between rounded-4xl  ${
+							name === 'Samuel' ? 'bg-surface-600' : 'bg-surface-700'
+						}`}
+					>
+						<img
+							src={profileImg}
+							alt="Profile Image"
+							class={`w-12 h-12 @3xl:h-14 @3xl:w-14 rounded-full ${
+								name === 'Samuel' ? 'bg-tertiary-500' : 'bg-surface-400'
 							}`}
-						>
-							<img
-								src={profileImg}
-								alt="Profile Image"
-								class={`w-12 h-12 @3xl:h-14 @3xl:w-14 rounded-full ${
-									name === 'Samuel' ? 'bg-tertiary-500' : 'bg-surface-400'
-								}`}
-							/>
-							<p class="flex-1 px-4 text-xl @3xl:text-2xl text-tertiary-400">{name}</p>
-							<div class="flex justify-between px-4 @3xl:px-6 space-x-4 max-h-12">
-								<div class="flex flex-col items-center text-right">
-									<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
-										{invites}
-									</p>
-									<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">invites</p>
-								</div>
-								<div class="flex flex-col items-center text-right">
-									<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
-										{index + 1}
-									</p>
-									<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">rank</p>
-								</div>
+						/>
+						<p class="flex-1 px-4 text-xl @3xl:text-2xl text-tertiary-400">{name}</p>
+						<div class="flex justify-between px-4 @3xl:px-6 space-x-4 max-h-12">
+							<div class="flex flex-col items-center text-right">
+								<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
+									{invites}
+								</p>
+								<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">invites</p>
 							</div>
-						</li>
-					{/each}
-				</ul>
-			</div>
+							<div class="flex flex-col items-center text-right">
+								<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
+									{index + 1}
+								</p>
+								<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">rank</p>
+							</div>
+						</div>
+					</li>
+				{/each}
+			</ul> -->
 		</div>
 	</div>
-{/if}
+</div>
 
 <button
 	class="fixed z-40 flex items-center justify-center text-4xl transform translate-x-1/2 rounded-full text-primary-900 right-1/2 bottom-4 bg-primary-500 w-14 h-14 {$modalOpen
