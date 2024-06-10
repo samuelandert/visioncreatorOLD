@@ -31,8 +31,10 @@ export default createOperation.subscription({
         }
 
         const profiles = context.supabase.channel('custom-all-channel')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, (payload) => {
-                latestPayload = payload.new;
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${user?.customClaims?.id}` }, (payload) => {
+                if (payload.new && payload.new.id === user?.customClaims?.id) {
+                    latestPayload = payload.new;
+                }
             })
             .subscribe();
 

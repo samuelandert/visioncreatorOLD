@@ -13,8 +13,8 @@
 	let { session } = data;
 	$: ({ session } = data);
 
-	const subscribeMe = createSubscription({
-		operationName: 'subscribeMe',
+	const subMe = createSubscription({
+		operationName: 'subMe',
 		input: {
 			userid: session.user.id
 		}
@@ -98,11 +98,11 @@
 >
 	<div class="flex flex-col items-center justify-center w-full p-4 space-y-4 @3xl:space-y-8">
 		<div class="w-full max-w-6xl shadow-xl bg-surface-800 rounded-3xl">
-			{#if $subscribeMe.isLoading}
+			{#if $subMe.isLoading}
 				<p class="flex items-center justify-center w-full p-10 h-72">Loading user details...</p>
-			{:else if $subscribeMe.isError}
+			{:else if $subMe.isError}
 				<p class="flex items-center justify-center w-full p-10 h-72 text-error-500">
-					Error: {$subscribeMe.error?.message}
+					Error: {$subMe.error?.message}
 				</p>
 			{:else}
 				<div
@@ -122,9 +122,9 @@
 								class="w-24 h-24 mb-2 border-4 rounded-full bg-tertiary-500 border-tertiary-200"
 							/>
 							<h1 class="text-2xl @3xl:text-5xl font-bold h1">
-								Welcome {$subscribeMe.data?.full_name}
+								Welcome {$subMe.data?.full_name}
 							</h1>
-							<p class="text-xs @3xl:text-xl">ID: {$subscribeMe.data?.id}</p>
+							<p class="text-xs @3xl:text-xl">ID: {$subMe.data?.id}</p>
 						</div>
 					</div>
 				</div>
