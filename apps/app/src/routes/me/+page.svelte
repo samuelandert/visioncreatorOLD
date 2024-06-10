@@ -66,23 +66,23 @@
 								alt="Profile Image"
 								class="w-24 h-24 mb-6 border-4 rounded-full border-surface-900"
 							/>
-							<h1 class="text-2xl text-5xl font-bold y">
+							<h1 class="text-2xl @3xl:text-5xl font-bold y">
 								Welcome {$subscribeMe.data?.full_name}
 							</h1>
-							<p>ID: {$subscribeMe.data?.id}</p>
+							<p class="text-xs @3xl:text-xl">ID: {$subscribeMe.data?.id}</p>
 						</div>
 					</div>
 				</div>
 
-				<div class="flex flex-col items-center p-8">
+				<div class="flex flex-col items-center p-4 @3xl:p-8">
 					<div class="flex justify-between w-full">
 						<div class="text-center">
-							<p class="mb-2 text-gray-400">Leaderboard Position</p>
-							<p class="text-3xl font-semibold text-white">#5</p>
+							<p class=" text-gray-400 text-sm @3xl:text-2xl">Leaderboard</p>
+							<p class="text-xl @3xl:text-3xl font-semibold text-white">#5</p>
 						</div>
 						<div class="text-center">
-							<p class="mb-2 text-gray-400">Monthly Income</p>
-							<p class="text-3xl font-semibold text-white">$5,000</p>
+							<p class="text-gray-400">Monthly Income</p>
+							<p class="text-xl @3xl:text-3xl font-semibold text-white">$5,000</p>
 						</div>
 					</div>
 				</div>

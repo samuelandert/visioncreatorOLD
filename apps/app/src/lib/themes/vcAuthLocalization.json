@@ -22,7 +22,7 @@
     "magic_link": {
         "email_input_label": "E-Mail Adresse",
         "email_input_placeholder": "Deine E-Mail Adresse",
-        "button_label": "Signup Newsletter",
+        "button_label": "SignIn",
         "loading_button_label": "Magischen Link senden ...",
         "link_text": "Einen magischen Link per E-Mail versenden"
     },
