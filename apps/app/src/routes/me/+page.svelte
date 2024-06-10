@@ -39,8 +39,10 @@
 		}
 	};
 
-	function toggleModal() {
-		modalOpen.update((n) => !n);
+	function toggleModal(event?: MouseEvent) {
+		if (!event || event.target === event.currentTarget) {
+			modalOpen.update((n) => !n);
+		}
 	}
 
 	let avatar = generateAvatar(session.user.id);
@@ -168,13 +170,20 @@
 {/if}
 
 <button
-	class="fixed z-40 flex items-center justify-center text-4xl transform translate-x-1/2 rounded-full text-primary-900 right-1/2 bottom-4 bg-primary-500 w-14 h-14"
-	on:click={toggleModal}>+</button
+	class="fixed z-40 flex items-center justify-center text-4xl transform translate-x-1/2 rounded-full text-primary-900 right-1/2 bottom-4 bg-primary-500 w-14 h-14 {$modalOpen
+		? 'hidden sm:flex'
+		: 'flex'}"
+	on:click={toggleModal}
 >
+	+
+</button>
 
 {#if $modalOpen}
-	<div class="fixed inset-0 flex items-end justify-center mx-4 mb-24">
-		<div class="w-full max-w-6xl p-4 @3xl:p-8 rounded-3xl bg-surface-600">
+	<div
+		class="fixed inset-0 flex items-end justify-center mx-4 mb-4 sm:mb-24"
+		on:click={toggleModal}
+	>
+		<div class="w-full max-w-6xl p-4 @3xl:p-8 rounded-3xl bg-surface-600" on:click|stopPropagation>
 			<div class="flex space-x-4">
 				<form method="post" action="?/signout" use:enhance={handleSignOut}>
 					<button
