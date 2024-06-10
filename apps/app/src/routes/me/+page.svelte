@@ -97,7 +97,7 @@
 	style="-webkit-overflow-scrolling: touch;"
 >
 	<div class="flex flex-col items-center justify-center w-full p-4 space-y-4 @3xl:space-y-8">
-		<div class="w-full max-w-6xl shadow-xl bg-surface-800 rounded-3xl">
+		<div class="w-full max-w-6xl bg-surface-800 rounded-3xl">
 			{#if $subMe.isLoading}
 				<p class="flex items-center justify-center w-full p-10 h-72">Loading user details...</p>
 			{:else if $subMe.isError}
@@ -124,24 +124,55 @@
 								}}
 							/>
 							<h1 class="text-2xl @3xl:text-5xl font-bold h1">
-								Welcome {$subMe.data?.full_name}
+								Hey {$subMe.data?.full_name}
 							</h1>
-							<p class="text-xs @3xl:text-xl">ID: {$subMe.data?.id}</p>
+							<p class="text-md @3xl:text-2xl">Schön das du da bist</p>
 						</div>
 					</div>
 				</div>
 
 				<div class="flex items-center justify-evenly p-4 @3xl:p-8 space-x-4">
 					<div class="text-center">
-						<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">#3</p>
-						<p class="text-tertiary-700 text-sm @3xl:text-lg">Leaderboard</p>
+						<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">3</p>
+						<p class="text-tertiary-600 text-sm @3xl:text-lg">Leaderboard</p>
 					</div>
 					<div class="text-center">
 						<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">125€/m</p>
-						<p class="text-tertiary-700 text-sm @3xl:text-lg">Stream Potenzial</p>
+						<p class="text-tertiary-600 text-sm @3xl:text-lg">Mein Stream Potenzial</p>
 					</div>
 				</div>
 			{/if}
+		</div>
+
+		<div
+			class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto rounded-3xl bg-surface-800 flex flex-col items-center justify-center space-y-4`}
+		>
+			<h2 class="text-xl">Entfalte dein volles Lebenspotenzial und werde Visioncreator.</h2>
+
+			<p class="text-center">
+				nur die motiviertesten <span class="text-xl">3</span> Menschen werden in der nächsten Runde
+				in den Kreis der Visioncreator aufgenommen.<br />Du bist gerade an Platz
+				<span class="text-xl">5</span>
+				und damit <br /><span class="text-3xl"
+					>nur noch <span class="text-primary-500">2</span> Inspirationen</span
+				> <br />von deinem neuen Leben entfernt.
+			</p>
+
+			<div class="text-center">
+				<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">25.06.2024</p>
+				<p class="text-tertiary-600 text-sm @3xl:text-md">Countdown bis zur nächsten Runde</p>
+			</div>
+
+			<p class="text-center">
+				Steige in der Warteliste auf, <br /> indem du Menschen inspirst den Visioncreator Newsletter
+				zu abonnieren
+			</p>
+			<div class="flex flex-row items-center space-x-2">
+				<button type="button" class="btn btn-sm @3xl:btn-md variant-filled-primary"
+					>Einladung kopieren</button
+				>
+				<button type="button" class="btn btn-sm @3xl:btn-md variant-ghost-primary">QR-Code</button>
+			</div>
 		</div>
 
 		<div class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto rounded-3xl bg-surface-800`}>
