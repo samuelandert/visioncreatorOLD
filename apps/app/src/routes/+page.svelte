@@ -2,7 +2,7 @@
 <script lang="ts">
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
 	import { onMount, afterUpdate } from 'svelte';
-	// import { page } from '$app/stores';
+	import { page } from '$app/stores';
 	import { futureMe } from '$lib/stores';
 
 	const drawerStore = getDrawerStore();
@@ -18,26 +18,19 @@
 	let isStarted = false;
 	let typeWriter;
 
-	// let visionID = 0;
-
 	let isMuted = false;
 
-	// let urlParamName, urlParamVisionid;
-	// $: {
-	// 	urlParamName = $page.url.searchParams.get('name') || '';
-	// 	urlParamVisionid = $page.url.searchParams.get('visionid') || 0;
-	// 	if (typeof window !== 'undefined') {
-	// 		// Capitalize the first letter of the name
-	// 		urlParamName = urlParamName.charAt(0).toUpperCase() + urlParamName.slice(1);
-	// 		localStorage.setItem('name', urlParamName);
-	// 		localStorage.setItem('visionID', urlParamVisionid);
-	// 		// Only set name from localStorage if it's not already set
-	// 		if (!name) {
-	// 			name = localStorage.getItem('name');
-	// 		}
-	// 		visionID = localStorage.getItem('visionID');
-	// 	}
-	// }
+	$: {
+		const urlParams = $page.url.searchParams;
+		const urlVisionId = urlParams.get('visionid');
+
+		if (typeof window !== 'undefined' && urlVisionId) {
+			futureMe.update((current) => ({
+				...current,
+				visionid: urlVisionId
+			}));
+		}
+	}
 
 	let paragraphs = [
 		'21. März 2031 - Uhrzeit - 23:21',

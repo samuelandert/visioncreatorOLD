@@ -66,6 +66,21 @@
 		}
 	}
 
+	const createInviteMutation = createMutation({
+		operationName: 'createInvite'
+	});
+
+	const handleCreateInvite = async () => {
+		const response = await $createInviteMutation.mutateAsync({
+			invitee: session.user.id,
+			inviter: $futureMe.visionid
+		});
+		if (response.success) {
+			console.log('Invite created successfully');
+		} else {
+			console.error('Failed to create invite:', response.error);
+		}
+	};
 	$: if ($me.data && (!$me.data.full_name || $me.data.full_name === '')) {
 		$updateNameMutation.mutateAsync({
 			id: session.user.id,
@@ -214,6 +229,11 @@
 					class="px-4 py-2 font-bold rounded-full text-warning-900 bg-warning-500 hover:bg-warning-400"
 					on:click={handleUpdateName}
 					disabled={loading}>Update Name</button
+				>
+				<button
+					type="button"
+					class="btn btn-sm @3xl:btn-lg variant-ghost-primary"
+					on:click={handleCreateInvite}>Create Invite</button
 				>
 			</div>
 		</div>
