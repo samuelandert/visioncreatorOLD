@@ -41,6 +41,7 @@
 		const newName = prompt('Please enter your new name:');
 		if (newName) {
 			await $updateNameMutation.mutateAsync({ id: session.user.id, full_name: newName });
+			modalOpen.set(false);
 		}
 	};
 
@@ -65,7 +66,6 @@
 		}
 	}
 
-	// Watch for changes in subMe data and update if necessary
 	$: if ($me.data && (!$me.data.full_name || $me.data.full_name === '')) {
 		$updateNameMutation.mutateAsync({
 			id: session.user.id,
