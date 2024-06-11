@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { onMount } from 'svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { createMutation, createSubscription } from '$lib/wundergraph';
 	import { writable } from 'svelte/store';
+	import { futureMe } from '$lib/stores';
 
 	export let data;
 	let loading = false;
@@ -61,6 +61,14 @@
 		} catch (err) {
 			alert('Failed to copy the link.');
 		}
+	}
+
+	// Watch for changes in subMe data and update if necessary
+	$: if ($subMe.data && (!$subMe.data.full_name || $subMe.data.full_name === '')) {
+		$updateNameMutation.mutateAsync({
+			userid: session.user.id,
+			fullName: $futureMe.name
+		});
 	}
 </script>
 

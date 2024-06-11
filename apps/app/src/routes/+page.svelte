@@ -2,7 +2,8 @@
 <script lang="ts">
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
 	import { onMount, afterUpdate } from 'svelte';
-	import { page } from '$app/stores';
+	// import { page } from '$app/stores';
+	import { futureMe } from '$lib/stores';
 
 	const drawerStore = getDrawerStore();
 
@@ -17,27 +18,26 @@
 	let isStarted = false;
 	let typeWriter;
 
-	let name;
-	let visionID = 0;
+	// let visionID = 0;
 
 	let isMuted = false;
 
-	let urlParamName, urlParamVisionid;
-	$: {
-		urlParamName = $page.url.searchParams.get('name') || '';
-		urlParamVisionid = $page.url.searchParams.get('visionid') || 0;
-		if (typeof window !== 'undefined') {
-			// Capitalize the first letter of the name
-			urlParamName = urlParamName.charAt(0).toUpperCase() + urlParamName.slice(1);
-			localStorage.setItem('name', urlParamName);
-			localStorage.setItem('visionID', urlParamVisionid);
-			// Only set name from localStorage if it's not already set
-			if (!name) {
-				name = localStorage.getItem('name');
-			}
-			visionID = localStorage.getItem('visionID');
-		}
-	}
+	// let urlParamName, urlParamVisionid;
+	// $: {
+	// 	urlParamName = $page.url.searchParams.get('name') || '';
+	// 	urlParamVisionid = $page.url.searchParams.get('visionid') || 0;
+	// 	if (typeof window !== 'undefined') {
+	// 		// Capitalize the first letter of the name
+	// 		urlParamName = urlParamName.charAt(0).toUpperCase() + urlParamName.slice(1);
+	// 		localStorage.setItem('name', urlParamName);
+	// 		localStorage.setItem('visionID', urlParamVisionid);
+	// 		// Only set name from localStorage if it's not already set
+	// 		if (!name) {
+	// 			name = localStorage.getItem('name');
+	// 		}
+	// 		visionID = localStorage.getItem('visionID');
+	// 	}
+	// }
 
 	let paragraphs = [
 		'21. März 2031 - Uhrzeit - 23:21',
@@ -73,21 +73,11 @@
 
 	const next = () => {
 		if (state === 1) {
-			// transition from state 1 to state 2
 			state = 2;
-			// If name is already stored in localStorage, skip to state 3
-			if (name) {
-				state = 3;
-			}
 		} else if (state === 2) {
-			// transition from state 2 to state 3
 			state = 3;
-			// update local storage with the name
-			if (typeof window !== 'undefined') {
-				localStorage.setItem('name', name);
-			}
+			// No need to manually update localStorage, it's handled by the store
 		} else if (state === 3) {
-			// transition from state 3 to state 4
 			state = 4;
 			start();
 		}
@@ -95,7 +85,6 @@
 
 	const start = () => {
 		isStarted = true;
-		localStorage.setItem('name', name);
 		backgroundMusic.play();
 		typeWriter();
 	};
@@ -111,9 +100,9 @@
 			if (!isStarted) return;
 			let text;
 			if (currentParagraph === 0 && !isFirstSentenceComplete) {
-				text = firstSentence.replace('xyz', localStorage.getItem('name'));
+				text = firstSentence.replace('xyz', $futureMe.name);
 			} else {
-				text = paragraphs[currentParagraph].replace('xyz', localStorage.getItem('name'));
+				text = paragraphs[currentParagraph].replace('xyz', $futureMe.name);
 			}
 
 			for (let i = 0; i < text.length; i++) {
@@ -188,7 +177,7 @@
 					>
 				{:else if state === 2}
 					<input
-						bind:value={name}
+						bind:value={$futureMe.name}
 						placeholder="Mein Name ist?"
 						style="background: rgba(255, 255, 255, 0.2); padding: 0.5rem 1rem; font-size: 1.6rem; color: white; border: 1px solid white; border-radius: 2rem; outline: none;"
 					/>
@@ -201,7 +190,7 @@
 					<h2
 						class="h2 mb-2 text-4xl @md:text-5xl @4xl:text-6xl @5xl:text-7xl @6xl:text-8xl @7xl:text-9xl text-white"
 					>
-						Schön das du da bist {localStorage.getItem('name')}!
+						Schön das du da bist {$futureMe.name}!
 					</h2>
 					<p class="mb-4 text-sm @md:text-lg @4xl:text-xl @5xl:text-2xl">
 						Lass uns in deine Zukunft schauen und in dein neues Leben eintauchen
