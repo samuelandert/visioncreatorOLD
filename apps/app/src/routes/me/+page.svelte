@@ -20,8 +20,9 @@
 		liveQuery: true
 	});
 
-	const subLeaderboard = createSubscription({
-		operationName: 'subLeaderboard'
+	const leaderboard = createQuery({
+		operationName: 'queryLeaderboard',
+		liveQuery: true
 	});
 
 	const updateNameMutation = createMutation({
@@ -138,15 +139,15 @@
 		</div>
 
 		<div class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto rounded-3xl bg-surface-800`}>
-			{#if $subLeaderboard.isLoading}
+			{#if $leaderboard.isLoading}
 				<p class="flex items-center justify-center w-full p-10 h-72">Loading user details...</p>
-			{:else if $subLeaderboard.isError}
+			{:else if $leaderboard.isError}
 				<p class="flex items-center justify-center w-full p-10 h-72 text-error-500">
-					Error: {$subLeaderboard.error?.message}
+					Error: {$leaderboard.error?.message}
 				</p>
 			{:else}
 				<ul class="space-y-2 @3xl:space-y-4">
-					{#each $subLeaderboard.data as { name, id, invites }, index}
+					{#each $leaderboard.data as { name, id, invites }, index}
 						<li
 							class={`flex items-center justify-between rounded-4xl  ${
 								id === session.user.id ? 'bg-surface-600' : 'bg-surface-700'
