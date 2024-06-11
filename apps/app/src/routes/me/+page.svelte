@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { createMutation, createSubscription, createQuery } from '$lib/wundergraph';
+	import { createMutation, createQuery } from '$lib/wundergraph';
 	import { writable } from 'svelte/store';
 	import { futureMe } from '$lib/stores';
 
@@ -166,9 +166,6 @@
 							</div>
 
 							<div class="flex justify-between px-4 @3xl:px-6 space-x-4 max-h-12">
-								<!-- <div class="flex items-center justify-center">
-									<span class="badge variant-filled-secondary">Visioncreator</span>
-								</div> -->
 								<div class="flex flex-col items-center text-right">
 									<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
 										{invites}
