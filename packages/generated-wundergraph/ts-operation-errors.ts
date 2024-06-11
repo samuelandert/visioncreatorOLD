@@ -4,6 +4,7 @@ import type { ClientOperationErrors, GraphQLError } from "@wundergraph/sdk/clien
 
 export type OperationErrors = {
 	listTodos: ListTodosErrors;
+	queryLeaderboard: QueryLeaderboardErrors;
 	queryMe: QueryMeErrors;
 	subLeaderboard: SubLeaderboardErrors;
 	subMe: SubMeErrors;
@@ -11,6 +12,7 @@ export type OperationErrors = {
 };
 
 export type ListTodosErrors = ClientOperationErrors;
+export type QueryLeaderboardErrors = ClientOperationErrors;
 export type QueryMeErrors = ClientOperationErrors;
 export type SubLeaderboardErrors = ClientOperationErrors;
 export type SubMeErrors = ClientOperationErrors;

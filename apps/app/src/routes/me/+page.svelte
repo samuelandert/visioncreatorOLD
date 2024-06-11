@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { createMutation, createSubscription } from '$lib/wundergraph';
+	import { createMutation, createSubscription, createQuery } from '$lib/wundergraph';
 	import { writable } from 'svelte/store';
 	import { futureMe } from '$lib/stores';
 
@@ -12,11 +12,12 @@
 	let { session } = data;
 	$: ({ session } = data);
 
-	const subMe = createSubscription({
-		operationName: 'subMe',
+	const me = createQuery({
+		operationName: 'queryMe',
 		input: {
-			userid: session.user.id
-		}
+			id: session.user.id
+		},
+		liveQuery: true
 	});
 
 	const subLeaderboard = createSubscription({
@@ -38,7 +39,7 @@
 	const handleUpdateName = async () => {
 		const newName = prompt('Please enter your new name:');
 		if (newName) {
-			await $updateNameMutation.mutateAsync({ userid: session.user.id, fullName: newName });
+			await $updateNameMutation.mutateAsync({ id: session.user.id, full_name: newName });
 		}
 	};
 
@@ -64,10 +65,10 @@
 	}
 
 	// Watch for changes in subMe data and update if necessary
-	$: if ($subMe.data && (!$subMe.data.full_name || $subMe.data.full_name === '')) {
+	$: if ($me.data && (!$me.data.full_name || $me.data.full_name === '')) {
 		$updateNameMutation.mutateAsync({
-			userid: session.user.id,
-			fullName: $futureMe.name
+			id: session.user.id,
+			full_name: $futureMe.name
 		});
 	}
 </script>
@@ -78,11 +79,11 @@
 >
 	<div class="flex flex-col items-center justify-center w-full p-4 space-y-4 @3xl:space-y-8">
 		<div class="w-full max-w-6xl bg-surface-800 rounded-3xl">
-			{#if $subMe.isLoading}
+			{#if $me.isLoading}
 				<p class="flex items-center justify-center w-full p-10 h-72">Loading user details...</p>
-			{:else if $subMe.isError}
+			{:else if $me.isError}
 				<p class="flex items-center justify-center w-full p-10 h-72 text-error-500">
-					Error: {$subMe.error?.message}
+					Error: {$me.error?.message}
 				</p>
 			{:else}
 				<div
@@ -98,13 +99,13 @@
 						<div class="flex flex-col items-center p-8">
 							<Avatar
 								me={{
-									data: { seed: $subMe.data?.id },
+									data: { seed: $me.data?.id },
 									design: { highlight: true },
 									size: 'lg'
 								}}
 							/>
 							<h1 class="text-2xl @3xl:text-5xl font-bold h1">
-								Hey {$subMe.data?.full_name}
+								Hey {$me.data?.full_name}
 							</h1>
 							<p class="text-md @3xl:text-2xl">Schön das du da bist</p>
 						</div>

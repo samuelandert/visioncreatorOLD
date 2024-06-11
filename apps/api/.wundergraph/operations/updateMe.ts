@@ -2,15 +2,15 @@ import { createOperation, z, AuthorizationError } from '../generated/wundergraph
 
 export default createOperation.mutation({
     input: z.object({
-        userid: z.string(),
-        fullName: z.string(),
+        id: z.string(),
+        full_name: z.string(),
     }),
     requireAuthentication: true,
     rbac: {
         requireMatchAll: ['authenticated'],
     },
     handler: async ({ context, input, user }) => {
-        if (input.userid !== user?.customClaims?.id) {
+        if (input.id !== user?.customClaims?.id) {
             console.error('Authorization Error: User ID does not match.');
             throw new AuthorizationError({ message: 'User ID does not match.' });
         }
@@ -18,8 +18,8 @@ export default createOperation.mutation({
 
         const { data, error } = await context.supabase
             .from('profiles')
-            .update({ full_name: input.fullName })
-            .eq('id', input.userid)
+            .update({ full_name: input.full_name })
+            .eq('id', input.id)
             .select();
 
         if (error) {

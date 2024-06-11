@@ -9,6 +9,7 @@ export default createOperation.subscription({
         requireMatchAll: ['authenticated'],
     },
     handler: async function* ({ context, input, user }) {
+        console.log("Starting subMe subscription");
 
         let latestPayload;
 
@@ -24,6 +25,7 @@ export default createOperation.subscription({
             .single();
 
         if (initialData.data) {
+            console.log("Initial data fetched", initialData.data);
             yield initialData.data;
         } else if (initialData.error) {
             console.error('Error fetching initial data:', initialData.error);
@@ -32,6 +34,7 @@ export default createOperation.subscription({
 
         const profiles = context.supabase.channel('custom-all-channel')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles', filter: `id=eq.${user?.customClaims?.id}` }, (payload) => {
+                console.log("Received update from channel", payload);
                 if (payload.new && payload.new.id === user?.customClaims?.id) {
                     latestPayload = payload.new;
                 }
@@ -41,6 +44,7 @@ export default createOperation.subscription({
         try {
             while (true) {
                 if (latestPayload) {
+                    console.log("Yielding new payload", latestPayload);
                     yield latestPayload;
                     latestPayload = null;
                 }
@@ -48,6 +52,7 @@ export default createOperation.subscription({
             }
         } finally {
             profiles.unsubscribe();
+            console.log("Unsubscribing from subMe channel");
         }
     },
 });
