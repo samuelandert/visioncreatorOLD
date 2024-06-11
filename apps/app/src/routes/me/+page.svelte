@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { onMount } from 'svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { createMutation, createSubscription } from '$lib/wundergraph';
 	import { writable } from 'svelte/store';
-	import Time, { dayjs } from 'svelte-time';
-	import 'dayjs/locale/de';
 
 	export let data;
 	let loading = false;
@@ -48,10 +47,6 @@
 			modalOpen.update((n) => !n);
 		}
 	}
-
-	dayjs.locale('de');
-
-	let futureDate = dayjs().add(8, 'hour').toISOString();
 
 	let linkCopied = writable(false);
 
@@ -123,31 +118,6 @@
 		<div
 			class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto text-center rounded-3xl bg-surface-800 flex flex-col items-center justify-center space-y-4`}
 		>
-			<h2 class="text-lg @3xl:text-2xl">
-				Entfalte dein volles Lebenspotenzial und werde Visioncreator.
-			</h2>
-
-			<p class="text-xs @3xl:text-base">
-				nur die motiviertesten <span class="text-xl">3</span> Menschen werden in der nächsten Runde
-				in den Kreis der Visioncreator aufgenommen.<br />Du bist gerade an Platz
-				<span class="text-xl">5</span>
-				und damit <br /><span class="text-xl @3xl:text-3xl"
-					>nur noch <span class="text-primary-500">2</span> Inspirationen</span
-				> <br />von deinem neuen Leben in Fülle entfernt.
-			</p>
-
-			<div class="">
-				<p class="text-tertiary-600 text-sm @3xl:text-md">Start nächste Runde</p>
-
-				<div class="text-3xl @3xl:text-4xl font-semibold text-tertiary-300">
-					<Time timestamp={futureDate} relative live />
-				</div>
-			</div>
-
-			<p class="text-xs @3xl:text-base text-tertiary-400">
-				Steige in der Warteliste auf, <br /> indem du Menschen inspirierst den Visioncreator Newsletter
-				zu abonnieren
-			</p>
 			<div class="flex flex-row items-center space-x-2">
 				<button
 					type="button"
@@ -196,12 +166,12 @@
 									<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">invites</p>
 								</div>
 
-								<!-- <div class="flex flex-col items-center text-right">
+								<div class="flex flex-col items-center text-right">
 									<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
 										{index + 1}
 									</p>
 									<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">rank</p>
-								</div> -->
+								</div>
 							</div>
 						</li>
 					{/each}
