@@ -5,7 +5,6 @@
 	import { writable } from 'svelte/store';
 	import { futureMe } from '$lib/stores';
 	import { onMount } from 'svelte';
-	import { env } from '$env/dynamic/public';
 
 	export let data;
 
@@ -16,9 +15,7 @@
 	$: ({ session } = data);
 
 	onMount(() => {
-		console.log('Mounting component and checking signup status.');
 		if (!$futureMe.signedUp) {
-			console.log('User not signed up, initiating signup process.');
 			Promise.all([
 				$updateNameMutation.mutateAsync({
 					id: session.user.id,
@@ -38,8 +35,6 @@
 				.catch((error) => {
 					console.error('Failed to perform operations:', error);
 				});
-		} else {
-			console.log('User already signed up.');
 		}
 	});
 
@@ -83,21 +78,6 @@
 	function toggleModal(event?: MouseEvent) {
 		if (!event || event.target === event.currentTarget) {
 			modalOpen.update((n) => !n);
-		}
-	}
-
-	let linkCopied = writable(false);
-
-	async function copyInvitationLink() {
-		const link = `${env.PUBLIC_BASE_URL}/?visionid=${session.user.id}`;
-		try {
-			await navigator.clipboard.writeText(link);
-			linkCopied.set(true);
-			setTimeout(() => {
-				linkCopied.set(false);
-			}, 1000);
-		} catch (err) {
-			alert('Failed to copy the link.');
 		}
 	}
 </script>
@@ -153,18 +133,15 @@
 				</div>
 			{/if}
 		</div>
-		<div
-			class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto text-center rounded-3xl bg-surface-800 flex flex-col items-center justify-center space-y-4`}
-		>
-			<div class="flex flex-row items-center space-x-2">
-				<button
-					type="button"
-					class="btn btn-sm @3xl:btn-lg variant-filled-primary"
-					on:click={copyInvitationLink}>Einladung kopieren</button
-				>
-				<button type="button" class="btn btn-sm @3xl:btn-lg variant-ghost-primary">QR-Code</button>
-			</div>
-		</div>
+		{#if $me.isLoading}
+			<p class="flex items-center justify-center w-full p-10 h-72">Loading user details...</p>
+		{:else if $me.isError}
+			<p class="flex items-center justify-center w-full p-10 h-72 text-error-500">
+				Error: {$me.error?.message}
+			</p>
+		{:else}
+			<InviteCard userId={session.user.id} />
+		{/if}
 
 		<div class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto rounded-3xl bg-surface-800`}>
 			{#if $leaderboard.isLoading}
