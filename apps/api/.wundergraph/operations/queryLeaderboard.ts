@@ -15,17 +15,14 @@ export default createOperation.query({
             console.error('Error fetching leaderboard data:', initialData.error);
             throw new Error('Failed to fetch leaderboard data');
         }
-
         // Process data
         let profilesData = initialData.data.map(profile => ({
             id: profile.id,
             name: profile.full_name,
             suminvites: profile.suminvites
         }));
-
         // Sort data by invites in descending order
         profilesData.sort((a, b) => b.suminvites - a.suminvites);
-
         return profilesData;
     },
 });

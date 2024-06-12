@@ -30,6 +30,7 @@
     "lodash": "^4.17.21",
     "lodash.isequal": "^4.5.0",
     "monaco-editor": "^0.44.0",
+    "qrcode": "^1.5.3",
     "sveltekit-superforms": "^1.7.2",
     "xstate": "^4.38.2",
     "zod": "^3.23.8"
