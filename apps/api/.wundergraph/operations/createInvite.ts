@@ -1,4 +1,4 @@
-import { createOperation, z } from '../generated/wundergraph.factory';
+import { createOperation, z, AuthorizationError } from '../generated/wundergraph.factory';
 
 export default createOperation.mutation({
     input: z.object({
@@ -9,7 +9,12 @@ export default createOperation.mutation({
     rbac: {
         requireMatchAll: ['authenticated'],
     },
-    handler: async ({ input, context }) => {
+    handler: async ({ user, input, context }) => {
+
+        if (input.invitee !== user?.customClaims?.id) {
+            console.error('Authorization Error: User ID does not match.');
+            throw new AuthorizationError({ message: 'User ID does not match.' });
+        }
         const existingInvite = await context.supabase
             .from('invites')
             .select()

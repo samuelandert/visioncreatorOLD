@@ -4,13 +4,35 @@
 	import { createMutation, createQuery } from '$lib/wundergraph';
 	import { writable } from 'svelte/store';
 	import { futureMe } from '$lib/stores';
+	import { onMount } from 'svelte';
 
 	export let data;
+
 	let loading = false;
 	let modalOpen = writable(false);
 
-	let { session } = data;
+	let { session, supabase } = data;
 	$: ({ session } = data);
+
+	onMount(() => {
+		const { data } = supabase.auth.onAuthStateChange((event) => {
+			if (event === 'INITIAL_SESSION') {
+				console.log('Session init', $me);
+
+				if ($me.data && (!$me.data.full_name || $me.data.full_name === '')) {
+					$updateNameMutation.mutateAsync({
+						id: session.user.id,
+						full_name: $futureMe.name
+					});
+					// const response = await $createInviteMutation.mutateAsync({
+					// 	invitee: session.user.id,
+					// 	inviter: $futureMe.visionid
+					// });
+				}
+			}
+		});
+		return () => data.subscription.unsubscribe();
+	});
 
 	const me = createQuery({
 		operationName: 'queryMe',
@@ -69,24 +91,6 @@
 	const createInviteMutation = createMutation({
 		operationName: 'createInvite'
 	});
-
-	const handleCreateInvite = async () => {
-		const response = await $createInviteMutation.mutateAsync({
-			invitee: session.user.id,
-			inviter: $futureMe.visionid
-		});
-		if (response.success) {
-			console.log('Invite created successfully');
-		} else {
-			console.error('Failed to create invite:', response.error);
-		}
-	};
-	$: if ($me.data && (!$me.data.full_name || $me.data.full_name === '')) {
-		$updateNameMutation.mutateAsync({
-			id: session.user.id,
-			full_name: $futureMe.name
-		});
-	}
 </script>
 
 <div
@@ -229,11 +233,6 @@
 					class="px-4 py-2 font-bold rounded-full text-warning-900 bg-warning-500 hover:bg-warning-400"
 					on:click={handleUpdateName}
 					disabled={loading}>Update Name</button
-				>
-				<button
-					type="button"
-					class="btn btn-sm @3xl:btn-lg variant-ghost-primary"
-					on:click={handleCreateInvite}>Create Invite</button
 				>
 			</div>
 		</div>
