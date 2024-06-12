@@ -9,7 +9,7 @@ export default createOperation.query({
         // Fetch initial data
         const initialData = await context.supabase
             .from('profiles')
-            .select('id, full_name');
+            .select('id, full_name, suminvites');
 
         if (initialData.error) {
             console.error('Error fetching leaderboard data:', initialData.error);
@@ -20,11 +20,11 @@ export default createOperation.query({
         let profilesData = initialData.data.map(profile => ({
             id: profile.id,
             name: profile.full_name,
-            invites: Math.floor(Math.random() * 11) // Generates a random number between 0 and 10
+            suminvites: profile.suminvites
         }));
 
         // Sort data by invites in descending order
-        profilesData.sort((a, b) => b.invites - a.invites);
+        profilesData.sort((a, b) => b.suminvites - a.suminvites);
 
         return profilesData;
     },

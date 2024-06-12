@@ -11,6 +11,9 @@ export default createOperation.mutation({
     },
     handler: async ({ user, input, context }) => {
 
+        console.log("----- INVITEE ------", input.invitee)
+        console.log("----- INVITER ------", input.inviter)
+
         if (input.invitee !== user?.customClaims?.id) {
             console.error('Authorization Error: User ID does not match.');
             throw new AuthorizationError({ message: 'User ID does not match.' });

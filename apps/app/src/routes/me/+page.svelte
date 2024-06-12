@@ -152,7 +152,7 @@
 				</p>
 			{:else}
 				<ul class="space-y-2 @3xl:space-y-4">
-					{#each $leaderboard.data as { name, id, invites }, index}
+					{#each $leaderboard.data as { name, id, suminvites }, index}
 						<li
 							class={`flex items-center justify-between rounded-4xl  ${
 								id === session.user.id ? 'bg-surface-600' : 'bg-surface-700'
@@ -173,7 +173,7 @@
 							<div class="flex justify-between px-4 @3xl:px-6 space-x-4 max-h-12">
 								<div class="flex flex-col items-center text-right">
 									<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
-										{invites}
+										{suminvites}
 									</p>
 									<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">invites</p>
 								</div>
