@@ -1,0 +1,30 @@
+---
+title: "Mein Magic Login Link"
+preheader: "Bitte bestätige deine Emailaddresse"
+confirmURL: '{{ .ConfirmationURL }}'
+buttonText: 'Jetzt einloggen'
+---
+
+<x-main>
+    <h1 class="m-0 mb-6 text-2xl font-semibold text-tertiary-300 sm:leading-8">
+      Bist es du?
+    </h1>
+
+    <p class="m-0 leading-6">
+      Wir haben nach dir gesucht. Schön das du wieder da bist! <br>Bitte bestätige deine Emailaddresse.
+    </p>
+
+    <x-spacer height="24px" />
+
+    <x-button href="{{ page.confirmURL }}">
+      {{page.buttonText}} &rarr;
+    </x-button>
+    <x-divider space-y="32px" class="bg-surface-400" />
+
+    <p class="m-0 text-xs">
+      Wenn du dich nicht angemeldet hast, kannst du diese Mail ignorieren.
+      <br>
+      <br>
+      Danke, <br />Dein Visioncreator Team
+    </p>
+</x-main>

@@ -11,27 +11,35 @@
 	let loading = false;
 	let modalOpen = writable(false);
 
-	let { session, supabase } = data;
+	let { session } = data;
 	$: ({ session } = data);
 
 	onMount(() => {
-		const { data } = supabase.auth.onAuthStateChange((event) => {
-			if (event === 'INITIAL_SESSION') {
-				console.log('Session init', $me);
-
-				if ($me.data && (!$me.data.full_name || $me.data.full_name === '')) {
-					$updateNameMutation.mutateAsync({
-						id: session.user.id,
-						full_name: $futureMe.name
+		console.log('Mounting component and checking signup status.');
+		if (!$futureMe.signedUp) {
+			console.log('User not signed up, initiating signup process.');
+			Promise.all([
+				$updateNameMutation.mutateAsync({
+					id: session.user.id,
+					full_name: $futureMe.name
+				}),
+				$createInviteMutation.mutateAsync({
+					invitee: session.user.id,
+					inviter: $futureMe.visionid
+				})
+			])
+				.then(() => {
+					console.log('Signup successful, updating futureMe store.');
+					futureMe.update((current) => {
+						return { ...current, signedUp: true };
 					});
-					// const response = await $createInviteMutation.mutateAsync({
-					// 	invitee: session.user.id,
-					// 	inviter: $futureMe.visionid
-					// });
-				}
-			}
-		});
-		return () => data.subscription.unsubscribe();
+				})
+				.catch((error) => {
+					console.error('Failed to perform operations:', error);
+				});
+		} else {
+			console.log('User already signed up.');
+		}
 	});
 
 	const me = createQuery({
@@ -49,6 +57,10 @@
 
 	const updateNameMutation = createMutation({
 		operationName: 'updateMe'
+	});
+
+	const createInviteMutation = createMutation({
+		operationName: 'createInvite'
 	});
 
 	const handleSignOut: SubmitFunction = () => {
@@ -87,10 +99,6 @@
 			alert('Failed to copy the link.');
 		}
 	}
-
-	const createInviteMutation = createMutation({
-		operationName: 'createInvite'
-	});
 </script>
 
 <div
