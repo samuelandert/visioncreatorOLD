@@ -5,6 +5,7 @@
 	import { writable } from 'svelte/store';
 	import { futureMe } from '$lib/stores';
 	import { onMount } from 'svelte';
+	import { env } from '$env/dynamic/public';
 
 	export let data;
 
@@ -88,7 +89,7 @@
 	let linkCopied = writable(false);
 
 	async function copyInvitationLink() {
-		const link = `https://localhost:3000/?visionid=${session.user.id}`;
+		const link = `${env.PUBLIC_BASE_URL}/?visionid=${session.user.id}`;
 		try {
 			await navigator.clipboard.writeText(link);
 			linkCopied.set(true);
