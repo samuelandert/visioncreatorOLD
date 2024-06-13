@@ -109,7 +109,7 @@
 								}}
 							/>
 							<h1 class="text-2xl @3xl:text-5xl font-bold h1">
-								Hey {$me.data?.full_name || 'you'}
+								Hey {$me.data?.full_name || $futureMe.name}
 							</h1>
 							<p class="text-md @3xl:text-2xl">Schön das du da bist</p>
 						</div>
