@@ -36,7 +36,7 @@
 				alert('Failed to generate QR code.');
 			}
 		}
-		showQRCode.update((n) => !n); // Toggle visibility
+		showQRCode.update((n) => !n);
 	}
 </script>
 

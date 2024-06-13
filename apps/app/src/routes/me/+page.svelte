@@ -11,30 +11,25 @@
 	let loading = false;
 	let modalOpen = writable(false);
 
-	let { session } = data;
+	let { session, supabase } = data;
 	$: ({ session } = data);
 
-	onMount(() => {
-		if (!$futureMe.signedUp) {
-			Promise.all([
-				$updateNameMutation.mutateAsync({
-					id: session.user.id,
-					full_name: $futureMe.name
-				}),
-				$createInviteMutation.mutateAsync({
-					invitee: session.user.id,
-					inviter: $futureMe.visionid
-				})
-			])
-				.then(() => {
-					console.log('Signup successful, updating futureMe store.');
-					futureMe.update((current) => {
-						return { ...current, signedUp: true };
-					});
-				})
-				.catch((error) => {
-					console.error('Failed to perform operations:', error);
-				});
+	onMount(async () => {
+		const me = await supabase.auth.getUser();
+
+		if (!me.data.user?.user_metadata.inviter) {
+			const { data, error } = await supabase.auth.updateUser({
+				data: { inviter: $futureMe.visionid, full_name: $futureMe.name }
+			});
+
+			$createInviteMutation.mutateAsync({
+				invitee: session.user.id,
+				inviter: $futureMe.visionid
+			});
+			$updateNameMutation.mutateAsync({
+				id: session.user.id,
+				full_name: $futureMe.name
+			});
 		}
 	});
 
@@ -114,7 +109,7 @@
 								}}
 							/>
 							<h1 class="text-2xl @3xl:text-5xl font-bold h1">
-								Hey {$me.data?.full_name}
+								Hey {$me.data?.full_name || 'you'}
 							</h1>
 							<p class="text-md @3xl:text-2xl">Schön das du da bist</p>
 						</div>

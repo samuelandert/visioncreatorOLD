@@ -13,7 +13,6 @@ export default createOperation.query({
             console.error('Authorization Error: User ID does not match.');
             throw new AuthorizationError({ message: 'User ID does not match.' });
         }
-
         const { data: profiles, error } = await context.supabase
             .from('profiles')
             .select('id, full_name')

@@ -24,6 +24,11 @@
         "composer/**"
       ]
     },
+    "maizzle#dev": {
+      "dependsOn": [
+        "^app#build"
+      ]
+    },
     "lint": {
       "outputs": []
     },
