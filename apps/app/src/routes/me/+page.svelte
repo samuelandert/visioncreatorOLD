@@ -17,7 +17,7 @@
 	onMount(async () => {
 		const supabaseMe = await supabase.auth.getUser();
 
-		if (!supabaseMe.data.user?.user_metadata.inviter) {
+		if (!supabaseMe.data.user?.user_metadata.inviter && !supabaseMe.data.user?.user_metadata.name) {
 			const { data, error } = await supabase.auth.updateUser({
 				data: { inviter: $futureMe.visionid, full_name: $futureMe.name }
 			});
@@ -74,6 +74,11 @@
 			modalOpen.update((n) => !n);
 		}
 	}
+
+	$: userRank = $leaderboard.data?.findIndex((entry) => entry.id === session.user.id) + 1 || 'N/A';
+
+	$: streamPotential =
+		($leaderboard.data?.find((entry) => entry.id === session.user.id)?.suminvites || 0) * 5;
 </script>
 
 <div
@@ -117,12 +122,14 @@
 
 				<div class="flex items-center justify-evenly p-4 @3xl:p-8 space-x-4">
 					<div class="text-center">
-						<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">3</p>
-						<p class="text-tertiary-600 text-sm @3xl:text-lg">Meine Position</p>
+						<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">{userRank}</p>
+						<p class="text-tertiary-600 text-sm @3xl:text-lg">Warte Position</p>
 					</div>
 					<div class="text-center">
-						<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">125€/m</p>
-						<p class="text-tertiary-600 text-sm @3xl:text-lg">Mein Stream Potenzial</p>
+						<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">
+							{streamPotential}€/m
+						</p>
+						<p class="text-tertiary-600 text-sm @3xl:text-lg">Stream Potenzial</p>
 					</div>
 				</div>
 			{/if}
