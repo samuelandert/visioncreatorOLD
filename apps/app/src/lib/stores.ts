@@ -7,6 +7,6 @@ interface FutureMe {
     signedUp: boolean
 }
 
-const defaultFutureMe: FutureMe = { name: '', visionid: "d43636b3-9849-4b52-8b85-8f30657b8f8f" };
+const defaultFutureMe: FutureMe = { name: '', visionid: '' };
 
 export const futureMe = persist(writable<FutureMe>(defaultFutureMe), createLocalStorage(), 'futureMe');

@@ -15,20 +15,19 @@
 	$: ({ session } = data);
 
 	onMount(async () => {
-		const supbaseMe = await supabase.auth.getUser();
+		const supabaseMe = await supabase.auth.getUser();
 
-		if (!supbaseMe.data.user?.user_metadata.inviter) {
+		if (!supabaseMe.data.user?.user_metadata.inviter) {
 			const { data, error } = await supabase.auth.updateUser({
 				data: { inviter: $futureMe.visionid, full_name: $futureMe.name }
-			});
-
-			$createInviteMutation.mutateAsync({
-				invitee: session.user.id,
-				inviter: $futureMe.visionid
 			});
 			$updateNameMutation.mutateAsync({
 				id: session.user.id,
 				full_name: $futureMe.name
+			});
+			$createInviteMutation.mutateAsync({
+				invitee: session.user.id,
+				inviter: $futureMe.visionid
 			});
 		}
 	});
@@ -162,7 +161,7 @@
 							/>
 
 							<div class="flex-1 px-4 text-xl @3xl:text-2xl text-tertiary-400">
-								{name}
+								{name || $futureMe.name}
 							</div>
 
 							<div class="flex justify-between px-4 @3xl:px-6 space-x-4 max-h-12">

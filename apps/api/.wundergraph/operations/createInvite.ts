@@ -11,11 +11,16 @@ export default createOperation.mutation({
     },
     handler: async ({ user, input, context }) => {
 
-        const fallbackInviterId = 'ef46b88a-25fe-42b1-b453-5ac8c8729d85';
+        const fallbackInviterId = process.env.NODE_ENV === "production"
+            ? "3de9f3dd-7fa2-4930-8194-b7ecf7e27932"
+            : "13eb2844-2b68-46f2-84db-862d10c96d8b";
+
+        console.log("---------fallback------------", fallbackInviterId)
 
         // Validate inviter: it should not be empty, the same as invitee, or invalid
         const inviterId = input.inviter && input.inviter !== input.invitee ? input.inviter : fallbackInviterId;
 
+        console.log("---------fallback------------", inviterId)
 
         if (input.invitee !== user?.customClaims?.id) {
             console.error('Authorization Error: User ID does not match.');
