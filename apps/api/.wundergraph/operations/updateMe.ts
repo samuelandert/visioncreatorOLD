@@ -18,7 +18,7 @@ export default createOperation.mutation({
 
         const { data, error } = await context.supabase
             .from('profiles')
-            .update({ full_name: input.full_name })
+            .update({ full_name: input.full_name, active: true })
             .eq('id', input.id)
             .select();
 
@@ -32,7 +32,7 @@ export default createOperation.mutation({
             return { success: false, error: 'No user found or no changes made.' };
         }
 
-        console.log('Name updated successfully!');
+        console.log('Name and active status updated successfully!');
         return { success: true, data };
     }
 });
