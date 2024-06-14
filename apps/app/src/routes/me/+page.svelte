@@ -15,9 +15,9 @@
 	$: ({ session } = data);
 
 	onMount(async () => {
-		const me = await supabase.auth.getUser();
+		const supbaseMe = await supabase.auth.getUser();
 
-		if (!me.data.user?.user_metadata.inviter) {
+		if (!supbaseMe.data.user?.user_metadata.inviter) {
 			const { data, error } = await supabase.auth.updateUser({
 				data: { inviter: $futureMe.visionid, full_name: $futureMe.name }
 			});
@@ -119,7 +119,7 @@
 				<div class="flex items-center justify-evenly p-4 @3xl:p-8 space-x-4">
 					<div class="text-center">
 						<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">3</p>
-						<p class="text-tertiary-600 text-sm @3xl:text-lg">Leaderboard</p>
+						<p class="text-tertiary-600 text-sm @3xl:text-lg">Meine Position</p>
 					</div>
 					<div class="text-center">
 						<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">125€/m</p>
