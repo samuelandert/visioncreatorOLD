@@ -6,10 +6,9 @@ export default createOperation.query({
         requireMatchAll: ['authenticated'],
     },
     handler: async ({ context }) => {
-        // Fetch initial data
         const initialData = await context.supabase
             .from('profiles')
-            .select('id, full_name, suminvites')
+            .select('id, full_name, suminvites, created_at')
             .eq('active', true);
 
         if (initialData.error) {
@@ -19,10 +18,18 @@ export default createOperation.query({
         let profilesData = initialData.data.map(profile => ({
             id: profile.id,
             name: profile.full_name,
-            suminvites: profile.suminvites
+            suminvites: profile.suminvites,
+            createdAt: profile.created_at
         }));
 
-        profilesData.sort((a, b) => b.suminvites - a.suminvites);
+        // Sort by suminvites first, then by created_at
+        profilesData.sort((a, b) => {
+            if (b.suminvites !== a.suminvites) {
+                return b.suminvites - a.suminvites;
+            } else {
+                return new Date(a.createdAt) - new Date(b.createdAt);
+            }
+        });
         return profilesData;
     },
 });

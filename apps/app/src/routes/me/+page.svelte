@@ -16,14 +16,16 @@
 
 	onMount(async () => {
 		const supabaseMe = await supabase.auth.getUser();
-
-		if (!supabaseMe.data.user?.user_metadata.inviter && !supabaseMe.data.user?.user_metadata.name) {
+		if (
+			!supabaseMe.data.user?.user_metadata.inviter &&
+			!supabaseMe.data.user?.user_metadata.full_name
+		) {
 			const { data, error } = await supabase.auth.updateUser({
-				data: { inviter: $futureMe.visionid, full_name: $futureMe.name }
+				data: { inviter: $futureMe.visionid, full_name: $futureMe.name || 'MyName' }
 			});
 			$updateNameMutation.mutateAsync({
 				id: session.user.id,
-				full_name: $futureMe.name
+				full_name: $futureMe.name || 'MyName'
 			});
 			$createInviteMutation.mutateAsync({
 				invitee: session.user.id,
@@ -75,7 +77,8 @@
 		}
 	}
 
-	$: userRank = $leaderboard.data?.findIndex((entry) => entry.id === session.user.id) + 1 || 'N/A';
+	$: userRank =
+		$leaderboard.data?.findIndex((entry) => entry.id === session.user.id) + 1 || 'rechnet...';
 
 	$: streamPotential =
 		($leaderboard.data?.find((entry) => entry.id === session.user.id)?.suminvites || 0) * 5;
