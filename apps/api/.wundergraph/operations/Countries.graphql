@@ -1,5 +1,4 @@
-query Countries($filter: countries_CountryFilterInput)
-@rbac(requireMatchAll: [authenticated]) {
+query Countries($filter: countries_CountryFilterInput) {
   countries_countries(filter: $filter) {
     code
     name

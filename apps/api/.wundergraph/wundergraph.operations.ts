@@ -1,5 +1,6 @@
 import { configureWunderGraphOperations } from '@wundergraph/sdk';
 import type { OperationsConfiguration } from './generated/wundergraph.operations';
+import { config } from 'process';
 
 export default configureWunderGraphOperations<OperationsConfiguration>({
 	operations: {
@@ -27,6 +28,19 @@ export default configureWunderGraphOperations<OperationsConfiguration>({
 		subscriptions: (config) => ({
 			...config,
 		}),
-		custom: {},
+		custom: {
+			Countries: (config) => ({
+				...config,
+				authentication: {
+					required: false,
+				},
+			}),
+			RemoveFromNewsletterList: (config) => ({
+				...config,
+				authentication: {
+					required: false
+				}
+			})
+		},
 	},
 });

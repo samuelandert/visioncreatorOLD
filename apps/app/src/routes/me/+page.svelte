@@ -31,6 +31,20 @@
 				invitee: session.user.id,
 				inviter: $futureMe.visionid
 			});
+
+			//Subscribe Newsletter
+			const formData = new URLSearchParams();
+			formData.append('l', 'eebca037-e9d6-4ef6-ac48-1eaeb5a80e33');
+			formData.append('email', supabaseMe.data.user.email);
+			formData.append('name', $futureMe.name);
+
+			fetch('https://listmonk.visioncreator.works/api/public/subscription', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: formData
+			});
 		}
 	});
 
