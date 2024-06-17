@@ -35,12 +35,12 @@ export default configureWunderGraphOperations<OperationsConfiguration>({
 					required: false,
 				},
 			}),
-			RemoveFromNewsletterList: (config) => ({
-				...config,
-				authentication: {
-					required: false
-				}
-			})
+			// RemoveFromNewsletterList: (config) => ({
+			// 	...config,
+			// 	authentication: {
+			// 		required: false
+			// 	}
+			// })
 		},
 	},
 });

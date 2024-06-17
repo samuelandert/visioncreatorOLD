@@ -7,6 +7,7 @@ export type OperationErrors = {
 	listTodos: ListTodosErrors;
 	queryLeaderboard: QueryLeaderboardErrors;
 	queryMe: QueryMeErrors;
+	removeFromNewsletterList: RemoveFromNewsletterListErrors;
 	subLeaderboard: SubLeaderboardErrors;
 	subMe: SubMeErrors;
 	updateMe: UpdateMeErrors;
@@ -16,6 +17,7 @@ export type CreateInviteErrors = ClientOperationErrors;
 export type ListTodosErrors = ClientOperationErrors;
 export type QueryLeaderboardErrors = ClientOperationErrors;
 export type QueryMeErrors = ClientOperationErrors;
+export type RemoveFromNewsletterListErrors = ClientOperationErrors;
 export type SubLeaderboardErrors = ClientOperationErrors;
 export type SubMeErrors = ClientOperationErrors;
 export type UpdateMeErrors = ClientOperationErrors;
