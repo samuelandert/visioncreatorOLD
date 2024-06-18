@@ -6,14 +6,14 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
-    "generate": "turbo run generate",
-    "api:build": "turbo run build --filter=api",
-    "api:start": "turbo run start --filter=api"
+    "build": "npx turbo run build",
+    "dev": "npx turbo run dev --parallel",
+    "generate": "npx turbo run generate",
+    "api:build": "npx turbo run build --filter=api",
+    "api:start": "npx turbo run start --filter=api"
   },
   "devDependencies": {
-    "turbo": "^2.0.3"
+    "turbo": "^2.0.4"
   },
   "engines": {
     "node": ">=20.12.2"

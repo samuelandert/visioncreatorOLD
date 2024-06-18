@@ -31,7 +31,7 @@ configureWunderGraphApplication({
         {
           userInfoEndpoint: process.env.NODE_ENV === 'production'
             ? 'https://next.visioncreator.works/auth/userinfo'
-            : 'http://localhost:3000/auth/userinfo',
+            : 'http://127.0.0.1:3000/auth/userinfo',
         },
       ],
     },
@@ -44,7 +44,7 @@ configureWunderGraphApplication({
           "https://next.visioncreator.works",
         ]
         : [
-          "http://localhost:3000",
+          "http://127.0.0.1:3000",
           new EnvironmentVariable("WG_ALLOWED_ORIGIN"),
         ],
   },
@@ -54,7 +54,7 @@ configureWunderGraphApplication({
       process.env.GITPOD_WORKSPACE_ID !== undefined,
   },
   options: {
-    publicNodeUrl: process.env.NODE_ENV === 'production' ? 'https://visioncreator.fly.dev' : 'http://localhost:9991'
+    publicNodeUrl: process.env.NODE_ENV === 'production' ? 'https://visioncreator.fly.dev' : 'http://127.0.0.1:9991'
   },
   authorization: {
     roles: ["admin", "authenticated"],

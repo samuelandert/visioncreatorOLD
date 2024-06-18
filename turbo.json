@@ -9,6 +9,16 @@
         "composer/**"
       ]
     },
+    "api#dev": {
+      "dependsOn": [
+        "^supacreator#dev"
+      ]
+    },
+    "app#dev": {
+      "dependsOn": [
+        "^supacreator#dev"
+      ]
+    },
     "api#build": {
       "outputs": [
         "generated-wundergraph/**"

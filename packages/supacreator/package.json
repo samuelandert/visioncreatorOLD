@@ -1,0 +1,11 @@
+{
+  "name": "supacreator",
+  "private": true,
+  "scripts": {
+    "dev": "npx supabase start",
+    "status": "npx supabase status"
+  },
+  "devDependencies": {
+    "supabase": "^1.176.10"
+  }
+}

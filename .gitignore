@@ -154,3 +154,6 @@ yarn-error.log*
 *.env
 packages/helpers/dist
 apps/api/generated
+
+.branches
+.temp

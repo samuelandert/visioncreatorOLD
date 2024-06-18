@@ -9,19 +9,19 @@ npm i && npm start
 #### Get all Continents
 
 ```shell
-curl http://localhost:9991/operations/Continents
+curl http://127.0.0.1:9991/operations/Continents
 ```
 
 #### Get all Countries
 
 ```shell
-curl http://localhost:9991/operations/Countries
+curl http://127.0.0.1:9991/operations/Countries
 ```
 
 #### Get user
 
 ```shell
-curl http://localhost:9991/operations/users/get?id=1
+curl http://127.0.0.1:9991/operations/users/get?id=1
 ```
 
 ## Learn More

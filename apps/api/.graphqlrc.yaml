@@ -7,6 +7,6 @@ documents: '.wundergraph/operations/**/*.graphql'
 extensions:
   endpoint:
     introspect: false
-    url: 'https://localhost:9991/graphql'
+    url: 'https://127.0.0.1:9991/graphql'
     headers:
       user-agent: 'WunderGraph Client'
