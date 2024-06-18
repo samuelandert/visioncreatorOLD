@@ -20,7 +20,7 @@ Now the following services are running:
 ## After inital launch set env vars
 
 After initial launch, when supabase is running, copy and past the env vars from our launched supacreator#package terminal. 
-To display the values again run 'npx supabase status' inside of 
+To display the values again run 'npx supabase status' inside of our supacreator package.
 
 Set them in apps/app:
 

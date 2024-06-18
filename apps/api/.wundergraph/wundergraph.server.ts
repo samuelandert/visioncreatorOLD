@@ -7,8 +7,8 @@ class MyContext {
 	nango: Nango;
 
 	constructor() {
-		const supabaseUrl = process.env.LOCAL_SUPABASE_URL;
-		const supabaseKey = process.env.LOCAL_SUPABASE_SERVICE_ROLE;
+		const supabaseUrl = process.env.SUPABASE_URL;
+		const supabaseKey = process.env.SUPABASE_SERVICE_ROLE;
 		const nangoHost = process.env.NANGO_HOST;
 		const nangoSecretKey = process.env.NANGO_SECRET_KEY;
 
