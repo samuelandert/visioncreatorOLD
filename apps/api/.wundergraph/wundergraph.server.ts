@@ -49,6 +49,7 @@ export default configureWunderGraphServer(() => ({
 				};
 			},
 		},
+
 	},
 	context: {
 		request: {

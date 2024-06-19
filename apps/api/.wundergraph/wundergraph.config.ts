@@ -48,11 +48,11 @@ configureWunderGraphApplication({
           new EnvironmentVariable("WG_ALLOWED_ORIGIN"),
         ],
   },
-  security: {
-    enableGraphQLEndpoint:
-      process.env.NODE_ENV !== "production" ||
-      process.env.GITPOD_WORKSPACE_ID !== undefined,
-  },
+  // security: {
+  //   enableGraphQLEndpoint:
+  //     process.env.NODE_ENV !== "production" ||
+  //     process.env.GITPOD_WORKSPACE_ID !== undefined,
+  // },
   options: {
     publicNodeUrl: process.env.NODE_ENV === 'production' ? 'https://visioncreator.fly.dev' : 'http://127.0.0.1:9991'
   },
