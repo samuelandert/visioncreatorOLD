@@ -39,6 +39,23 @@
 		isLoading = false;
 		userInput = '';
 	}
+
+	async function testWriteToFile() {
+		try {
+			const response = await fetch('/api/chat', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ hardcodedContent: 'hi, this works' })
+			});
+
+			const data = await response.json();
+			console.log(data.content);
+		} catch (error) {
+			console.error('Error writing to file:', error);
+		}
+	}
 </script>
 
 <main class="flex flex-col w-screen h-screen">
@@ -69,6 +86,10 @@
 				/>
 				<button type="submit" class="p-2 text-white rounded-r bg-primary-500">Send</button>
 			</form>
+
+			<button on:click={testWriteToFile} class="p-2 mt-4 text-white bg-green-500 rounded"
+				>Test Write to File</button
+			>
 		</div>
 
 		<div class="flex flex-col w-1/2">
