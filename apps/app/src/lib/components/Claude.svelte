@@ -23,38 +23,23 @@
   }
 </script>
 
-<div class="countdown-container">
-  <h2>Countdown: {count}</h2>
-  <button on:click={startCountdown} disabled={isRunning}>
-    {isRunning ? 'Counting down...' : 'Start Countdown'}
-  </button>
-  <button on:click={resetCountdown} disabled={!isRunning && count === 10}>
-    Reset
-  </button>
+<div class="w-full h-full flex justify-center items-center">
+  <div class="countdown-container flex flex-col items-center font-sans">
+    <h2 class="text-2xl mb-4">Countdown:</h2>
+    <div class="text-primary-500 text-9xl mb-8 px-8 py-4">{count}</div>
+    <button
+      on:click={startCountdown}
+      disabled={isRunning}
+      class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+    >
+      {isRunning ? 'Counting down...' : 'Start Countdown'}
+    </button>
+    <button
+      on:click={resetCountdown}
+      disabled={!isRunning && count === 10}
+      class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded mt-4"
+    >
+      Reset
+    </button>
+  </div>
 </div>
-
-<style>
-  .countdown-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: Arial, sans-serif;
-  }
-
-  h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-
-  button {
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
-    margin: 0.5rem;
-    cursor: pointer;
-  }
-
-  button:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-</style>

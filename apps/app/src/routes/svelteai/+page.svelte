@@ -4,7 +4,7 @@
 	import Preview from '$lib/Preview.svelte';
 
 	interface Message {
-		role: 'user' | 'assistant';
+		role: 'user' | 'assistant' | 'system';
 		content: string;
 	}
 
@@ -29,14 +29,11 @@
 			const assistantResponse = await chatWithClaude(messages);
 			messages = [...messages, { role: 'assistant', content: assistantResponse }];
 
-			// Extract Svelte component code from the response
 			componentCode = extractSvelteCode(assistantResponse);
 
-			// Send the extracted Svelte code to the API to write to the file
 			await writeSvelteCodeToFile(componentCode);
 		} catch (error) {
 			console.error('Error:', error);
-			messages = [...messages, { role: 'assistant', content: 'Sorry, an error occurred.' }];
 		}
 
 		isLoading = false;
@@ -50,7 +47,7 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ svelteCode })
+				body: JSON.stringify({ messages, hardcodedContent: svelteCode })
 			});
 
 			const data = await response.json();
@@ -63,7 +60,7 @@
 
 <main class="flex flex-col w-screen h-screen">
 	<div class="flex flex-1 space-x-4">
-		<div class="flex flex-col w-1/2 p-4">
+		<div class="flex flex-col w-1/3 p-4">
 			<h1 class="mb-4 text-2xl font-bold">SvelteAI</h1>
 
 			<div
@@ -91,7 +88,7 @@
 			</form>
 		</div>
 
-		<div class="flex flex-col w-1/2">
+		<div class="flex flex-col w-2/3">
 			<Preview />
 		</div>
 	</div>
