@@ -26,7 +26,7 @@
 	}
 </script>
 
-<div class="flex w-screen h-screen p-10">
+<!-- <div class="flex w-screen h-screen p-10">
 	<div class="w-48 h-full overflow-auto">
 		{#each $components as component}
 			<button
@@ -41,4 +41,6 @@
 	<div class="w-full h-full overflow-auto">
 		<ComposeView {view} />
 	</div>
-</div>
+</div> -->
+
+<ComposeView {view} />

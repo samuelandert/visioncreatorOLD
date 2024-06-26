@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { chatWithClaude } from '$lib/api';
 	import SvelteMarkdown from 'svelte-markdown';
-	import ComponentList from '$lib/ComponentList.svelte';
+	import Preview from '$lib/Preview.svelte';
 
 	interface Message {
 		role: 'user' | 'assistant';
@@ -31,6 +31,9 @@
 
 			// Extract Svelte component code from the response
 			componentCode = extractSvelteCode(assistantResponse);
+
+			// Send the extracted Svelte code to the API to write to the file
+			await writeSvelteCodeToFile(componentCode);
 		} catch (error) {
 			console.error('Error:', error);
 			messages = [...messages, { role: 'assistant', content: 'Sorry, an error occurred.' }];
@@ -40,20 +43,20 @@
 		userInput = '';
 	}
 
-	async function testWriteToFile() {
+	async function writeSvelteCodeToFile(svelteCode: string) {
 		try {
 			const response = await fetch('/api/chat', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ hardcodedContent: 'hi, this works' })
+				body: JSON.stringify({ svelteCode })
 			});
 
 			const data = await response.json();
 			console.log(data.content);
 		} catch (error) {
-			console.error('Error writing to file:', error);
+			console.error('Error writing Svelte code to file:', error);
 		}
 	}
 </script>
@@ -86,14 +89,10 @@
 				/>
 				<button type="submit" class="p-2 text-white rounded-r bg-primary-500">Send</button>
 			</form>
-
-			<button on:click={testWriteToFile} class="p-2 mt-4 text-white bg-green-500 rounded"
-				>Test Write to File</button
-			>
 		</div>
 
 		<div class="flex flex-col w-1/2">
-			<ComponentList />
+			<Preview />
 		</div>
 	</div>
 </main>
