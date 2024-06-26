@@ -5,10 +5,8 @@
 	let selectedChildren = { ...initialView.children[0] };
 	let view = { ...initialView };
 
-	// Dynamically import component names from the components folder
 	let components = writable([]);
 
-	// Function to load component names
 	async function loadComponentNames() {
 		const componentFiles = import.meta.glob('$lib/components/*.svelte');
 		const componentNames = [];
@@ -29,20 +27,18 @@
 </script>
 
 <div class="flex w-screen h-screen p-10">
-	<div class="w-1/4 h-full overflow-auto">
-		<label>
-			<select
-				bind:value={selectedChildren.component}
-				on:change={(e) => updateChildren(e.target.value, selectedChildren.slot)}
+	<div class="w-48 h-full overflow-auto">
+		{#each $components as component}
+			<button
+				class="block w-full p-2 text-left hover:bg-gray-200"
+				on:click={() => updateChildren(component.value, selectedChildren.slot)}
 			>
-				{#each $components as component}
-					<option value={component.value}>{component.name}</option>
-				{/each}
-			</select>
-		</label>
+				{component.name}
+			</button>
+		{/each}
 	</div>
 
-	<div class="w-3/4 h-full overflow-auto">
+	<div class="w-full h-full overflow-auto">
 		<ComposeView {view} />
 	</div>
 </div>

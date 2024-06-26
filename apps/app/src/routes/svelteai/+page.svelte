@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { chatWithClaude } from '$lib/api';
 	import SvelteMarkdown from 'svelte-markdown';
-	import ComponentList from '$lib/OLD.svelte';
+	import ComponentList from '$lib/ComponentList.svelte';
 
 	interface Message {
 		role: 'user' | 'assistant';
@@ -41,12 +41,12 @@
 	}
 </script>
 
-<main class="h-screen w-screen flex flex-col">
+<main class="flex flex-col w-screen h-screen">
 	<div class="flex flex-1 space-x-4">
-		<div class="w-1/2 flex flex-col p-4">
-			<h1 class="text-2xl font-bold mb-4">SvelteAI</h1>
+		<div class="flex flex-col w-1/2 p-4">
+			<h1 class="mb-4 text-2xl font-bold">SvelteAI</h1>
 
-			<div class="flex-1 bg-gray-100 p-4 overflow-y-auto mb-4 rounded">
+			<div class="flex-1 p-4 mb-4 overflow-y-auto bg-gray-100 rounded">
 				{#each messages as message}
 					<div class="mb-4">
 						<strong>{message.role === 'user' ? 'You:' : 'AI:'}</strong>
@@ -63,13 +63,13 @@
 					type="text"
 					bind:value={userInput}
 					placeholder="Type your message..."
-					class="flex-grow border p-2 rounded-l"
+					class="flex-grow p-2 border rounded-l"
 				/>
-				<button type="submit" class="bg-blue-500 text-white p-2 rounded-r">Send</button>
+				<button type="submit" class="p-2 text-white bg-blue-500 rounded-r">Send</button>
 			</form>
 		</div>
 
-		<div class="w-1/2 flex flex-col">
+		<div class="flex flex-col w-1/2">
 			<ComponentList />
 		</div>
 	</div>
