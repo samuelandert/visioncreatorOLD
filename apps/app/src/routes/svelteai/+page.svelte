@@ -46,7 +46,9 @@
 		<div class="flex flex-col w-1/2 p-4">
 			<h1 class="mb-4 text-2xl font-bold">SvelteAI</h1>
 
-			<div class="flex-1 p-4 mb-4 overflow-y-auto bg-gray-100 rounded">
+			<div
+				class="flex-1 p-4 mb-4 overflow-y-auto max-h-[calc(100vh-200px)] rounded bg-tertiary-300 text-surface-700"
+			>
 				{#each messages as message}
 					<div class="mb-4">
 						<strong>{message.role === 'user' ? 'You:' : 'AI:'}</strong>
@@ -63,9 +65,9 @@
 					type="text"
 					bind:value={userInput}
 					placeholder="Type your message..."
-					class="flex-grow p-2 border rounded-l"
+					class="flex-grow p-2 rounded-l text-surface-800"
 				/>
-				<button type="submit" class="p-2 text-white bg-blue-500 rounded-r">Send</button>
+				<button type="submit" class="p-2 text-white rounded-r bg-primary-500">Send</button>
 			</form>
 		</div>
 
