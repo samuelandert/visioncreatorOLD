@@ -10,6 +10,7 @@ const anthropic = new Anthropic({
 });
 
 const CLAUDE_FILE_PATH = path.resolve('src/lib/components/Claude.svelte');
+const ARTIFACTS_FILE_PATH = path.resolve('src/lib/prompts/artifacts.txt');
 
 async function readFileContent(filePath) {
   try {
@@ -44,9 +45,9 @@ export async function POST({ request }) {
 
   try {
     const existingComponent = await readFileContent(CLAUDE_FILE_PATH);
+    const artifactsContent = await readFileContent(ARTIFACTS_FILE_PATH);
 
-    const systemMessage = `You are a Svelte component engineer AI assistant. You can create, modify, and explain Svelte components. When asked to create or modify a component, always wrap the Svelte code in \`\`\`svelte code blocks. Always return the full working component, without shortcuts abbeviations like (existing code here) or (rest of the code remains the same) or (Existing HTML and CSS code remains the same), always return the full code. Here is the existing Claude.svelte component:\n\n\`\`\`svelte\n${existingComponent}\n\`\`\``;
-
+    const systemMessage = `${artifactsContent}\n\nHere is the existing Claude.svelte component:\n\n\`\`\`svelte\n${existingComponent}\n\`\`\``;
     const processedMessages = [];
     let lastRole = 'assistant';  
 
@@ -72,15 +73,22 @@ export async function POST({ request }) {
       system: systemMessage,
     });
 
-    const assistantMessage = response.content[0].text;
-    const svelteCodeMatch = assistantMessage.match(/```svelte\n([\s\S]*?)\n```/);
+    console.log("--------------response---------", response.content[0].text);
 
-    if (svelteCodeMatch) {
-      const svelteCode = svelteCodeMatch[1].trim();
-      await writeFileContent(CLAUDE_FILE_PATH, svelteCode);
+    const assistantMessage = response.content[0].text;
+
+    // Extract content inside <antartifact> tags
+    const artifactMatch = assistantMessage.match(/<antartifact[^>]*>([\s\S]*?)<\/antartifact>/);
+
+    if (artifactMatch) {
+      const artifactContent = artifactMatch[1].trim();
+      await writeFileContent(CLAUDE_FILE_PATH, artifactContent);
     }
 
-    return json({ content: assistantMessage });
+    // Remove <antartifact> tags from the assistant message
+    const cleanedMessage = assistantMessage.replace(/<antartifact[^>]*>[\s\S]*?<\/antartifact>/g, '');
+
+    return json({ content: cleanedMessage });
   } catch (error) {
     console.error('Error calling Claude API:', error);
     return json({ error: 'An error occurred while processing your request.' }, { status: 500 });
