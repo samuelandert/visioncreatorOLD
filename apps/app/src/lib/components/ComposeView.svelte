@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { QueryClient } from '@tanstack/svelte-query';
 	import { onDestroy } from 'svelte';
 	import lodash from 'lodash';
 	const { isEqual } = lodash;
-	export let queryClient: QueryClient;
 	export let view: any;
 
 	let composerInstance;
@@ -16,7 +14,7 @@
 		const module = await import(`./Composer.svelte`);
 		composerInstance = new module.default({
 			target: element,
-			props: { composer: view, queryClient }
+			props: { composer: view }
 		});
 	}
 

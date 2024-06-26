@@ -13,7 +13,8 @@
     "api:start": "npx turbo run start --filter=api"
   },
   "devDependencies": {
-    "turbo": "^2.0.4"
+    "turbo": "^2.0.4",
+    "vite-plugin-tailwind-purgecss": "^0.3.3"
   },
   "engines": {
     "node": ">=20.12.2"

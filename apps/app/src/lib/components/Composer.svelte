@@ -27,7 +27,7 @@
 	}
 
 	export let composer: IComposer;
-	export let queryClient;
+	let queryClient;
 
 	let layoutStyle = '';
 	let unsubscribers = [];
