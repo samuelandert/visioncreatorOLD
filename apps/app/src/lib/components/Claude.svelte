@@ -5,6 +5,7 @@
 	let computerShipCounts = { 1: 4, 2: 3, 3: 2, 4: 1, 5: 1 };
 	let playerTurn = true;
 	let gameOver = false;
+	let winner = null; // Added winner variable to track the winner
 
 	// Randomly place ships on both boards
 	function placeShips(board, shipCounts) {
@@ -66,6 +67,7 @@
 
 			if (isGameOver(computerShipCounts)) {
 				gameOver = true;
+				winner = 'player'; // Set the winner as player
 			}
 		}
 
@@ -103,6 +105,7 @@
 
 				if (isGameOver(playerShipCounts)) {
 					gameOver = true;
+					winner = 'computer'; // Set the winner as computer
 				}
 			}
 
@@ -124,6 +127,7 @@
 		computerShipCounts = { 1: 3, 2: 2, 3: 1, 4: 1 };
 		playerTurn = true;
 		gameOver = false;
+		winner = null; // Reset the winner
 
 		placeShips(playerBoard, playerShipCounts);
 		placeShips(computerBoard, computerShipCounts);
@@ -136,7 +140,7 @@
 	<h2 class="mb-4 text-2xl">Battleships</h2>
 	{#if gameOver}
 		<div class="p-8 text-6xl text-white rounded-lg result-message bg-primary-500">
-			{isGameOver(playerShipCounts) ? 'Computer wins!' : 'You win!'}
+			{winner === 'player' ? 'You win!' : 'Computer wins!'}
 		</div>
 	{:else}
 		<div class="flex justify-center mb-4">
