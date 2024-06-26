@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { view as initialView } from '$lib/views/Countries';
+	import { view as initialView } from '$lib/views/Default';
 	import { writable } from 'svelte/store';
 
 	let selectedChildren = { ...initialView.children[0] };
@@ -30,7 +30,7 @@
 	<div class="w-48 h-full overflow-auto">
 		{#each $components as component}
 			<button
-				class="block w-full p-2 text-left hover:bg-gray-200"
+				class="block w-full p-1 text-left hover:bg-gray-200"
 				on:click={() => updateChildren(component.value, selectedChildren.slot)}
 			>
 				{component.name}
