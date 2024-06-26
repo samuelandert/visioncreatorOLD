@@ -26,8 +26,9 @@
 	}
 </script>
 
-<!-- <div class="flex w-screen h-screen p-10">
-	<div class="w-48 h-full overflow-auto">
+<!-- 
+<div class="flex w-full h-full p-10">
+	<div class="w-48 h-full overflow-y-scroll">
 		{#each $components as component}
 			<button
 				class="block w-full p-1 text-left hover:bg-gray-200"
@@ -38,9 +39,7 @@
 		{/each}
 	</div>
 
-	<div class="w-full h-full overflow-auto">
-		<ComposeView {view} />
-	</div>
-</div> -->
-
+	<div class="w-full h-full"> -->
 <ComposeView {view} />
+<!-- </div>
+</div> -->

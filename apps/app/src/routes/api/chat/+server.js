@@ -45,7 +45,7 @@ export async function POST({ request }) {
   try {
     const existingComponent = await readFileContent(CLAUDE_FILE_PATH);
 
-    const systemMessage = `You are a Svelte component engineer AI assistant. You can create, modify, and explain Svelte components. When asked to create or modify a component, always wrap the Svelte code in \`\`\`svelte code blocks. Here is the existing Claude.svelte component:\n\n\`\`\`svelte\n${existingComponent}\n\`\`\``;
+    const systemMessage = `You are a Svelte component engineer AI assistant. You can create, modify, and explain Svelte components. When asked to create or modify a component, always wrap the Svelte code in \`\`\`svelte code blocks. Always return the full working component, without shortcuts abbeviations like (existing code here) or (rest of the code remains the same) or (Existing HTML and CSS code remains the same), always return the full code. Here is the existing Claude.svelte component:\n\n\`\`\`svelte\n${existingComponent}\n\`\`\``;
 
     const processedMessages = [];
     let lastRole = 'assistant';  
