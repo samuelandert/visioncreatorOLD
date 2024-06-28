@@ -1,120 +1,149 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { writable } from 'svelte/store';
 
-	let apartments = [];
-	let featuredApartment = null;
+	interface Transaction {
+		id: string;
+		date: Date;
+		description: string;
+		amount: number;
+		type: 'income' | 'expense';
+		category: string;
+	}
 
-	const generateData = (count: number) =>
-		Array.from({ length: count }, () => ({
-			id: Math.random().toString(36).substring(2, 9),
-			title: `${getRandomName()} ${getApartmentType()}`,
-			description: getApartmentDescription(),
-			price: `$${Math.floor(Math.random() * 500) + 100}/night`,
-			beds: Math.floor(Math.random() * 4) + 1,
-			baths: Math.floor(Math.random() * 3) + 1,
-			sqft: Math.floor(Math.random() * 1500) + 500,
-			imageUrl: `https://picsum.photos/1080/1920?random=${Math.random()
-				.toString(36)
-				.substring(2, 9)}`
-		}));
+	const balance = writable(0);
+	let transactions: Transaction[] = [];
 
-	const getRandomName = () => {
-		const names = [
-			'Serene Meadows',
-			'Coastal Breeze',
-			'Meadowbrook',
-			'Sunset Ridge',
-			'Oakwood',
-			'Riverview',
-			'Hillcrest',
-			'Parkside',
-			'Willow Glen',
-			'Cypress Grove',
-			'Serenity Oaks',
-			'Tranquil Pines',
-			'Stillwater Springs',
-			'Sundance Palms',
-			'Whispering Cedars',
-			'Sycamore Haven',
-			'Waterfall Valley',
-			'Mariposa Meadows',
-			'Serena Shores',
-			'Sapphire Cove',
-			'Azure Bay',
-			'Hidden Cove',
-			'Emerald Isle',
-			'Seaside Retreat',
-			'Ocean Mist'
-		];
-		return names[Math.floor(Math.random() * names.length)];
-	};
-
-	const getApartmentType = () => {
-		const types = [
-			'Apartment',
-			'Condo',
-			'Loft',
-			'Penthouse',
-			'Suite',
-			'Flat',
-			'Villa',
-			'Residence'
-		];
-		return types[Math.floor(Math.random() * types.length)];
-	};
-
-	const getApartmentDescription = () => {
+	function generateRandomTransactions(count: number): Transaction[] {
 		const descriptions = [
-			'Enjoy a luxurious stay in this beautifully furnished apartment with stunning city views.',
-			'Relax in this modern and stylish condo, perfect for a comfortable and convenient stay.',
-			'Experience the charm of this cozy loft, ideally located in the heart of the city.',
-			'Indulge in the ultimate luxury of this penthouse apartment with breathtaking panoramic views.',
-			'Unwind in this spacious and well-appointed suite, designed for your utmost comfort.',
-			'Discover the perfect blend of comfort and style in this elegant flat, beautifully renovated.',
-			'Escape to this private villa, offering a tranquil oasis with all the amenities you desire.',
-			'Enjoy the convenience and comfort of this modern residence, ideal for both short and long-term stays.'
+			'Grocery shopping',
+			'Salary deposit',
+			'Rent payment',
+			'Utility bill',
+			'Restaurant dinner',
+			'Online purchase',
+			'ATM withdrawal',
+			'Transfer from savings',
+			'Subscription fee',
+			'Refund'
 		];
-		return descriptions[Math.floor(Math.random() * descriptions.length)];
-	};
+
+		const categories = [
+			'Food & Dining',
+			'Income',
+			'Housing',
+			'Utilities',
+			'Entertainment',
+			'Shopping',
+			'Cash',
+			'Transfer',
+			'Subscriptions',
+			'Refund'
+		];
+
+		return Array.from({ length: count }, () => ({
+			id: Math.random().toString(36).substr(2, 9),
+			date: new Date(Date.now() - Math.floor(Math.random() * 30 * 24 * 60 * 60 * 1000)),
+			description: descriptions[Math.floor(Math.random() * descriptions.length)],
+			amount: parseFloat((Math.random() * 1000 - 500).toFixed(2)),
+			type: Math.random() > 0.5 ? 'income' : 'expense',
+			category: categories[Math.floor(Math.random() * categories.length)]
+		}));
+	}
 
 	onMount(() => {
-		featuredApartment = generateData(1)[0];
-		apartments = generateData(10);
+		transactions = generateRandomTransactions(20).sort((a, b) => b.date.getTime() - a.date.getTime());
+		balance.set(transactions.reduce((sum, t) => sum + t.amount, 1000));
 	});
+
+	function formatCurrency(amount: number): string {
+		return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+	}
+
+	function formatRelativeTime(date: Date): string {
+		const now = new Date();
+		const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+		if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`;
+		if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+		if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+		if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} days ago`;
+		if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 604800)} weeks ago`;
+		if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)} months ago`;
+		return `${Math.floor(diffInSeconds / 31536000)} years ago`;
+	}
+
+	function sendMoney() {
+		const amount = parseFloat(prompt('Enter the amount to send:') || '0');
+		if (isNaN(amount) || amount <= 0) {
+			alert('Please enter a valid positive number.');
+			return;
+		}
+
+		let currentBalance: number;
+		balance.subscribe((value) => {
+			currentBalance = value;
+		})();
+
+		if (amount > currentBalance) {
+			alert('Insufficient funds. You cannot send more than your current balance.');
+			return;
+		}
+
+		const newTransaction: Transaction = {
+			id: Math.random().toString(36).substr(2, 9),
+			date: new Date(),
+			description: 'Money sent',
+			amount: -amount,
+			type: 'expense',
+			category: 'Transfer'
+		};
+
+		transactions = [newTransaction, ...transactions];
+		balance.update((b) => b - amount);
+	}
 </script>
 
-<div class="w-full h-full overflow-y-scroll text-surface-800">
-	{#if featuredApartment}
-		<div class="relative">
-			<img
-				src={featuredApartment.imageUrl}
-				alt="Featured Apartment"
-				class="object-cover w-full h-96"
-			/>
-			<div class="absolute top-0 left-0 p-4 bg-white bg-opacity-75 rounded-lg shadow-lg">
-				<h2 class="text-2xl font-bold text-surface-800">{featuredApartment.title}</h2>
-				<p class="text-gray-500">{featuredApartment.description}</p>
-			</div>
-		</div>
-	{/if}
+<div class="flex flex-col w-full h-full overflow-hidden text-gray-800 bg-gray-100">
+	<div class="p-6 mb-6 text-center text-white bg-blue-600">
+		<h1 class="mb-2 text-2xl font-bold">Current Balance</h1>
+		<p class="text-6xl font-bold">{formatCurrency($balance)}</p>
+	</div>
 
-	<div class="p-4 text-surface-800">
-		<h2 class="mb-4 text-2xl font-bold">Available Properties</h2>
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-			{#each apartments as apartment (apartment.id)}
-				<div class="overflow-hidden bg-white rounded-lg shadow-md">
-					<img src={apartment.imageUrl} alt="Apartment" class="object-cover w-full h-48" />
-					<div class="p-4">
-						<h3 class="mb-2 text-lg font-bold text-surface-800">{apartment.title}</h3>
-						<p class="text-gray-600">{apartment.description}</p>
-						<div class="mt-4 text-lg font-bold text-surface-800">{apartment.price}</div>
-						<div class="mt-2 text-sm text-gray-500">
-							<span>{apartment.beds} Bed</span> | <span>{apartment.baths} Bath</span> |
-							<span>{apartment.sqft} Sq Ft</span>
-						</div>
+	<div class="flex-grow px-6 overflow-y-auto">
+		<h2 class="mb-4 text-xl font-bold">Recent Transactions</h2>
+		<div class="bg-white rounded-lg shadow">
+			{#each transactions as transaction (transaction.id)}
+				<div class="flex items-center justify-between p-4 border-b border-gray-200">
+					<div class="flex-grow">
+						<p class="font-semibold">{transaction.description}</p>
+						<p class="text-xs text-gray-400">{transaction.category}</p>
+					</div>
+					<div class="flex flex-col items-end">
+						<p
+							class="{transaction.type === 'income'
+								? 'text-green-600'
+								: 'text-red-600'} font-bold text-xl"
+						>
+							{transaction.type === 'income' ? '+' : '-'}{formatCurrency(
+								Math.abs(transaction.amount)
+							)}
+						</p>
+						<p class="text-xs text-gray-400">{formatRelativeTime(transaction.date)}</p>
 					</div>
 				</div>
 			{/each}
+		</div>
+	</div>
+
+	<div class="p-4 bg-blue-600">
+		<div class="max-w-md mx-auto">
+			<button
+				on:click={sendMoney}
+				class="w-full px-4 py-2 font-semibold text-white transition duration-300 bg-blue-800 rounded-full hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-opacity-50"
+			>
+				Send Money
+			</button>
 		</div>
 	</div>
 </div>

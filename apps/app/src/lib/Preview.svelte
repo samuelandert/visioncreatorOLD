@@ -26,6 +26,28 @@
 	function updateChildren(component, slot) {
 		view.children = [{ ...selectedChildren, component, slot }];
 	}
+
+	async function saveComponent() {
+		let name = prompt('Enter the name for the new component:');
+		if (!name) return;
+
+		name = name.charAt(0).toUpperCase() + name.slice(1);
+
+		const response = await fetch('/api/save-component', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ name })
+		});
+
+		if (response.ok) {
+			alert('Component saved successfully!');
+			loadComponentNames(); // Refresh the component list
+		} else {
+			alert('Error saving component.');
+		}
+	}
 </script>
 
 <div class="flex w-full h-full">
@@ -38,8 +60,15 @@
 				{component.name}
 			</button>
 		{/each}
+		<button
+			on:click={saveComponent}
+			type="submit"
+			class="w-full p-2 rounded-full text-surface-800 bg-primary-500">Save</button
+		>
 	</div>
-	<div class="w-full h-full">
-		<ComposeView {view} />
+	<div class="w-full h-full p-4 bg-surface-900">
+		<div class="w-full h-full overflow-hidden rounded-2xl">
+			<ComposeView {view} />
+		</div>
 	</div>
 </div>

@@ -2,6 +2,7 @@
 	import { chatWithClaude } from '$lib/api';
 	import SvelteMarkdown from 'svelte-markdown';
 	import Preview from '$lib/Preview.svelte';
+	import { onMount } from 'svelte';
 
 	interface Message {
 		role: 'user' | 'assistant' | 'system';
@@ -13,6 +14,7 @@
 	let isLoading = false;
 	let componentCode = '';
 	let showSidebar = true; // Boolean to control sidebar visibility
+	let messageContainer: HTMLDivElement;
 
 	function extractSvelteCode(text: string): string {
 		const codeMatch = text.match(/```svelte\n([\s\S]*?)\n```/);
@@ -26,6 +28,13 @@
 		messages = [...messages, userMessage];
 		isLoading = true;
 
+		// Clear input field and reset its height immediately
+		userInput = '';
+		const textarea = document.querySelector('textarea');
+		if (textarea) {
+			textarea.style.height = 'auto';
+		}
+
 		try {
 			const assistantResponse = await chatWithClaude(messages);
 			messages = [...messages, { role: 'assistant', content: assistantResponse }];
@@ -38,7 +47,6 @@
 		}
 
 		isLoading = false;
-		userInput = '';
 	}
 
 	async function writeSvelteCodeToFile(svelteCode: string) {
@@ -57,6 +65,16 @@
 			console.error('Error writing Svelte code to file:', error);
 		}
 	}
+
+	function scrollToBottom() {
+		if (messageContainer) {
+			messageContainer.scrollTop = messageContainer.scrollHeight;
+		}
+	}
+
+	onMount(() => {
+		scrollToBottom();
+	});
 </script>
 
 <main class="flex flex-col w-screen h-screen">
@@ -65,15 +83,22 @@
 			<h1 class="px-4 pt-4 ml-2 text-2xl font-bold">SvelteAI</h1>
 			{#if showSidebar}
 				<div class="flex flex-col flex-1 p-4 overflow-hidden">
-					<div class="flex-1 p-4 mb-4 overflow-y-auto rounded bg-surface-700 text-tertiary-200">
+					<div
+						class="flex-1 p-4 mb-4 overflow-y-auto rounded bg-surface-700 text-tertiary-200"
+						bind:this={messageContainer}
+						on:DOMNodeInserted={scrollToBottom}
+					>
 						{#each messages as message}
 							<div class="mb-2">
-								<strong>{message.role === 'user' ? 'You:' : 'AI:'}</strong>
+								<strong>{message.role === 'user' ? 'You:' : 'Assistant:'}</strong>
 								<SvelteMarkdown source={message.content} />
 							</div>
 						{/each}
 						{#if isLoading}
-							<p>Building...</p>
+							<div class="mb-2">
+								<strong>Assistant:</strong>
+								<p>Building...</p>
+							</div>
 						{/if}
 					</div>
 
@@ -87,8 +112,18 @@
 								e.target.style.height = 'auto';
 								e.target.style.height = e.target.scrollHeight + 'px';
 							}}
+							on:keydown={(e) => {
+								if (e.key === 'Enter' && !e.shiftKey) {
+									e.preventDefault();
+									handleSubmit();
+								}
+							}}
 						/>
-						<button type="submit" class="p-2 text-white rounded-r bg-primary-500">Send</button>
+						<button
+							type="submit"
+							class="p-2 text-white rounded-r bg-primary-500"
+							style="height: 40px;">Send</button
+						>
 					</form>
 				</div>
 			{/if}
