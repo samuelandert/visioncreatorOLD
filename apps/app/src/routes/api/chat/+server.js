@@ -47,7 +47,7 @@ export async function POST({ request }) {
     const existingComponent = await readFileContent(CLAUDE_FILE_PATH);
     const artifactsContent = await readFileContent(ARTIFACTS_FILE_PATH);
 
-    const systemMessage = `${artifactsContent}\n\nHere is the existing Claude.svelte component:\n\n\`\`\`svelte\n${existingComponent}\n\`\`\``;
+    const systemMessage = `${artifactsContent}\n\nHere is our existing component:\n\n\`\`\`svelte\n${existingComponent}\n\`\`\``;
     const processedMessages = [];
     let lastRole = 'assistant';  
 
@@ -67,13 +67,11 @@ export async function POST({ request }) {
     }
 
     const response = await anthropic.messages.create({
-      model: "claude-3-sonnet-20240229",
+      model: "claude-3-5-sonnet-20240620",
       max_tokens: 4000,
       messages: processedMessages,
       system: systemMessage,
     });
-
-    console.log("--------------response---------", response.content[0].text);
 
     const assistantMessage = response.content[0].text;
 

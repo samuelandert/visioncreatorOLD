@@ -37,9 +37,9 @@
 				{component.name}
 			</button>
 		{/each}
-	</div>
-
-	<div class="w-full h-full"> -->
-<ComposeView {view} />
-<!-- </div>
-</div> -->
+	</div> 
+</div>
+-->
+<div class="w-full h-full">
+	<ComposeView {view} />
+</div>
