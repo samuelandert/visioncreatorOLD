@@ -83,7 +83,7 @@
 	});
 </script>
 
-<div class="w-full h-full overflow-scroll">
+<div class="w-full h-full overflow-y-scroll text-surface-800">
 	{#if featuredApartment}
 		<div class="relative">
 			<img
@@ -93,12 +93,12 @@
 			/>
 			<div class="absolute top-0 left-0 p-4 bg-white bg-opacity-75 rounded-lg shadow-lg">
 				<h2 class="text-2xl font-bold text-surface-800">{featuredApartment.title}</h2>
-				<p>{featuredApartment.description}</p>
+				<p class="text-gray-500">{featuredApartment.description}</p>
 			</div>
 		</div>
 	{/if}
 
-	<div class="p-4">
+	<div class="p-4 text-surface-800">
 		<h2 class="mb-4 text-2xl font-bold">Available Properties</h2>
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 			{#each apartments as apartment (apartment.id)}

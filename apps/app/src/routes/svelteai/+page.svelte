@@ -61,13 +61,13 @@
 
 <main class="flex flex-col w-screen h-screen">
 	<div class="flex flex-1 overflow-hidden">
-		<div class="flex flex-col h-full min-w-96">
+		<div class="flex flex-col w-1/4 h-full">
 			<h1 class="px-4 pt-4 ml-2 text-2xl font-bold">SvelteAI</h1>
 			{#if showSidebar}
 				<div class="flex flex-col flex-1 p-4 overflow-hidden">
-					<div class="flex-1 p-4 mb-4 overflow-y-auto rounded bg-tertiary-300 text-surface-700">
+					<div class="flex-1 p-4 mb-4 overflow-y-auto rounded bg-surface-700 text-tertiary-200">
 						{#each messages as message}
-							<div class="mb-4">
+							<div class="mb-2">
 								<strong>{message.role === 'user' ? 'You:' : 'AI:'}</strong>
 								<SvelteMarkdown source={message.content} />
 							</div>
@@ -77,12 +77,16 @@
 						{/if}
 					</div>
 
-					<form on:submit|preventDefault={handleSubmit} class="sticky bottom-0 flex p-2 bg-white">
-						<input
-							type="text"
+					<form on:submit|preventDefault={handleSubmit} class="sticky bottom-0 flex">
+						<textarea
 							bind:value={userInput}
 							placeholder="Type your message..."
-							class="flex-grow p-2 border-0 rounded-l text-surface-800"
+							class="flex-grow p-2 border-0 rounded-l resize-none text-tertiary-200 bg-surface-700"
+							rows="1"
+							on:input={(e) => {
+								e.target.style.height = 'auto';
+								e.target.style.height = e.target.scrollHeight + 'px';
+							}}
 						/>
 						<button type="submit" class="p-2 text-white rounded-r bg-primary-500">Send</button>
 					</form>

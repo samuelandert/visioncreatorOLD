@@ -12,7 +12,9 @@
 		const componentNames = [];
 		for (const path in componentFiles) {
 			const name = path.split('/').pop().replace('.svelte', '');
-			componentNames.push({ name, value: name });
+			if (name.startsWith('o-') || name === 'Claude') {
+				componentNames.push({ name, value: name });
+			}
 		}
 		components.set(componentNames);
 	}
@@ -26,9 +28,8 @@
 	}
 </script>
 
-<!-- 
-<div class="flex w-full h-full p-10">
-	<div class="w-48 h-full overflow-y-scroll">
+<div class="flex w-full h-full">
+	<div class="w-48 h-full py-10 pr-5 overflow-y-scroll bg-surface-900">
 		{#each $components as component}
 			<button
 				class="block w-full p-1 text-left hover:bg-gray-200"
@@ -37,9 +38,8 @@
 				{component.name}
 			</button>
 		{/each}
-	</div> 
-</div>
--->
-<div class="w-full h-full">
-	<ComposeView {view} />
+	</div>
+	<div class="w-full h-full">
+		<ComposeView {view} />
+	</div>
 </div>
