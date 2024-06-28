@@ -7,14 +7,16 @@
 	interface Message {
 		role: 'user' | 'assistant' | 'system';
 		content: string;
+		image?: string;
 	}
 
 	let messages: Message[] = [];
 	let userInput = '';
 	let isLoading = false;
 	let componentCode = '';
-	let showSidebar = true; // Boolean to control sidebar visibility
+	let showSidebar = true;
 	let messageContainer: HTMLDivElement;
+	let imageFile: File | null = null;
 
 	function extractSvelteCode(text: string): string {
 		const codeMatch = text.match(/```svelte\n([\s\S]*?)\n```/);
@@ -22,14 +24,20 @@
 	}
 
 	async function handleSubmit() {
-		if (!userInput.trim()) return;
+		if (!userInput.trim() && !imageFile) return;
 
-		const userMessage: Message = { role: 'user', content: userInput };
+		let userMessage: Message = { role: 'user', content: userInput };
+
+		if (imageFile) {
+			const base64Image = await fileToBase64(imageFile);
+			userMessage.image = base64Image;
+		}
+
 		messages = [...messages, userMessage];
 		isLoading = true;
 
-		// Clear input field and reset its height immediately
 		userInput = '';
+		imageFile = null;
 		const textarea = document.querySelector('textarea');
 		if (textarea) {
 			textarea.style.height = 'auto';
@@ -47,6 +55,15 @@
 		}
 
 		isLoading = false;
+	}
+
+	async function fileToBase64(file: File): Promise<string> {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = () => resolve(reader.result as string);
+			reader.onerror = reject;
+			reader.readAsDataURL(file);
+		});
 	}
 
 	async function writeSvelteCodeToFile(svelteCode: string) {
@@ -75,6 +92,13 @@
 	onMount(() => {
 		scrollToBottom();
 	});
+
+	function handleFileChange(event: Event) {
+		const target = event.target as HTMLInputElement;
+		if (target.files) {
+			imageFile = target.files[0];
+		}
+	}
 </script>
 
 <main class="flex flex-col w-screen h-screen">
@@ -91,6 +115,9 @@
 						{#each messages as message}
 							<div class="mb-2">
 								<strong>{message.role === 'user' ? 'You:' : 'Assistant:'}</strong>
+								{#if message.image}
+									<img src={message.image} alt="Uploaded image" class="h-auto max-w-full mb-2" />
+								{/if}
 								<SvelteMarkdown source={message.content} />
 							</div>
 						{/each}
@@ -102,28 +129,41 @@
 						{/if}
 					</div>
 
-					<form on:submit|preventDefault={handleSubmit} class="sticky bottom-0 flex">
-						<textarea
-							bind:value={userInput}
-							placeholder="Type your message..."
-							class="flex-grow p-2 border-0 rounded-l resize-none text-tertiary-200 bg-surface-700"
-							rows="1"
-							on:input={(e) => {
-								e.target.style.height = 'auto';
-								e.target.style.height = e.target.scrollHeight + 'px';
-							}}
-							on:keydown={(e) => {
-								if (e.key === 'Enter' && !e.shiftKey) {
-									e.preventDefault();
-									handleSubmit();
-								}
-							}}
-						/>
-						<button
-							type="submit"
-							class="p-2 text-white rounded-r bg-primary-500"
-							style="height: 40px;">Send</button
-						>
+					<form on:submit|preventDefault={handleSubmit} class="sticky bottom-0 flex flex-col">
+						<div class="flex mb-2">
+							<textarea
+								bind:value={userInput}
+								placeholder="Type your message..."
+								class="flex-grow p-2 border-0 rounded-l resize-none text-tertiary-200 bg-surface-700"
+								rows="1"
+								on:input={(e) => {
+									e.target.style.height = 'auto';
+									e.target.style.height = e.target.scrollHeight + 'px';
+								}}
+								on:keydown={(e) => {
+									if (e.key === 'Enter' && !e.shiftKey) {
+										e.preventDefault();
+										handleSubmit();
+									}
+								}}
+							/>
+							<button
+								type="submit"
+								class="p-2 text-white rounded-r bg-primary-500"
+								style="height: 40px;">Send</button
+							>
+						</div>
+						<div class="flex items-center">
+							<input
+								type="file"
+								accept="image/*"
+								on:change={handleFileChange}
+								class="flex-grow p-2 border-0 rounded text-tertiary-200 bg-surface-700"
+							/>
+							{#if imageFile}
+								<span class="ml-2 text-tertiary-200">{imageFile.name}</span>
+							{/if}
+						</div>
 					</form>
 				</div>
 			{/if}

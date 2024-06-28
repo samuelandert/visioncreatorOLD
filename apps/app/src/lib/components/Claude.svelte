@@ -1,140 +1,95 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { writable } from 'svelte/store';
+  import { onMount } from 'svelte';
+  import { writable } from 'svelte/store';
 
-	interface Person {
-		id: string;
-		name: string;
-		age: number;
-		bio: string;
-		imageUrl: string;
-	}
+  interface Transaction {
+    id: string;
+    date: Date;
+    description: string;
+    amount: number;
+    type: 'income' | 'expense';
+  }
 
-	const people = writable<Person[]>([]);
-	const favorites = writable<Person[]>([]);
-	let currentView = writable('dating');
+  const balance = writable(2640.24);
+  const secondaryBalance = writable(368.00);
+  let transactions: Transaction[] = [];
 
-	function generateRandomPerson(): Person {
-		const names = [
-			'Alice',
-			'Bob',
-			'Charlie',
-			'Diana',
-			'Ethan',
-			'Fiona',
-			'George',
-			'Hannah',
-			'Ian',
-			'Julia'
-		];
-		return {
-			id: Math.random().toString(36).substring(2, 9),
-			name: names[Math.floor(Math.random() * names.length)],
-			age: Math.floor(Math.random() * 20) + 20,
-			bio: `I love ${
-				['hiking', 'reading', 'traveling', 'cooking', 'photography'][Math.floor(Math.random() * 5)]
-			}!`,
-			imageUrl: `/api/placeholder/1080/1920?random=${Math.random().toString(36).substring(2, 9)}`
-		};
-	}
+  onMount(() => {
+    transactions = [
+      { id: '1', date: new Date(), description: 'Receive payment', amount: 24.00, type: 'income' },
+      { id: '2', date: new Date(), description: 'Amazon payment', amount: 50.00, type: 'expense' },
+      { id: '3', date: new Date(), description: 'PayPal payment', amount: 16.00, type: 'expense' },
+    ];
+  });
 
-	onMount(() => {
-		people.set(Array.from({ length: 10 }, generateRandomPerson));
-	});
-
-	function dislikePerson() {
-		people.update((currentPeople) => currentPeople.slice(1));
-	}
-
-	function likePerson() {
-		people.update((currentPeople) => {
-			const [likedPerson, ...rest] = currentPeople;
-			favorites.update((currentFavorites) => [...currentFavorites, likedPerson]);
-			return rest;
-		});
-	}
+  function formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+  }
 </script>
 
-<div class="flex flex-col w-full h-full bg-gray-100">
-	<div class="bg-white shadow">
-		<div class="container px-4 mx-auto">
-			<div class="flex justify-center">
-				<button
-					class="px-4 py-2 font-semibold {$currentView === 'dating'
-						? 'text-blue-600 border-b-2 border-blue-600'
-						: 'text-gray-600'}"
-					on:click={() => currentView.set('dating')}
-				>
-					Dating
-				</button>
-				<button
-					class="px-4 py-2 font-semibold {$currentView === 'favorites'
-						? 'text-blue-600 border-b-2 border-blue-600'
-						: 'text-gray-600'}"
-					on:click={() => currentView.set('favorites')}
-				>
-					Favorites
-				</button>
-			</div>
-		</div>
-	</div>
-
-	<div class="relative flex-grow overflow-hidden">
-		{#if $currentView === 'dating'}
-			<div class="relative w-full h-full">
-				{#if $people.length > 0}
-					<img src={$people[0].imageUrl} alt={$people[0].name} class="object-cover w-full h-full" />
-					<div class="absolute bottom-0 left-0 right-0">
-						<div class="p-4 bg-black bg-opacity-50">
-							<h2 class="text-2xl font-semibold text-surface-800">
-								{$people[0].name}, {$people[0].age}
-							</h2>
-							<p class="text-gray-600">{$people[0].bio}</p>
-						</div>
-						<div class="flex justify-center p-4 bg-black bg-opacity-50">
-							<button
-								on:click={dislikePerson}
-								class="p-4 mx-2 text-white transition duration-300 bg-red-500 rounded-full shadow-lg hover:bg-red-600"
-							>
-								✖
-							</button>
-							<button
-								on:click={likePerson}
-								class="p-4 mx-2 text-white transition duration-300 bg-green-500 rounded-full shadow-lg hover:bg-green-600"
-							>
-								❤
-							</button>
-						</div>
-					</div>
-				{:else}
-					<div class="flex items-center justify-center h-full">
-						<p class="text-xl text-gray-600">No more people to show!</p>
-					</div>
-				{/if}
-			</div>
-		{:else}
-			<div class="h-full overflow-y-auto">
-				<div class="container px-4 py-8 mx-auto">
-					<h2 class="mb-4 text-2xl font-semibold text-surface-800">Your Favorites</h2>
-					{#if $favorites.length > 0}
-						<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-							{#each $favorites as person}
-								<div class="relative h-64 overflow-hidden rounded-lg shadow-md">
-									<img src={person.imageUrl} alt={person.name} class="object-cover w-full h-full" />
-									<div class="absolute bottom-0 left-0 right-0 p-4 bg-black bg-opacity-50">
-										<h3 class="text-lg font-semibold text-surface-800">
-											{person.name}, {person.age}
-										</h3>
-										<p class="text-gray-600">{person.bio}</p>
-									</div>
-								</div>
-							{/each}
-						</div>
-					{:else}
-						<p class="text-gray-600">You haven't liked anyone yet!</p>
-					{/if}
-				</div>
-			</div>
-		{/if}
-	</div>
+<div class="flex flex-col w-full h-full overflow-hidden text-gray-800 bg-yellow-300">
+  <div class="p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold">Hello, Alexander 👋</h1>
+      <button class="text-2xl">🔔</button>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+      <div class="flex justify-between items-center mb-2">
+        <span class="font-bold">BVC</span>
+        <span class="font-bold">VISA</span>
+      </div>
+      <div class="mb-2">
+        <span class="text-sm">Available balance</span>
+        <h2 class="text-3xl font-bold">{formatCurrency($balance)}</h2>
+      </div>
+      <span class="text-sm text-gray-500">Card 5679****</span>
+    </div>
+    
+    <div class="bg-gray-100 rounded-lg p-4 mb-4">
+      <div class="flex items-center">
+        <span class="mr-2">💰</span>
+        <div>
+          <span class="text-sm">Saving Goal</span>
+          <p class="font-semibold">$249.24 from $2,640.24</p>
+        </div>
+      </div>
+    </div>
+    
+    <h3 class="font-bold mb-2">Recently Payment</h3>
+    <div class="bg-white rounded-lg shadow-md">
+      {#each transactions as transaction}
+        <div class="flex justify-between items-center p-4 border-b border-gray-200">
+          <div>
+            <p class="font-semibold">{transaction.description}</p>
+            <p class="text-xs text-gray-400">today, 12:40</p>
+          </div>
+          <span class="{transaction.type === 'income' ? 'text-green-600' : 'text-red-600'} font-bold">
+            {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
+          </span>
+        </div>
+      {/each}
+    </div>
+  </div>
+  
+  <div class="mt-auto p-4 bg-white">
+    <div class="flex justify-around">
+      <button class="flex flex-col items-center">
+        <span class="text-2xl">🏠</span>
+        <span class="text-xs">Home</span>
+      </button>
+      <button class="flex flex-col items-center">
+        <span class="text-2xl">💳</span>
+        <span class="text-xs">Card</span>
+      </button>
+      <button class="flex flex-col items-center">
+        <span class="text-2xl">🔄</span>
+        <span class="text-xs">Transfer</span>
+      </button>
+      <button class="flex flex-col items-center">
+        <span class="text-2xl">👤</span>
+        <span class="text-xs">Profile</span>
+      </button>
+    </div>
+  </div>
 </div>
