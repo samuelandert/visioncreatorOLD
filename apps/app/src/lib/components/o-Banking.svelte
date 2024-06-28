@@ -52,7 +52,9 @@
 	}
 
 	onMount(() => {
-		transactions = generateRandomTransactions(20).sort((a, b) => b.date.getTime() - a.date.getTime());
+		transactions = generateRandomTransactions(20).sort(
+			(a, b) => b.date.getTime() - a.date.getTime()
+		);
 		balance.set(transactions.reduce((sum, t) => sum + t.amount, 1000));
 	});
 
