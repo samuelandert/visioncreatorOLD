@@ -24,7 +24,8 @@ export default defineConfig({
 	],
 	build: {
 		rollupOptions: {
-			preserveEntrySignatures: 'strict'
+			preserveEntrySignatures: 'strict',
+			external: ['@anthropic-ai/sdk']
 		}
 	},
 	test: {
