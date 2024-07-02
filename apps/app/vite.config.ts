@@ -25,7 +25,7 @@ export default defineConfig({
 	build: {
 		rollupOptions: {
 			preserveEntrySignatures: 'strict',
-			external: ['@anthropic-ai/sdk']
+			external: ['@anthropic-ai/sdk', 'svelte-markdown'] // Added 'svelte-markdown' here
 		}
 	},
 	test: {
