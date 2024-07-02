@@ -16,14 +16,29 @@ export default createOperation.mutation({
         }
         console.log('Authorization successful');
 
-        const { data, error } = await context.supabase
-            .from('profiles')
-            .update({ full_name: input.full_name, active: true })
-            .eq('id', input.id)
-            .select();
+        const retryCount = 3;
+        let attempt = 0;
+        let success = false;
+        let data, error;
 
-        if (error) {
-            console.error(`Error: ${error.message}`);
+        while (attempt < retryCount && !success) {
+            attempt++;
+            const { data: updateData, error: updateError } = await context.supabase
+                .from('profiles')
+                .update({ full_name: input.full_name, active: true })
+                .eq('id', input.id)
+                .select();
+
+            if (updateError) {
+                console.error(`Attempt ${attempt} - Error: ${updateError.message}`);
+                error = updateError;
+            } else {
+                data = updateData;
+                success = true;
+            }
+        }
+
+        if (!success) {
             return { success: false, error: error.message };
         }
 

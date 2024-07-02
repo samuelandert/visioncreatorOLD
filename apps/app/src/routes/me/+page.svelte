@@ -20,31 +20,24 @@
 			!supabaseMe.data.user?.user_metadata.inviter &&
 			!supabaseMe.data.user?.user_metadata.full_name
 		) {
-			const { data, error } = await supabase.auth.updateUser({
-				data: { inviter: $futureMe.visionid, full_name: $futureMe.name || 'MyName' }
-			});
-			$updateNameMutation.mutateAsync({
-				id: session.user.id,
-				full_name: $futureMe.name || 'MyName'
-			});
-			$createInviteMutation.mutateAsync({
-				invitee: session.user.id,
-				inviter: $futureMe.visionid
-			});
+			try {
+				const { data, error } = await supabase.auth.updateUser({
+					data: { inviter: $futureMe.visionid, full_name: $futureMe.name || 'MyName' }
+				});
+				if (error) throw error;
 
-			// //Subscribe Newsletter
-			// const formData = new URLSearchParams();
-			// formData.append('l', 'eebca037-e9d6-4ef6-ac48-1eaeb5a80e33');
-			// formData.append('email', supabaseMe.data.user.email);
-			// formData.append('name', $futureMe.name);
+				await $updateNameMutation.mutateAsync({
+					id: session.user.id,
+					full_name: $futureMe.name || 'MyName'
+				});
 
-			// fetch('https://listmonk.visioncreator.works/api/public/subscription', {
-			// 	method: 'POST',
-			// 	headers: {
-			// 		'Content-Type': 'application/x-www-form-urlencoded'
-			// 	},
-			// 	body: formData
-			// });
+				await $createInviteMutation.mutateAsync({
+					invitee: session.user.id,
+					inviter: $futureMe.visionid
+				});
+			} catch (error) {
+				console.error('Error during signup process:', error);
+			}
 		}
 	});
 
