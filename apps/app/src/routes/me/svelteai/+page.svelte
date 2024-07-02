@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { chatWithClaude } from '$lib/api';
 	import SvelteMarkdown from 'svelte-markdown';
 	import Preview from '$lib/Preview.svelte';
@@ -172,4 +172,4 @@
 			<Preview />
 		</div>
 	</div>
-</main>
+</main> -->
