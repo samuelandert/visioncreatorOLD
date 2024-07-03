@@ -1,6 +1,6 @@
 import { createOperation, z, AuthorizationError } from '../generated/wundergraph.factory';
 
-export default createOperation.query({
+export default createOperation.mutation({
     input: z.object({
         id: z.string(),
     }),
@@ -9,25 +9,27 @@ export default createOperation.query({
         requireMatchAll: ['authenticated'],
     },
     handler: async ({ context, input, user }) => {
+
+        console.log("this got called");
         if (input.id !== user?.customClaims?.id) {
             console.error('Authorization Error: User ID does not match.');
             throw new AuthorizationError({ message: 'User ID does not match.' });
         }
-        const { data: profiles, error } = await context.supabase
-            .from('profiles')
-            .select('id, full_name, newsletter')
-            .eq('id', input.id)
-            .single();
 
-        if (error) {
-            console.error('Error fetching user details:', error);
-            throw new Error('Failed to fetch user details');
+        const { error: updateError } = await context.supabase
+            .from('profiles')
+            .update({ newsletter: false })
+            .eq('id', input.id);
+
+        if (updateError) {
+            console.error('Error updating profile:', updateError);
+            throw new Error('Failed to update profile');
         }
 
+        console.log(`Newsletter status successfully toggled to false for user ID: ${input.id}`);
+
         return {
-            id: profiles.id,
-            full_name: profiles.full_name,
-            newsletter: profiles.newsletter
+            message: 'Newsletter status updated successfully',
         };
     },
 });

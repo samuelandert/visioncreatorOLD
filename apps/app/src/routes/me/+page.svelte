@@ -48,7 +48,6 @@
 				if (!response.ok) {
 					throw new Error(result.error || 'Failed to subscribe');
 				}
-				alert(result.message);
 			} catch (error) {
 				console.error('Error during signup process:', error);
 			}
@@ -75,6 +74,32 @@
 	const createInviteMutation = createMutation({
 		operationName: 'createInvite'
 	});
+
+	const toggleNewsletter = createMutation({
+		operationName: 'toggleNewsletter'
+	});
+
+	const handleUnsubscribe = async () => {
+		try {
+			await $toggleNewsletter.mutateAsync({
+				id: session.user.id
+			});
+			const email = session.user.email;
+			const response = await fetch('/api/newsletter', {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ email })
+			});
+			const result = await response.json();
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to unsubscribe');
+			}
+		} catch (error) {
+			console.error('Error during unsubscription process:', error);
+		}
+	};
 
 	const handleSignOut: SubmitFunction = () => {
 		loading = true;
@@ -232,20 +257,37 @@
 		class="fixed inset-0 flex items-end justify-center mx-4 mb-4 sm:mb-24"
 		on:click={toggleModal}
 	>
-		<div class="w-full max-w-6xl p-4 @3xl:p-8 rounded-3xl bg-surface-600" on:click|stopPropagation>
-			<div class="flex space-x-4">
-				<form method="post" action="?/signout" use:enhance={handleSignOut}>
+		{#if $me.data}
+			<div
+				class="w-full max-w-6xl p-4 @3xl:p-8 rounded-3xl bg-surface-600"
+				on:click|stopPropagation
+			>
+				<div class="flex space-x-4">
+					<form method="post" action="?/signout" use:enhance={handleSignOut}>
+						<button
+							class="px-4 py-2 font-bold rounded-full text-error-900 bg-error-500 hover:bg-error-400"
+							disabled={loading}>Sign Out</button
+						>
+					</form>
 					<button
-						class="px-4 py-2 font-bold rounded-full text-error-900 bg-error-500 hover:bg-error-400"
-						disabled={loading}>Sign Out</button
+						class="px-4 py-2 font-bold rounded-full text-warning-900 bg-warning-500 hover:bg-warning-400"
+						on:click={handleUpdateName}
+						disabled={loading}>Update Name</button
 					>
-				</form>
-				<button
-					class="px-4 py-2 font-bold rounded-full text-warning-900 bg-warning-500 hover:bg-warning-400"
-					on:click={handleUpdateName}
-					disabled={loading}>Update Name</button
-				>
+					{#if $me.data?.newsletter}
+						<button
+							class="px-4 py-2 font-bold rounded-full text-error-900 bg-error-500 hover:bg-error-400"
+							on:click={handleUnsubscribe}
+							disabled={loading}>Unsubscribe from Newsletter</button
+						>
+					{/if}
+				</div>
+				<div class="mt-4">
+					<p>
+						Newsletter: {$me.data?.newsletter ? 'Subscribed' : 'Unsubscribed'}
+					</p>
+				</div>
 			</div>
-		</div>
+		{/if}
 	</div>
 {/if}
