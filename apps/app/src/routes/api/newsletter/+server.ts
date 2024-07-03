@@ -3,7 +3,7 @@ import { env } from '$env/dynamic/private';
 
 export const POST: RequestHandler = async ({ request }) => {
     try {
-        const { email } = await request.json();
+        const { email, name } = await request.json();
 
         const authString = `${env.SECRET_LISTMONK_USER}:${env.SECRET_LISTMONK_PASSWORD}`;
         const encodedAuthString = btoa(authString);
@@ -16,6 +16,7 @@ export const POST: RequestHandler = async ({ request }) => {
             },
             body: JSON.stringify({
                 email: email,
+                name: name,
                 status: "enabled",
                 lists: [3]
             })
