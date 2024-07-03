@@ -36,7 +36,7 @@
     },
     "maizzle#dev": {
       "dependsOn": [
-        "^app#build"
+        "^app#dev"
       ]
     },
     "lint": {

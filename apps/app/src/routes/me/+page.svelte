@@ -62,6 +62,29 @@
 		operationName: 'createInvite'
 	});
 
+	const handleSubscribe = async () => {
+		const email = prompt('Please enter your email to subscribe:');
+		if (email) {
+			try {
+				const response = await fetch('/api/newsletter', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ email })
+				});
+				const result = await response.json();
+				if (!response.ok) {
+					throw new Error(result.error || 'Failed to subscribe');
+				}
+				alert(result.message);
+			} catch (error) {
+				console.error('Subscription error:', error);
+				alert('Failed to subscribe. Please try again later.');
+			}
+		}
+	};
+
 	const handleSignOut: SubmitFunction = () => {
 		loading = true;
 		return async ({ update }) => {
@@ -142,6 +165,12 @@
 						<p class="text-tertiary-600 text-sm @3xl:text-lg">Stream Potenzial</p>
 					</div>
 				</div>
+				<button
+					class="z-40 flex items-center justify-center text-4xl transform translate-x-1/2 rounded-full text-primary-900 bg-primary-500"
+					on:click={handleSubscribe}
+				>
+					Subscribe
+				</button>
 			{/if}
 		</div>
 		{#if $me.isLoading}
