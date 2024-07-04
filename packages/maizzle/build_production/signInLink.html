@@ -26,6 +26,9 @@
         margin-top: 32px !important;
         margin-bottom: 32px !important
       }
+      .sm-p-4 {
+        padding: 16px !important
+      }
       .sm-px-4 {
         padding-left: 16px !important;
         padding-right: 16px !important
@@ -54,37 +57,39 @@
     <div class="sm-px-4" style="text-align: center; font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif">
       <table align="center" cellpadding="0" cellspacing="0" role="none">
         <tr>
-          <td style="width: 552px; max-width: 100%">
+          <td style="width: 720px; max-width: 100%">
             <table style="width: 100%;" cellpadding="0" cellspacing="0" role="none">
               <tr>
-                <td class="sm-px-6" style="border-radius: 24px; background-color: #10153d; padding: 48px; font-size: 16px; color: #f0ede5; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05)">
-                  <h1 class="sm-leading-8" style="margin: 0 0 24px; font-size: 24px; font-weight: 600; color: #f0ede5">
-                    Bist es du?
-                  </h1>
-                  <p style="margin: 0; line-height: 24px">
-                    Wir haben nach dir gesucht. Schön das du wieder da bist! <br>Bitte bestätige deine Emailaddresse.
-                  </p>
-                  <div role="separator" style="line-height: 24px">&zwj;</div>
-                  <div>
-                    <a href="{{ .ConfirmationURL }}" style="display: inline-block; border-radius: 9999px; background-color: #eab308; padding: 16px 24px; font-size: 16px; font-weight: 600; line-height: 1; color: #141a4d; text-decoration: none">
-                      <!--[if mso]>
+                <td class="sm-px-6" style="border-radius: 24px; background-color: #10153d; font-size: 16px; color: #f0ede5; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05)">
+                  <div class="sm-p-4" style="width: 600px; padding: 40px">
+                    <h1 class="sm-leading-8" style="margin: 0 0 24px; font-size: 24px; font-weight: 600; color: #f0ede5">
+                      Bist es du?
+                    </h1>
+                    <p style="margin: 0; line-height: 24px">
+                      Wir haben nach dir gesucht. Schön das du wieder da bist! <br>Bitte bestätige deine Emailaddresse.
+                    </p>
+                    <div role="separator" style="line-height: 24px">&zwj;</div>
+                    <div>
+                      <a href="{{ .ConfirmationURL }}" style="display: inline-block; border-radius: 9999px; background-color: #eab308; padding: 16px 24px; font-size: 16px; font-weight: 600; line-height: 1; color: #141a4d; text-decoration: none">
+                        <!--[if mso]>
       <i style="mso-font-width: 150%; mso-text-raise: 30px" hidden>&emsp;</i>
     <![endif]-->
-                      <span style="mso-text-raise: 16px">
+                        <span style="mso-text-raise: 16px">
       Jetzt einloggen &rarr;
     </span>
-                      <!--[if mso]>
+                        <!--[if mso]>
       <i hidden style="mso-font-width: 150%;">&emsp;&#8203;</i>
     <![endif]-->
-                    </a>
+                      </a>
+                    </div>
+                    <div role="separator" style="background-color: #5f6594; height: 1px; line-height: 1px; margin: 32px 0">&zwj;</div>
+                    <p style="margin: 0; font-size: 12px">
+                      Wenn du dich nicht angemeldet hast, kannst du diese Mail ignorieren.
+                      <br>
+                      <br>
+                      Danke, <br>Dein Visioncreator Team
+                    </p>
                   </div>
-                  <div role="separator" style="background-color: #5f6594; height: 1px; line-height: 1px; margin: 32px 0">&zwj;</div>
-                  <p style="margin: 0; font-size: 12px">
-                    Wenn du dich nicht angemeldet hast, kannst du diese Mail ignorieren.
-                    <br>
-                    <br>
-                    Danke, <br>Dein Visioncreator Team
-                  </p>
                 </td>
               </tr>
               <tr role="separator">
