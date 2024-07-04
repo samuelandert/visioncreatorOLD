@@ -250,6 +250,18 @@
 			</div>
 		</div>
 	</div> -->
+	<footer class="fixed inset-x-0 bottom-0 p-4 text-xs text-center text-white">
+		<button
+			on:click={() =>
+				drawerStore.open({
+					position: 'bottom'
+				})}
+			class="mx-2">Login</button
+		>
+		<a href="/data-privacy" class="mx-2">Datenschutz</a>
+		<a href="/terms-of-service" class="mx-2">AGB</a>
+		<a href="/imprint" class="mx-2">Impressum</a>
+	</footer>
 </div>
 
 <style>

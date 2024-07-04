@@ -83,7 +83,7 @@
 		<slot />
 	</AppShell>
 </QueryClientProvider>
-
+<!-- 
 {#if !session}
 	<footer class="fixed inset-x-0 bottom-0 p-4 text-xs text-center text-white">
 		<button
@@ -97,4 +97,4 @@
 		<a href="/terms-of-service" class="mx-2">AGB</a>
 		<a href="/imprint" class="mx-2">Impressum</a>
 	</footer>
-{/if}
+{/if} -->
