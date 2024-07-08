@@ -8,9 +8,7 @@
   "scripts": {
     "build": "npx turbo run build",
     "dev": "npx turbo run dev --parallel",
-    "generate": "npx turbo run generate",
-    "api:build": "npx turbo run build --filter=api",
-    "api:start": "npx turbo run start --filter=api"
+    "generate": "npx turbo run generate"
   },
   "devDependencies": {
     "turbo": "^2.0.4",
@@ -23,9 +21,5 @@
   "volta": {
     "node": "20.12.2",
     "npm": "10.5.0"
-  },
-  "dependencies": {
-    "@trigger.dev/sdk": "^2.3.19",
-    "@trigger.dev/sveltekit": "^2.3.19"
   }
 }
