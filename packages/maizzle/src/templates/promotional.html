@@ -1,7 +1,10 @@
 ---
-title: '{{ .Campaign.Subject }}'
-content: '{{ template "content" . }}'
-name: '{{ .Subscriber.Name }}'
+title: '@{{ .Campaign.Subject }}'
+content: '@{{ template "content" . }}'
+name: '@{{ .Subscriber.Name }}'
+unsubscribeUrl: '@{{ UnsubscribeURL }}'
+emailUnsub: '@{{ L.T "email.unsub" }}'
+postmark: '@{{ `{{{ pm:unsubscribe }}}` }}'
 ---
 
 <x-main>
@@ -11,7 +14,7 @@ name: '{{ .Subscriber.Name }}'
         <td class="w-[720px] max-w-full">
           <table class="w-full">
             <tr>
-                <table class="w-full h-96" style="background-image: url('https://images.unsplash.com/photo-1719153863464-b2ee7e28b6df?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-position: center;">
+                <table class="w-full h-96 rounded-t-3xl" style="background-image: url('https://images.unsplash.com/photo-1719153863464-b2ee7e28b6df?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-position: center;">
                   <tr>
                     <td class="w-12 sm:w-6"></td>
                     <td>
@@ -28,16 +31,20 @@ name: '{{ .Subscriber.Name }}'
                     <td class="w-12 sm:w-6"></td>
                   </tr>
                 </table>
-                    <div class="p-10 m-0 leading-6 sm:p-4">
+                    <div class="p-8 m-0 leading-6 sm:p-4">
                       <p class="text-sm text-surface-400">OR READ THE SCRIPT HERE</p>
                       {{ page.name }}
-                      {{ page.content }}
+                      {{{ page.content }}}
                     </div>
                 </x-v-fill>
               </td>
             </tr>
-
+            <tr>
+              <td><div class="m-8 "><a class="text-primary-500" href="{{ page.unsubscribeUrl }}" >
+                {{{ page.emailUnsub }}}</a></div></td>
+            </tr>
           </table>
+          <a class="hidden text-surface-900" href="{{ page.postmark }}" style="text-decoration: none;">Postmark</a>
         </td>
       </tr>
     </table>

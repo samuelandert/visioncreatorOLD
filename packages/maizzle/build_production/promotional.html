@@ -39,9 +39,6 @@
     <![endif]-->
     <title>undefined</title>
     <style>
-      .hover-important-text-decoration-underline:hover {
-        text-decoration: underline !important;
-      }
       @media (max-width: 600px) {
         .sm-my-8 {
           margin-top: 32px !important;
@@ -83,7 +80,12 @@
       word-break: break-word;
     "
   >
-    <div role="article" aria-roledescription="email" lang="en">
+    <div
+      role="article"
+      aria-roledescription="email"
+      aria-label="{{ .Campaign.Subject }}"
+      lang="en"
+    >
       <div
         class="sm-my-8"
         style="margin-top: 48px; margin-bottom: 48px; text-align: center"
@@ -150,6 +152,8 @@
                                   style="
                                     height: 384px;
                                     width: 100%;
+                                    border-top-left-radius: 24px;
+                                    border-top-right-radius: 24px;
                                     background-image: url('https://images.unsplash.com/photo-1719153863464-b2ee7e28b6df?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
                                     background-size: cover;
                                     background-position: center;
@@ -223,7 +227,7 @@
                                   class="sm-p-4"
                                   style="
                                     margin: 0;
-                                    padding: 40px;
+                                    padding: 32px;
                                     line-height: 24px;
                                   "
                                 >
@@ -237,7 +241,24 @@
                             </table>
                           </td>
                         </tr>
+                        <tr>
+                          <td>
+                            <div style="margin: 32px">
+                              <a
+                                href="{{ UnsubscribeURL }}"
+                                style="color: #e9c96e"
+                              >
+                                {{ L.T "email.unsub" }}</a
+                              >
+                            </div>
+                          </td>
+                        </tr>
                       </table>
+                      <a
+                        href="{{ `{{{ pm:unsubscribe }}}` }}"
+                        style="text-decoration: none"
+                        >Unsubscribe from List</a
+                      >
                     </div>
                   </td>
                 </tr>

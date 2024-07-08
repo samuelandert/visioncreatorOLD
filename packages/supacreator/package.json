@@ -2,8 +2,7 @@
   "name": "supacreator",
   "private": true,
   "scripts": {
-    "dev": "npx supabase start",
-    "status": "npx supabase status"
+    "dev": "npx supabase start && npx supabase status && npx supabase functions serve "
   },
   "devDependencies": {
     "supabase": "^1.176.10"
