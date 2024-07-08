@@ -13,6 +13,10 @@
 
 module.exports = {
   build: {
+    port: 3001,
+    browsersync: {
+      port: 3002,
+    },
     templates: {
       source: 'src/templates',
       destination: {
