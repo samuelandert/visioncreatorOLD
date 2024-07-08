@@ -28,13 +28,18 @@ export default configureWunderGraphOperations<OperationsConfiguration>({
 			...config,
 		}),
 		custom: {
-			Countries: (config) => ({
+			// SpaceX: (config) => ({
+			// 	...config,
+			// 	authentication: {
+			// 		required: false,
+			// 	},
+			// }),
+			SubscribeToNewsletter: (config) => ({
 				...config,
 				authentication: {
 					required: false,
 				},
 			})
-
 		},
 	},
 });

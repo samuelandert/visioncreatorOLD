@@ -62,31 +62,31 @@
 		liveQuery: true
 	});
 
-	const callEdgeFunction = async () => {
-		try {
-			const requestBody = JSON.stringify({ name: 'Functions' });
-			console.log('Request body:', requestBody); // Log the request body
+	// const callEdgeFunction = async () => {
+	// 	try {
+	// 		const requestBody = JSON.stringify({ name: 'Functions' });
+	// 		console.log('Request body:', requestBody); // Log the request body
 
-			const response = await fetch('http://127.0.0.1:54321/functions/v1/hello', {
-				method: 'POST',
-				headers: {
-					Authorization:
-						'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0',
-					'Content-Type': 'application/json'
-				},
-				body: requestBody // Ensure the body is correctly formatted
-			});
+	// 		const response = await fetch('http://127.0.0.1:54321/functions/v1/hello', {
+	// 			method: 'POST',
+	// 			headers: {
+	// 				Authorization:
+	// 					'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0',
+	// 				'Content-Type': 'application/json'
+	// 			},
+	// 			body: requestBody // Ensure the body is correctly formatted
+	// 		});
 
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
+	// 		if (!response.ok) {
+	// 			throw new Error(`HTTP error! status: ${response.status}`);
+	// 		}
 
-			const result = await response.json();
-			alert(JSON.stringify(result));
-		} catch (error) {
-			console.error('Error calling edge function:', error);
-		}
-	};
+	// 		const result = await response.json();
+	// 		alert(JSON.stringify(result));
+	// 	} catch (error) {
+	// 		console.error('Error calling edge function:', error);
+	// 	}
+	// };
 
 	const leaderboard = createQuery({
 		operationName: 'queryLeaderboard',
@@ -313,12 +313,12 @@
 						Newsletter: {$me.data?.newsletter ? 'Subscribed' : 'Unsubscribed'}
 					</p>
 				</div>
-				<button
+				<!-- <button
 					class="px-4 py-2 font-bold rounded-full text-warning-900 bg-warning-500 hover:bg-warning-400"
 					on:click={callEdgeFunction}
 				>
 					Call Function
-				</button>
+				</button> -->
 			</div>
 		{/if}
 	</div>

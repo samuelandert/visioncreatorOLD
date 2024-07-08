@@ -1,0 +1,5 @@
+query SpaceX {
+  spacex_roadster {
+    earth_distance_km
+  }
+}
