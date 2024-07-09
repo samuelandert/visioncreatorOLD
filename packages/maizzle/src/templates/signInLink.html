@@ -1,18 +1,19 @@
 ---
-title: "Mein Magic Login Link"
-preheader: "Bitte bestätige deine Emailaddresse"
-confirmURL: '{{ .ConfirmationURL }}'
-buttonText: 'Jetzt einloggen'
+title: "My Magic Login Link"
+preheader: "Please confirm your email address"
+confirmURL: "{{ .ConfirmationURL }}"
+buttonText: "Log in now"
 ---
 
 <x-main>
-  <div class="p-10 sm:p-4 w-[600px]">
+  <div class="p-10 sm:p-4 w-[720px]">
     <h1 class="m-0 mb-6 text-2xl font-semibold text-tertiary-300 sm:leading-8">
-      Bist es du?
+      Is it you?
     </h1>
 
     <p class="m-0 leading-6">
-      Wir haben nach dir gesucht. Schön das du wieder da bist! <br>Bitte bestätige deine Emailaddresse.
+      We've been looking for you. Great to have you back! <br />Please confirm
+      your email address.
     </p>
 
     <x-spacer height="24px" />
@@ -23,10 +24,10 @@ buttonText: 'Jetzt einloggen'
     <x-divider space-y="32px" class="bg-surface-400" />
 
     <p class="m-0 text-xs">
-      Wenn du dich nicht angemeldet hast, kannst du diese Mail ignorieren.
-      <br>
-      <br>
-      Danke, <br />Dein Visioncreator Team
+      If you didn't request this login, you can ignore this email.
+      <br />
+      <br />
+      Thank you, <br />Your Visioncreator Team
     </p>
   </div>
 </x-main>
