@@ -10,9 +10,13 @@
 
 	let loading = false;
 	let modalOpen = writable(false);
-
+	let activeTab = writable('actions');
 	let { session, supabase } = data;
 	$: ({ session } = data);
+
+	function setActiveTab(tab: string) {
+		activeTab.set(tab);
+	}
 
 	onMount(async () => {
 		const supabaseMe = await supabase.auth.getUser();
@@ -51,43 +55,9 @@
 		liveQuery: true
 	});
 
-	// const callEdgeFunction = async () => {
-	// 	try {
-	// 		const requestBody = JSON.stringify({ name: 'Functions' });
-	// 		console.log('Request body:', requestBody); // Log the request body
-
-	// 		const response = await fetch('http://127.0.0.1:54321/functions/v1/hello', {
-	// 			method: 'POST',
-	// 			headers: {
-	// 				Authorization:
-	// 					'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0',
-	// 				'Content-Type': 'application/json'
-	// 			},
-	// 			body: requestBody // Ensure the body is correctly formatted
-	// 		});
-
-	// 		if (!response.ok) {
-	// 			throw new Error(`HTTP error! status: ${response.status}`);
-	// 		}
-
-	// 		const result = await response.json();
-	// 		alert(JSON.stringify(result));
-	// 	} catch (error) {
-	// 		console.error('Error calling edge function:', error);
-	// 	}
-	// };
-
 	const leaderboard = createQuery({
 		operationName: 'queryLeaderboard',
 		liveQuery: true
-	});
-
-	const newsletterStatus = createQuery({
-		operationName: 'MyNewsletterStatus',
-		input: {
-			id: session.user.id,
-			email: session.user.email
-		}
 	});
 
 	const updateNameMutation = createMutation({
@@ -101,18 +71,6 @@
 	const toggleNewsletterMutation = createMutation({
 		operationName: 'ToggleNewsletter'
 	});
-
-	const handleToggleNewsletter = async () => {
-		try {
-			await $toggleNewsletterMutation.mutateAsync({
-				id: session.user.id,
-				email: session?.user.email
-			});
-			$newsletterStatus.refetch();
-		} catch (error) {
-			console.error('Error during newsletter toggle process:', error);
-		}
-	};
 
 	const handleSignOut: SubmitFunction = () => {
 		loading = true;
@@ -265,7 +223,6 @@
 >
 	+
 </button>
-
 {#if $modalOpen}
 	<div
 		class="fixed inset-0 flex items-end justify-center mx-4 mb-4 sm:mb-24"
@@ -276,46 +233,56 @@
 				class="w-full max-w-6xl p-4 @3xl:p-8 rounded-3xl bg-surface-600"
 				on:click|stopPropagation
 			>
-				<div class="flex space-x-4">
-					<form method="post" action="?/signout" use:enhance={handleSignOut}>
+				{#if $activeTab === 'actions'}
+					<div class="flex justify-center mb-4 space-x-4">
+						<form method="post" action="?/signout" use:enhance={handleSignOut}>
+							<button
+								class="px-6 py-2 font-bold rounded-full text-error-900 bg-error-500 hover:bg-error-400"
+								disabled={loading}>Sign Out</button
+							>
+						</form>
 						<button
-							class="px-4 py-2 font-bold rounded-full text-error-900 bg-error-500 hover:bg-error-400"
-							disabled={loading}>Sign Out</button
+							class="px-6 py-2 font-bold rounded-full text-warning-900 bg-warning-500 hover:bg-warning-400"
+							on:click={handleUpdateName}
+							disabled={loading}>Update Name</button
 						>
-					</form>
-					<button
-						class="px-4 py-2 font-bold rounded-full text-warning-900 bg-warning-500 hover:bg-warning-400"
-						on:click={handleUpdateName}
-						disabled={loading}>Update Name</button
-					>
-					<div class="flex items-center space-x-4">
-						<span class="text-tertiary-300">Newsletter Subscription:</span>
-						{#if $newsletterStatus.isLoading}
-							<span class="text-tertiary-500">Loading...</span>
-						{:else if $newsletterStatus.isError}
-							<span class="text-error-500">Error loading status</span>
-						{:else}
-							<label class="relative inline-flex items-center cursor-pointer">
-								<input
-									type="checkbox"
-									class="sr-only peer"
-									checked={$newsletterStatus.data}
-									on:change={handleToggleNewsletter}
-									disabled={$toggleNewsletterMutation.isLoading}
-								/>
-								<div
-									class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
-								/>
-							</label>
-						{/if}
 					</div>
+				{:else if $activeTab === 'settings'}
+					<div class="mb-4">
+						<Newsletter me={{ email: session.user.email, id: session.user.id }} />
+					</div>
+				{/if}
+
+				<div class="border-t border-surface-500">
+					<ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
+						<li class="mr-2">
+							<a
+								href="#"
+								class={`inline-block p-4 rounded-t-lg ${
+									$activeTab === 'actions'
+										? 'text-primary-500 border-b-2 border-primary-500'
+										: 'text-tertiary-400 hover:text-tertiary-300'
+								}`}
+								on:click|preventDefault={() => setActiveTab('actions')}
+							>
+								Actions
+							</a>
+						</li>
+						<li class="mr-2">
+							<a
+								href="#"
+								class={`inline-block p-4 rounded-t-lg ${
+									$activeTab === 'settings'
+										? 'text-primary-500 border-b-2 border-primary-500'
+										: 'text-tertiary-400 hover:text-tertiary-300'
+								}`}
+								on:click|preventDefault={() => setActiveTab('settings')}
+							>
+								Settings
+							</a>
+						</li>
+					</ul>
 				</div>
-				<!-- <button
-					class="px-4 py-2 font-bold rounded-full text-warning-900 bg-warning-500 hover:bg-warning-400"
-					on:click={callEdgeFunction}
-				>
-					Call Function
-				</button> -->
 			</div>
 		{/if}
 	</div>
