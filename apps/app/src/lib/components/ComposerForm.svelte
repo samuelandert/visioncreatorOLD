@@ -7,6 +7,7 @@
 	export let me;
 
 	const { fields, validators } = $me.context;
+	const { submitForm } = $me.do.core;
 
 	let stepperState = writable({ current: 0, total: fields.length });
 
@@ -38,7 +39,7 @@
 				on: {
 					NEXT: [
 						{
-							target: 'summary',
+							target: 'submitted',
 							actions: assign({
 								formData: (context, event) => ({
 									...context.formData,
@@ -69,17 +70,6 @@
 					}
 				}
 			},
-			summary: {
-				on: {
-					SUBMIT: 'submitted',
-					PREV: {
-						target: 'input',
-						actions: assign({
-							currentField: (context) => context.currentField - 1
-						})
-					}
-				}
-			},
 			submitted: {
 				on: {
 					RESTART: {
@@ -107,9 +97,8 @@
 		}));
 	}
 
-	async function handleNext() {
+	async function handleSubmit() {
 		const currentFieldName = fields[$state.context.currentField].name;
-
 		const validationResult = await validate(currentFieldName);
 
 		if (validationResult && !validationResult.valid) {
@@ -117,9 +106,24 @@
 		}
 
 		const fieldValue = $form[currentFieldName];
-		if ($state.matches('summary')) {
-			send('SUBMIT');
+		send('NEXT', { fieldValue });
+
+		if (isLastStep) {
+			submitForm($state.context.formData);
+		}
+	}
+	async function handleNext() {
+		if (isLastStep) {
+			await handleSubmit();
 		} else {
+			const currentFieldName = fields[$state.context.currentField].name;
+			const validationResult = await validate(currentFieldName);
+
+			if (validationResult && !validationResult.valid) {
+				return;
+			}
+
+			const fieldValue = $form[currentFieldName];
 			send('NEXT', { fieldValue });
 		}
 	}
@@ -129,15 +133,6 @@
 			event.preventDefault();
 			handleNext();
 		}
-	}
-
-	function isJsonString(str) {
-		try {
-			JSON.parse(str);
-		} catch (e) {
-			return false;
-		}
-		return true;
 	}
 
 	let childInput;
@@ -154,6 +149,8 @@
 	const possibleActions = derived(state, ($state) =>
 		Object.keys(formMachine.states[$state.value]?.on || {})
 	);
+
+	$: isLastStep = $state.context.currentField === fields.length - 1;
 </script>
 
 <div class="p-3 pb-4 md:p-8 lg:p-12">
@@ -161,15 +158,15 @@
 		{#if $state.matches('input')}
 			<div class="mb-4">
 				<div class="p-2">
-					<h2 class="mb-2 text-lg md:text-4xl font-semibold text-center text-primary-500">
+					<h2 class="mb-2 text-lg font-semibold text-center md:text-4xl text-primary-500">
 						{fields[$state.context.currentField].title}
 					</h2>
 					{#if $errors[fields[$state.context.currentField].name]}
-						<p class="text-sm lg:text-2xl text-center text-warning-500">
+						<p class="text-sm text-center lg:text-2xl text-warning-500">
 							{$errors[fields[$state.context.currentField].name]}
 						</p>
 					{:else}
-						<p class="text-sm lg:text-2xl text-center text-secondary-500">
+						<p class="text-sm text-center lg:text-2xl text-secondary-500">
 							{fields[$state.context.currentField].description}
 						</p>
 					{/if}
@@ -199,33 +196,9 @@
 				{/if}
 			</div>
 		{/if}
-		{#if $state.matches('summary')}
-			<div class="py-3">
-				<h2 class="mb-2 text-lg md:text-4xl font-semibold text-center text-primary-500">Summary</h2>
-				<p class="text-sm md:text-2xl text-center text-secondary-500 mb-3">
-					Please verify your order
-				</p>
-				<dl>
-					{#each Object.entries($state.context.formData) as [key, value]}
-						<span class="flex-auto">
-							<dt class="text-xs lg:text-sm text-secondary-300">{key}</dt>
-							{#if typeof value === 'string' && isJsonString(value)}
-								{#each Object.entries(JSON.parse(value)) as [subKey, subValue]}
-									<dd class="text-sm md:text-2xl text-secondary-500 font-semibold">
-										{subKey}: {subValue}
-									</dd>
-								{/each}
-							{:else}
-								<dd class="text-sm md:text-2xl text-secondary-500 font-semibold">{value}</dd>
-							{/if}
-						</span>
-					{/each}
-				</dl>
-			</div>
-		{/if}
 		{#if $state.matches('submitted')}
 			<div
-				class="bg-success-500 w-full rounded-lg px-4 py-12 text-white text-center mb-2 text-xl font-semibold"
+				class="w-full px-4 py-12 mb-2 text-xl font-semibold text-center text-white rounded-lg bg-success-500"
 			>
 				submitted
 			</div>
@@ -237,10 +210,10 @@
 						<button
 							type="button"
 							on:click={() => send(action)}
-							class="btn btn-sm md:btn-base variant-filled-secondary font-semibold"
+							class="font-semibold btn btn-sm md:btn-base variant-filled-secondary"
 							disabled={$state.context.currentField === 0}
 							><span>
-								<Icon icon="solar:alt-arrow-left-bold" class="text-white h-5" />
+								<Icon icon="solar:alt-arrow-left-bold" class="h-5 text-white" />
 							</span>
 						</button>
 					{/if}
@@ -248,11 +221,11 @@
 			</div>
 			<div>
 				{#each $possibleActions as action (action)}
-					{#if action !== 'NEXT' && action !== 'PREV' && action !== 'SUBMIT'}
+					{#if action !== 'NEXT' && action !== 'PREV'}
 						<button
 							type="button"
 							on:click={() => send(action)}
-							class="btn btn-sm md:btn-base variant-filled font-semibold"
+							class="font-semibold btn btn-sm md:btn-base variant-filled"
 						>
 							{action}
 						</button>
@@ -260,26 +233,17 @@
 				{/each}
 			</div>
 			<div>
-				{#each $possibleActions as action (action)}
-					{#if action === 'NEXT' || action === 'SUBMIT'}
-						<button
-							type="button"
-							on:click={() => handleNext()}
-							class="btn variant-filled-primary btn-sm md:btn-base font-semibold"
-							disabled={$errors[fields[$state.context.currentField].name]}
-						>
-							{action}
-						</button>
-					{/if}
-				{/each}
+				{#if $possibleActions.includes('NEXT')}
+					<button
+						type="button"
+						on:click={handleNext}
+						class="font-semibold btn variant-filled-primary btn-sm md:btn-base"
+						disabled={$errors[fields[$state.context.currentField].name]}
+					>
+						{isLastStep ? 'Submit' : 'Next'}
+					</button>
+				{/if}
 			</div>
 		</div>
 	</form>
 </div>
-
-<style>
-	dl {
-		display: grid;
-		gap: 10px;
-	}
-</style>

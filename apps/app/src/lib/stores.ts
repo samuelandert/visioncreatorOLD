@@ -6,6 +6,12 @@ interface FutureMe {
     visionid: string,
 }
 
+interface Me {
+    id: string;
+}
+
 const defaultFutureMe: FutureMe = { name: '', visionid: '' };
+const defaultMe: Me = { id: '' };
 
 export const futureMe = persist(writable<FutureMe>(defaultFutureMe), createLocalStorage(), 'futureMe');
+export const Me = persist(writable<Me>(defaultMe), createLocalStorage(), 'Me');

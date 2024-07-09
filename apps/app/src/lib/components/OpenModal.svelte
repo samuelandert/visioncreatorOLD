@@ -2,6 +2,7 @@
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
 	const drawerStore = getDrawerStore();
 	import { view } from '$lib/views/Form';
+	import ComposeView from './ComposeView.svelte';
 
 	function openDrawer() {
 		drawerStore.open({
@@ -11,4 +12,4 @@
 	}
 </script>
 
-<button class="btn variant-filled-primary btn-lg mt-6" on:click={openDrawer}> Open Modal </button>
+<button class="mt-6 btn variant-filled-primary btn-lg" on:click={openDrawer}> Open Modal </button>

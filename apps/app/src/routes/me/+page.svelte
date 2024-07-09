@@ -1,14 +1,11 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import type { SubmitFunction } from '@sveltejs/kit';
-	import { createMutation, createQuery } from '$lib/wundergraph';
+	import { createQuery } from '$lib/wundergraph';
 	import { writable } from 'svelte/store';
-	import { futureMe } from '$lib/stores';
+	import { futureMe, Me } from '$lib/stores';
 	import { onMount } from 'svelte';
 
 	export let data;
 
-	let loading = false;
 	let modalOpen = writable(false);
 	let activeTab = writable('actions');
 	let { session, supabase } = data;
@@ -20,6 +17,8 @@
 
 	onMount(async () => {
 		const supabaseMe = await supabase.auth.getUser();
+		Me.update((store) => ({ ...store, id: supabaseMe.data.user?.id || '' }));
+
 		if (
 			!supabaseMe.data.user?.user_metadata.inviter &&
 			!supabaseMe.data.user?.user_metadata.full_name
@@ -29,18 +28,6 @@
 					data: { inviter: $futureMe.visionid, full_name: $futureMe.name || 'UpdateMyName' }
 				});
 				if (error) throw error;
-				await $updateNameMutation.mutateAsync({
-					id: session.user.id,
-					full_name: $futureMe.name || 'MyName'
-				});
-				await $createInviteMutation.mutateAsync({
-					invitee: session.user.id,
-					inviter: $futureMe.visionid
-				});
-				await $toggleNewsletterMutation.mutateAsync({
-					id: session.user.id,
-					email: session?.user.email
-				});
 			} catch (error) {
 				console.error('Error during signup process:', error);
 			}
@@ -60,40 +47,16 @@
 		liveQuery: true
 	});
 
-	const updateNameMutation = createMutation({
-		operationName: 'updateMe'
-	});
-
-	const createInviteMutation = createMutation({
-		operationName: 'createInvite'
-	});
-
-	const toggleNewsletterMutation = createMutation({
-		operationName: 'ToggleNewsletter'
-	});
-
-	const handleSignOut: SubmitFunction = () => {
-		loading = true;
-		return async ({ update }) => {
-			loading = false;
-			update();
-		};
-	};
-
-	const handleUpdateName = async () => {
-		const newName = prompt('Please enter your new name:');
-		if (newName) {
-			await $updateNameMutation.mutateAsync({ id: session.user.id, full_name: newName });
-			$me.refetch();
-			$leaderboard.refetch();
-			modalOpen.set(false);
-		}
-	};
-
 	function toggleModal(event?: MouseEvent) {
 		if (!event || event.target === event.currentTarget) {
 			modalOpen.update((n) => !n);
 		}
+	}
+
+	function handleAction() {
+		$me.refetch();
+		$leaderboard.refetch();
+		modalOpen.set(false);
 	}
 
 	$: userRank =
@@ -136,8 +99,9 @@
 							/>
 							<h1 class="text-2xl @3xl:text-5xl font-bold h1">
 								Hey {$me.data?.full_name || $futureMe.name}
+								{$me.data?.id}
 							</h1>
-							<p class="text-md @3xl:text-2xl">Schön das du da bist</p>
+							<p class="text-md @3xl:text-2xl">wonderful to have you around</p>
 						</div>
 					</div>
 				</div>
@@ -145,13 +109,13 @@
 				<div class="flex items-center justify-evenly p-4 @3xl:p-8 space-x-4">
 					<div class="text-center">
 						<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">{userRank}</p>
-						<p class="text-tertiary-600 text-sm @3xl:text-lg">Warte Position</p>
+						<p class="text-tertiary-600 text-sm @3xl:text-lg">Waiting Position</p>
 					</div>
 					<div class="text-center">
 						<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">
-							{streamPotential}€/m
+							{streamPotential} $/m
 						</p>
-						<p class="text-tertiary-600 text-sm @3xl:text-lg">Stream Potenzial</p>
+						<p class="text-tertiary-600 text-sm @3xl:text-lg">Streaming Potential</p>
 					</div>
 				</div>
 			{/if}
@@ -223,8 +187,7 @@
 	on:click={toggleModal}
 >
 	+
-</button>
-{#if $modalOpen}
+</button>{#if $modalOpen}
 	<div
 		class="fixed inset-0 flex items-end justify-center mx-4 mb-4 sm:mb-24"
 		on:click={toggleModal}
@@ -235,25 +198,14 @@
 				on:click|stopPropagation
 			>
 				{#if $activeTab === 'actions'}
-					<div class="flex justify-center mb-4 space-x-4">
-						<form method="post" action="?/signout" use:enhance={handleSignOut}>
-							<button
-								class="px-6 py-2 font-bold rounded-full text-error-900 bg-error-500 hover:bg-error-400"
-								disabled={loading}>Sign Out</button
-							>
-						</form>
-						<button
-							class="px-6 py-2 font-bold rounded-full text-warning-900 bg-warning-500 hover:bg-warning-400"
-							on:click={handleUpdateName}
-							disabled={loading}>Update Name</button
-						>
-					</div>
+					<ActionButtons me={{ id: session.user.id }} on:nameupdate={handleAction} />
 				{:else if $activeTab === 'settings'}
 					<div class="mb-4">
 						<Newsletter me={{ email: session.user.email, id: session.user.id }} />
 					</div>
 				{/if}
 
+				<!-- Tab navigation remains the same -->
 				<div class="border-t border-surface-500">
 					<ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
 						<li class="mr-2">
