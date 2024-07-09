@@ -60,9 +60,21 @@ export default createOperation.mutation({
                 return { action: 'added', success: addResponse.data.data };
             } else {
                 const subscriber = subscribers[0];
-                if (subscriber.status === 'blocklisted') {
-                    // Subscriber blocklisted, remove block and add to list [3]
-                    const unblockResponse = await context.nango.proxy({
+                const isBlocklisted = subscriber.status === 'blocklisted';
+                const isSubscribedToList3 = subscriber.lists.some((list: any) => list.id === 3 && list.subscription_status === 'confirmed');
+
+                if (!isBlocklisted && isSubscribedToList3) {
+                    // Subscribed and not blocklisted, blocklist
+                    const blockResponse = await context.nango.proxy({
+                        method: 'PUT',
+                        endpoint: `/subscribers/${subscriber.id}/blocklist`,
+                        connectionId: 'listmonk-vc',
+                        providerConfigKey: 'listmonk'
+                    });
+                    return { action: 'blocklisted', success: blockResponse.data.data };
+                } else {
+                    // Either blocklisted or not subscribed to list 3, resubscribe
+                    const updateResponse = await context.nango.proxy({
                         method: 'PUT',
                         endpoint: `/subscribers/${subscriber.id}`,
                         connectionId: 'listmonk-vc',
@@ -88,16 +100,7 @@ export default createOperation.mutation({
                         }
                     });
 
-                    return { action: 'unblocked', success: unblockResponse.data.data && addToListResponse.data };
-                } else {
-                    // Subscribed but not blocklisted, blocklist
-                    const blockResponse = await context.nango.proxy({
-                        method: 'PUT',
-                        endpoint: `/subscribers/${subscriber.id}/blocklist`,
-                        connectionId: 'listmonk-vc',
-                        providerConfigKey: 'listmonk'
-                    });
-                    return { action: 'blocklisted', success: blockResponse.data.data };
+                    return { action: 'resubscribed', success: updateResponse.data.data && addToListResponse.data };
                 }
             }
         } catch (error) {

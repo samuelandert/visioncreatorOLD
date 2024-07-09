@@ -33,8 +33,11 @@ export default createOperation.query({
 
             if (subscribers.length > 0) {
                 const subscriber = subscribers[0];
-                // Check if the subscriber is blocklisted
-                return subscriber.status !== 'blocklisted';
+                const isBlocklisted = subscriber.status === 'blocklisted';
+                const isSubscribedToList3 = subscriber.lists.some((list: any) => list.id === 3 && list.subscription_status === 'confirmed');
+
+                // Return true if the subscriber is not blocklisted AND is subscribed to list 3
+                return !isBlocklisted && isSubscribedToList3;
             }
 
             return false;
