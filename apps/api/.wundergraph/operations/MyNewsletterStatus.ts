@@ -27,9 +27,17 @@ export default createOperation.query({
                 }
             });
 
+            console.log('Listmonk API Response:', JSON.stringify(checkResponse.data, null, 2));
+
             const subscribers = checkResponse.data.data.results;
 
-            return subscribers.length > 0;
+            if (subscribers.length > 0) {
+                const subscriber = subscribers[0];
+                // Check if the subscriber is blocklisted
+                return subscriber.status !== 'blocklisted';
+            }
+
+            return false;
         } catch (error) {
             console.error('Failed to check newsletter subscription status:', error);
             throw new Error('Failed to check newsletter subscription status');

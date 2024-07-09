@@ -4,7 +4,6 @@ content: '@{{ template "content" . }}'
 name: '@{{ .Subscriber.Name }}'
 unsubscribeUrl: '@{{ UnsubscribeURL }}'
 emailUnsub: '@{{ L.T "email.unsub" }}'
-postmark: '@{{ `{{{ pm:unsubscribe }}}` }}'
 ---
 
 <x-main>
@@ -44,7 +43,6 @@ postmark: '@{{ `{{{ pm:unsubscribe }}}` }}'
                 {{{ page.emailUnsub }}}</a></div></td>
             </tr>
           </table>
-          <a class="hidden text-surface-900" href="{{ page.postmark }}" style="text-decoration: none;">Postmark</a>
         </td>
       </tr>
     </table>

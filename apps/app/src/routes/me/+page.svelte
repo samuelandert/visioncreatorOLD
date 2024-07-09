@@ -85,6 +85,7 @@
 		if (newName) {
 			await $updateNameMutation.mutateAsync({ id: session.user.id, full_name: newName });
 			$me.refetch();
+			$leaderboard.refetch();
 			modalOpen.set(false);
 		}
 	};
