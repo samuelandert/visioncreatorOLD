@@ -22,32 +22,21 @@
 		) {
 			try {
 				const { data, error } = await supabase.auth.updateUser({
-					data: { inviter: $futureMe.visionid, full_name: $futureMe.name || 'MyName' }
+					data: { inviter: $futureMe.visionid, full_name: $futureMe.name || 'UpdateMyName' }
 				});
 				if (error) throw error;
-
 				await $updateNameMutation.mutateAsync({
 					id: session.user.id,
 					full_name: $futureMe.name || 'MyName'
 				});
-
 				await $createInviteMutation.mutateAsync({
 					invitee: session.user.id,
 					inviter: $futureMe.visionid
 				});
-				const email = session.user.email;
-				const name = $futureMe.name;
-				const response = await fetch('/api/newsletter', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ email, name })
+				await $toggleNewsletterMutation.mutateAsync({
+					id: session.user.id,
+					email: session?.user.email
 				});
-				const result = await response.json();
-				if (!response.ok) {
-					throw new Error(result.error || 'Failed to subscribe');
-				}
 			} catch (error) {
 				console.error('Error during signup process:', error);
 			}
@@ -93,6 +82,14 @@
 		liveQuery: true
 	});
 
+	const newsletterStatus = createQuery({
+		operationName: 'MyNewsletterStatus',
+		input: {
+			id: session.user.id,
+			email: session.user.email
+		}
+	});
+
 	const updateNameMutation = createMutation({
 		operationName: 'updateMe'
 	});
@@ -101,29 +98,19 @@
 		operationName: 'createInvite'
 	});
 
-	const toggleNewsletter = createMutation({
-		operationName: 'toggleNewsletter'
+	const toggleNewsletterMutation = createMutation({
+		operationName: 'ToggleNewsletter'
 	});
 
-	const handleUnsubscribe = async () => {
+	const handleToggleNewsletter = async () => {
 		try {
-			await $toggleNewsletter.mutateAsync({
-				id: session.user.id
+			await $toggleNewsletterMutation.mutateAsync({
+				id: session.user.id,
+				email: session?.user.email
 			});
-			const email = session.user.email;
-			const response = await fetch('/api/newsletter', {
-				method: 'DELETE',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ email })
-			});
-			const result = await response.json();
-			if (!response.ok) {
-				throw new Error(result.error || 'Failed to unsubscribe');
-			}
+			$newsletterStatus.refetch();
 		} catch (error) {
-			console.error('Error during unsubscription process:', error);
+			console.error('Error during newsletter toggle process:', error);
 		}
 	};
 
@@ -139,6 +126,7 @@
 		const newName = prompt('Please enter your new name:');
 		if (newName) {
 			await $updateNameMutation.mutateAsync({ id: session.user.id, full_name: newName });
+			$me.refetch();
 			modalOpen.set(false);
 		}
 	};
@@ -300,18 +288,27 @@
 						on:click={handleUpdateName}
 						disabled={loading}>Update Name</button
 					>
-					{#if $me.data?.newsletter}
-						<button
-							class="px-4 py-2 font-bold rounded-full text-error-900 bg-error-500 hover:bg-error-400"
-							on:click={handleUnsubscribe}
-							disabled={loading}>Unsubscribe from Newsletter</button
-						>
-					{/if}
-				</div>
-				<div class="mt-4">
-					<p>
-						Newsletter: {$me.data?.newsletter ? 'Subscribed' : 'Unsubscribed'}
-					</p>
+					<div class="flex items-center space-x-4">
+						<span class="text-tertiary-300">Newsletter Subscription:</span>
+						{#if $newsletterStatus.isLoading}
+							<span class="text-tertiary-500">Loading...</span>
+						{:else if $newsletterStatus.isError}
+							<span class="text-error-500">Error loading status</span>
+						{:else}
+							<label class="relative inline-flex items-center cursor-pointer">
+								<input
+									type="checkbox"
+									class="sr-only peer"
+									checked={$newsletterStatus.data}
+									on:change={handleToggleNewsletter}
+									disabled={$toggleNewsletterMutation.isLoading}
+								/>
+								<div
+									class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+								/>
+							</label>
+						{/if}
+					</div>
 				</div>
 				<!-- <button
 					class="px-4 py-2 font-bold rounded-full text-warning-900 bg-warning-500 hover:bg-warning-400"
