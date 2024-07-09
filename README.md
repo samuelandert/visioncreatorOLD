@@ -14,7 +14,8 @@ Now the following services are running:
 - Maizzle Email Template Preview: http://127.0.0.1:3001
 - Supabase API Url: http://127.0.0.1:54321
 - Supabase Studio: http://127.0.0.1:54323
-- Inbucket (Email Inbox Simulation): http://127.0.0.1:54324 
+- Inbucket (Email Inbox Simulation): http://127.0.0.1:54324
+- Nango: https://127.0.0.1:3003
 
 
 ## After inital launch set env vars
@@ -38,7 +39,7 @@ Set them in apps/api:
 SUPABASE_URL=http://127.0.0.1:54321
 SUPABASE_SERVICE_ROLE="copy-me-from-supacreator-package-terminal"
 NANGO_SECRET_KEY="copy-from-nango-dev-dashboard"
-NANGO_HOST=https://api.nango.dev
+NANGO_HOST=https://127.0.0.1:3003
 ```
 
 
