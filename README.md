@@ -61,3 +61,11 @@ Local migration of schema
 ```
 npx supabase migration up
 ```
+
+
+Note:
+Nango package repo is a git submodule, pull all latest update from remote with:
+
+```
+git submodule update --remote --merge
+```

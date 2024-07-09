@@ -4,7 +4,8 @@ export default createOperation.mutation({
     input: z.object({
         email: z.string().email()
     }),
-    handler: async ({ context, input }) => { 
+    handler: async ({ context, input }) => {
+        console.log("----------------------------------------------------------------", input.email)
         try {
             const response = await context.nango.proxy({
                 method: 'POST',
@@ -13,7 +14,7 @@ export default createOperation.mutation({
                 providerConfigKey: 'listmonk',
                 data: {
                     "lists": [3],
-                    "email": input.email 
+                    "email": input.email
                 }
             });
             console.log("--------------------", response.data.data)
