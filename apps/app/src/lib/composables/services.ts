@@ -2,7 +2,7 @@
 import { client } from '$lib/wundergraph';
 import { getComposerStore } from './composerStores';
 import { get } from 'svelte/store';
-import { Me } from '$lib/stores';
+import { Me, emitEvent } from '$lib/stores';
 
 export const coreServices = {
     mutateStore: (storeID: string, value: any) => {
@@ -37,6 +37,7 @@ export const coreServices = {
                 }
             });
             console.log("Update result:", result);
+            emitEvent({ type: 'updateMe', payload: result });
         } catch (error) {
             console.error("Error updating user:", error);
         }

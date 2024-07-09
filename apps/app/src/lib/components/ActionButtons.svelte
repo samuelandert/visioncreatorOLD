@@ -32,7 +32,9 @@
 </script>
 
 {#if showComposeView}
-	<ComposeView {view} on:close={toggleComposeView} />
+	<div class="p-4">
+		<ComposeView {view} on:close={toggleComposeView} />
+	</div>
 {:else}
 	<div class="flex justify-center mb-4 space-x-4">
 		<form method="post" action="?/signout" use:enhance={handleSignOut}>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createQuery } from '$lib/wundergraph';
 	import { writable } from 'svelte/store';
-	import { futureMe, Me } from '$lib/stores';
+	import { futureMe, Me, eventStream } from '$lib/stores';
 	import { onMount } from 'svelte';
 
 	export let data;
@@ -32,6 +32,17 @@
 				console.error('Error during signup process:', error);
 			}
 		}
+		const unsubscribe = eventStream.subscribe((events) => {
+			const latestEvent = events[events.length - 1];
+			if (latestEvent && latestEvent.type === 'updateMe') {
+				$me.refetch();
+				$leaderboard.refetch();
+			}
+		});
+
+		return () => {
+			unsubscribe();
+		};
 	});
 
 	const me = createQuery({
@@ -51,12 +62,6 @@
 		if (!event || event.target === event.currentTarget) {
 			modalOpen.update((n) => !n);
 		}
-	}
-
-	function handleAction() {
-		$me.refetch();
-		$leaderboard.refetch();
-		modalOpen.set(false);
 	}
 
 	$: userRank =
@@ -99,7 +104,6 @@
 							/>
 							<h1 class="text-2xl @3xl:text-5xl font-bold h1">
 								Hey {$me.data?.full_name || $futureMe.name}
-								{$me.data?.id}
 							</h1>
 							<p class="text-md @3xl:text-2xl">wonderful to have you around</p>
 						</div>
@@ -198,14 +202,13 @@
 				on:click|stopPropagation
 			>
 				{#if $activeTab === 'actions'}
-					<ActionButtons me={{ id: session.user.id }} on:nameupdate={handleAction} />
+					<ActionButtons me={{ id: session.user.id }} />
 				{:else if $activeTab === 'settings'}
 					<div class="mb-4">
 						<Newsletter me={{ email: session.user.email, id: session.user.id }} />
 					</div>
 				{/if}
 
-				<!-- Tab navigation remains the same -->
 				<div class="border-t border-surface-500">
 					<ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
 						<li class="mr-2">

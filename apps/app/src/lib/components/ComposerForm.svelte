@@ -151,99 +151,105 @@
 	);
 
 	$: isLastStep = $state.context.currentField === fields.length - 1;
+
+	$: isOnlyOneField = fields.length === 1;
+	$: isFirstField = $state.context.currentField === 0;
 </script>
 
-<div class="p-3 pb-4 md:p-8 lg:p-12">
-	<form on:submit|preventDefault={handleNext} on:keydown={handleKeyDown} class="w-full">
-		{#if $state.matches('input')}
-			<div class="mb-4">
-				<div class="p-2">
-					<h2 class="mb-2 text-lg font-semibold text-center md:text-4xl text-primary-500">
-						{fields[$state.context.currentField].title}
-					</h2>
-					{#if $errors[fields[$state.context.currentField].name]}
-						<p class="text-sm text-center lg:text-2xl text-warning-500">
-							{$errors[fields[$state.context.currentField].name]}
-						</p>
-					{:else}
-						<p class="text-sm text-center lg:text-2xl text-secondary-500">
-							{fields[$state.context.currentField].description}
-						</p>
-					{/if}
-				</div>
+<form on:submit|preventDefault={handleNext} on:keydown={handleKeyDown} class="w-full">
+	{#if $state.matches('input')}
+		<div class="mb-4">
+			<div class="p-2">
+				<h2 class="mb-2 text-lg font-semibold text-center md:text-4xl text-primary-500">
+					{fields[$state.context.currentField].title}
+				</h2>
+				{#if $errors[fields[$state.context.currentField].name]}
+					<p class="text-sm text-center lg:text-2xl text-warning-500">
+						{$errors[fields[$state.context.currentField].name]}
+					</p>
+				{:else}
+					<p class="text-sm text-center lg:text-2xl text-secondary-500">
+						{fields[$state.context.currentField].description}
+					</p>
+				{/if}
+			</div>
+			{#if !isOnlyOneField}
 				<div class="py-4">
 					<Stepper {stepperState} stepStateName={fields[$state.context.currentField].name} />
 				</div>
+			{/if}
 
-				{#if fields[$state.context.currentField].type === 'text'}
-					<TextInput {childInput} />
-				{:else if fields[$state.context.currentField].type === 'email'}
-					<TextInput {childInput} />
-				{:else if fields[$state.context.currentField].type === 'textarea'}
-					<TextAreaInput {childInput} />
-				{:else if fields[$state.context.currentField].type === 'select'}
-					<SelectInput {childInput} />
-				{:else if fields[$state.context.currentField].type === 'slider'}
-					<SliderInput {childInput} />
-				{:else if fields[$state.context.currentField].type === 'toggle'}
-					<ToggleInput {childInput} />
-				{:else if fields[$state.context.currentField].type === 'number'}
-					<NumberInput {childInput} />
-				{:else if fields[$state.context.currentField].type === 'cardSelect'}
-					<CardSelectInput {childInput} />
-				{:else if fields[$state.context.currentField].type === 'dateRange'}
-					<DateRangeInput {childInput} />
-				{/if}
-			</div>
-		{/if}
-		{#if $state.matches('submitted')}
-			<div
-				class="w-full px-4 py-12 mb-2 text-xl font-semibold text-center text-white rounded-lg bg-success-500"
-			>
-				submitted
-			</div>
-		{/if}
-		<div class="flex justify-between mt-1 md:mt-4">
-			<div>
+			{#if fields[$state.context.currentField].type === 'text'}
+				<TextInput {childInput} />
+			{:else if fields[$state.context.currentField].type === 'email'}
+				<TextInput {childInput} />
+			{:else if fields[$state.context.currentField].type === 'textarea'}
+				<TextAreaInput {childInput} />
+			{:else if fields[$state.context.currentField].type === 'select'}
+				<SelectInput {childInput} />
+			{:else if fields[$state.context.currentField].type === 'slider'}
+				<SliderInput {childInput} />
+			{:else if fields[$state.context.currentField].type === 'toggle'}
+				<ToggleInput {childInput} />
+			{:else if fields[$state.context.currentField].type === 'number'}
+				<NumberInput {childInput} />
+			{:else if fields[$state.context.currentField].type === 'cardSelect'}
+				<CardSelectInput {childInput} />
+			{:else if fields[$state.context.currentField].type === 'dateRange'}
+				<DateRangeInput {childInput} />
+			{/if}
+		</div>
+	{/if}
+	{#if $state.matches('submitted')}
+		<div
+			class="w-full px-4 py-12 mb-2 text-xl font-semibold text-center text-white rounded-lg bg-success-500"
+		>
+			submitted
+		</div>
+	{/if}
+
+	<div class="flex justify-between mt-1 md:mt-4">
+		<div>
+			{#if !isOnlyOneField && !isFirstField}
 				{#each $possibleActions as action (action)}
 					{#if action === 'PREV'}
 						<button
 							type="button"
 							on:click={() => send(action)}
 							class="font-semibold btn btn-sm md:btn-base variant-filled-secondary"
-							disabled={$state.context.currentField === 0}
-							><span>
+						>
+							<span>
 								<Icon icon="solar:alt-arrow-left-bold" class="h-5 text-white" />
 							</span>
 						</button>
 					{/if}
 				{/each}
-			</div>
-			<div>
-				{#each $possibleActions as action (action)}
-					{#if action !== 'NEXT' && action !== 'PREV'}
-						<button
-							type="button"
-							on:click={() => send(action)}
-							class="font-semibold btn btn-sm md:btn-base variant-filled"
-						>
-							{action}
-						</button>
-					{/if}
-				{/each}
-			</div>
-			<div>
-				{#if $possibleActions.includes('NEXT')}
+			{/if}
+		</div>
+		<div>
+			{#each $possibleActions as action (action)}
+				{#if action !== 'NEXT' && action !== 'PREV'}
 					<button
 						type="button"
-						on:click={handleNext}
-						class="font-semibold btn variant-filled-primary btn-sm md:btn-base"
-						disabled={$errors[fields[$state.context.currentField].name]}
+						on:click={() => send(action)}
+						class="font-semibold btn btn-sm md:btn-base variant-filled"
 					>
-						{isLastStep ? 'Submit' : 'Next'}
+						{action}
 					</button>
 				{/if}
-			</div>
+			{/each}
 		</div>
-	</form>
-</div>
+		<div>
+			{#if $possibleActions.includes('NEXT')}
+				<button
+					type="button"
+					on:click={handleNext}
+					class="font-semibold btn variant-filled-primary btn-sm md:btn-base"
+					disabled={$errors[fields[$state.context.currentField].name]}
+				>
+					{isLastStep ? 'Submit' : 'Next'}
+				</button>
+			{/if}
+		</div>
+	</div>
+</form>
