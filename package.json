@@ -11,8 +11,7 @@
     "generate": "npx turbo run generate"
   },
   "devDependencies": {
-    "turbo": "^2.0.4",
-    "vite-plugin-tailwind-purgecss": "^0.3.3"
+    "turbo": "^2.0.6"
   },
   "engines": {
     "node": ">=20.12.2"
