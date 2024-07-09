@@ -37,6 +37,9 @@
 			if (latestEvent && latestEvent.type === 'updateMe') {
 				$me.refetch();
 				$leaderboard.refetch();
+				setTimeout(() => {
+					modalOpen.set(false);
+				}, 1500);
 			}
 		});
 

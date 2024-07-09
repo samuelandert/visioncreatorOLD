@@ -11,10 +11,8 @@ export default createOperation.mutation({
     },
     handler: async ({ context, input, user }) => {
         if (input.id !== user?.customClaims?.id) {
-            console.error('Authorization Error: User ID does not match.');
             throw new AuthorizationError({ message: 'User ID does not match.' });
         }
-        console.log('Authorization successful');
 
         const retryCount = 3;
         let attempt = 0;
@@ -23,31 +21,50 @@ export default createOperation.mutation({
 
         while (attempt < retryCount && !success) {
             attempt++;
-            const { data: updateData, error: updateError } = await context.supabase
-                .from('profiles')
-                .update({ full_name: input.full_name, active: true })
-                .eq('id', input.id)
-                .select();
+            try {
+                const { data: updateData, error: updateError } = await context.supabase
+                    .from('profiles')
+                    .update({ full_name: input.full_name, active: true })
+                    .eq('id', input.id)
+                    .select()
+                    .single();
 
-            if (updateError) {
-                console.error(`Attempt ${attempt} - Error: ${updateError.message}`);
-                error = updateError;
-            } else {
-                data = updateData;
-                success = true;
+                if (updateError) {
+                    console.error(`Attempt ${attempt} - Error: ${updateError.message}`);
+                    error = updateError;
+                } else {
+                    data = updateData;
+                    success = true;
+                }
+            } catch (err) {
+                console.error(`Attempt ${attempt} - Unexpected error: ${err.message}`);
+                error = err;
+            }
+
+            if (!success && attempt < retryCount) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
             }
         }
 
         if (!success) {
-            return { success: false, error: error.message };
+            return {
+                success: false,
+                message: error.message || 'Failed to update user after multiple attempts.'
+            };
         }
 
-        if (data.length === 0) {
-            console.log('No user found with the specified ID, or no changes were made.');
-            return { success: false, error: 'No user found or no changes made.' };
+        if (!data) {
+            return {
+                success: false,
+                message: 'No user found or no changes made.'
+            };
         }
 
         console.log('Name and active status updated successfully!');
-        return { success: true, data };
+        return {
+            success: true,
+            message: `Your profile has been successfully updated to ${input.full_name}!`,
+            data
+        };
     }
 });

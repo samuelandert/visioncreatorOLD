@@ -24,8 +24,7 @@ export const coreServices = {
         const userId = get(Me).id;
 
         if (!userId) {
-            console.error("User ID not found in Me store");
-            return;
+            throw new Error("User ID not found in Me store");
         }
 
         try {
@@ -36,10 +35,21 @@ export const coreServices = {
                     full_name: formData.full_name
                 }
             });
+
+            if (!result.data.success) {
+                throw new Error(result.data.message || 'An error occurred while updating user');
+            }
+
             console.log("Update result:", result);
             emitEvent({ type: 'updateMe', payload: result });
+
+            return {
+                success: true,
+                message: result.data.message || 'User updated successfully'
+            };
         } catch (error) {
             console.error("Error updating user:", error);
+            throw error;
         }
     }
 };
