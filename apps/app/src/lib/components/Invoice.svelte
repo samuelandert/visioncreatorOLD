@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-
 	let pdfUrl: string | null = null;
 	let error: string | null = null;
 
-	onMount(async () => {
-		console.log('Invoice component mounted');
+	let customerName = '';
+	let customerAddress = '';
+	let customerEmail = '';
+
+	async function generateInvoice() {
 		const payload = {
 			company: {
 				name: 'Visioncreator GmbH',
@@ -13,10 +14,9 @@
 				email: 'hello@visioncreator.works'
 			},
 			customer: {
-				name: 'John Doe',
-				address: '456 Customer Ave, Town, Country',
-				phone: 'Tel: (987) 654-3210',
-				email: 'john@example.com'
+				name: customerName,
+				address: customerAddress,
+				email: customerEmail
 			},
 			invoice: {
 				number: 1001,
@@ -72,20 +72,56 @@
 			console.error('Error generating PDF:', err);
 			error = 'An error occurred while generating the PDF: ' + (err.message || '');
 		}
-	});
+	}
 </script>
 
-<div class="container p-4 mx-auto">
-	<h1 class="mb-4 text-2xl font-bold">Invoice Preview</h1>
-	{#if pdfUrl}
-		<iframe
-			src={pdfUrl}
-			title="Invoice PDF"
-			class="w-full h-screen border-2 border-gray-300 rounded"
-		/>
-	{:else if error}
-		<p class="text-red-600">{error}</p>
-	{:else}
-		<p class="text-gray-600">Loading invoice...</p>
-	{/if}
+<div class="flex w-full p-8 mx-auto">
+	<div class="w-1/4 pr-4 space-y-4">
+		<h2 class="h2">Customer Details</h2>
+		<label class="label">
+			<span>Name</span>
+			<input
+				class="input"
+				type="text"
+				bind:value={customerName}
+				placeholder="Enter customer name"
+			/>
+		</label>
+		<label class="label">
+			<span>Address</span>
+			<textarea
+				class="textarea"
+				bind:value={customerAddress}
+				rows="3"
+				placeholder="Enter customer address"
+			/>
+		</label>
+		<label class="label">
+			<span>Email</span>
+			<input
+				class="input"
+				type="email"
+				bind:value={customerEmail}
+				placeholder="Enter customer email"
+			/>
+		</label>
+		<button class="btn variant-filled-primary" on:click={generateInvoice}>Generate Invoice</button>
+	</div>
+
+	<div class="w-3/4 pl-4">
+		<h2 class="h2">Invoice Preview</h2>
+		{#if pdfUrl}
+			<iframe
+				src={pdfUrl}
+				title="Invoice PDF"
+				class="w-full h-[calc(100vh-200px)] border-2 border-surface-300-600-token rounded-container-token"
+			/>
+		{:else if error}
+			<p class="text-error-500">{error}</p>
+		{:else}
+			<p class="text-surface-600-300-token">
+				No invoice generated yet. Fill in the customer details and click "Generate Invoice".
+			</p>
+		{/if}
+	</div>
 </div>

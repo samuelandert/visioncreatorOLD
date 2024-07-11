@@ -1,8 +1,12 @@
 <script lang="ts">
 	import ComposeView from '$lib/components/ComposeView.svelte';
+	import { page } from '$app/stores';
 
-	const view = {
-		id: 'HelloEarth',
+	// Get the component name from the URL parameter 'c', default to "Header"
+	$: componentName = $page.url.searchParams.get('c') || 'Header';
+
+	$: view = {
+		id: 'ComponentViewer',
 		layout: {
 			areas: `
 			"main"
@@ -11,7 +15,7 @@
 		children: [
 			{
 				id: 'xyz1',
-				component: 'Invoice',
+				component: componentName,
 				slot: 'main'
 			}
 		]
