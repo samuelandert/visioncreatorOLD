@@ -33,29 +33,34 @@
 	}
 
 	let paragraphs = [
-		'21. März 2031 - Uhrzeit - 23:21',
-		'Liebes Tagebuch, heute strahlen und blitzen meine Augen vor Freude.',
-		'Ich führe ein Leben, indem ich Tag täglich entscheiden kann',
-		'in welche sinnstiftende Arbeit ich meine wertvolle Lebenszeit investiere.',
-		'Ich bin so froh das ich das alte und verstaubte Konzept',
-		'Zeit gegen Geld zu tauschen abgelegt habe und ich jetzt',
-		'über 25 verschiedene Einkommensquellen habe, die mich und meine Familie',
-		'ein ereignisreiches und gutes Leben führen lassen',
-		'Ich bin dankbar und glücklich darüber, dass ich 2024 Visioncreator geworden bin.',
-		'Es ist eine geile Community und wir haben viel Spaß zusammen.',
-		'Jeder von uns investiert jeden Tag 1€ in sich selbst',
-		'und damit in gesellschaftsbewegende Großvisionen an denen wir alle beteiligt sind',
-		'Wir haben es geschafft jeden Monat ein Community-Startup',
-		'aus unserer Mitte heraus zu finanzieren und so das Leben ',
-		'auf unserem Planeten Tag für Tag für jeden Menschen immer lebenswerter zu machen',
-		'Heute ist ein besonderer Tag. In einer Stunde ist es so weit',
-		'dass wir zum ersten mal eine Vision mit 10 Million € finanzieren werden',
-		'Einfach unglaublich und faszinierend zugleich, dass wir das heute schaffen.',
-		'Ich habe richtig Gänsehaut und kann es kaum erwarten',
-		'draußen schießen schon die Feuerwerks-Raketen',
-		'und ich werde mich jetzt ins Partygetümmel schmeißen',
+		'21. März 2031 - Uhrzeit - 23:31',
+		'Liebes Tagebuch,',
+		'heute strahlen und blitzen meine Augen vor Freude.',
+		'Ich führe ein Leben, indem ich tagtäglich entscheiden kann,',
+		'in welche sinnreiche Arbeit ich meine wertvolle Lebenszeit investiere.',
+		'Ich bin so froh, dass ich das alte und verstaubte Konzept',
+		'“Zeit gegen Geld tauschen“ abgelegt habe und ich jetzt',
+		'über 21 unabhängige Einkommensströme mit 10.946 € im Monat habe',
+		'die mich und meine Familie, ein ereignisreiches und schönes Leben genießen lassen.',
+		'Ich bin dankbar und glücklich dafür, dass ich 2024 Visioncreator geworden bin.',
+		'Jeder von uns investiert jeden Tag 1€ in sich selbst,',
+		'und damit in neue Gewohnheiten, die das volle Lebenspotenzial jedes Einzelnen entfalten.',
+		'Wir entdecken, entwickeln und kreieren jeden Tag mit brennender Leidenschaft',
+		'gesellschaftsbewegende Großvisionen, an dessen Erfolge wir alle beteiligt sind.',
+		'Wir haben es geschafft, jedes Quartal ein Community-Startup',
+		'aus unserer Mitte heraus zu finanzieren',
+		'und so das Leben auf unserem Planeten',
+		'für jeden Menschen immer lebenswerter zu machen.',
+		'Heute ist ein besonderer Tag!',
+		'In einer Stunde ist es so weit',
+		'dass zum ersten Mal 1.346.269 Visioncreators',
+		'eine Vision mit 44,87 Millionen Euro finanzieren werden.',
+		'Einfach unglaublich und faszinierend zugleich, dass wir das heute erreichen.',
+		'Ich habe richtige Gänsehaut und kann es kaum erwarten.',
+		'Draußen schießen schon die Feuerwerks-Raketen',
+		'und ich werde mich jetzt ins Partygetümmel schmeißen.',
 		'Danke das ich damals an mich geglaubt habe',
-		'und mich dazu entschieden habe Visioncreator zu sein',
+		'und mich dafür entschieden habe Visioncreator zu sein.',
 		'In tiefer Dankbarkeit dein Visioncreator xyz'
 	];
 	let state = 1;
@@ -115,7 +120,7 @@
 			}
 
 			if (currentParagraph < paragraphs.length - 1) {
-				await new Promise((resolve) => setTimeout(resolve, 1500));
+				await new Promise((resolve) => setTimeout(resolve, 1800));
 				centeredText = '';
 				currentParagraph = (currentParagraph + 1) % paragraphs.length;
 				typeWriter();
@@ -183,7 +188,7 @@
 					<h2
 						class="h2 mb-2 text-4xl @md:text-5xl @4xl:text-6xl @5xl:text-7xl @6xl:text-8xl @7xl:text-9xl text-white"
 					>
-						Schön das du da bist {$futureMe.name}!
+						Schön das du da bist, {$futureMe.name}!
 					</h2>
 					<p class="mb-4 text-sm @md:text-lg @4xl:text-xl @5xl:text-2xl">
 						Lass uns in deine Zukunft schauen und in dein neues Leben eintauchen
