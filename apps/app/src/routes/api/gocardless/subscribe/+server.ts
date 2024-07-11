@@ -22,12 +22,12 @@ export async function POST({ request }) {
         if (!template) {
             return json({ error: 'Billing request template not found' }, { status: 404 });
         }
-
         // Create a subscription
         const subscription = await gocardlessClient.subscriptions.create({
-            amount: template.payment_request_amount,
-            currency: template.payment_request_currency,
+            amount: 3966,
+            currency: template.mandate_request_currency,
             name: template.name,
+            interval_unit: 'monthly',
             metadata: {
                 template_id: templateId
             },
