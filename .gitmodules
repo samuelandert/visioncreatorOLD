@@ -1,3 +1,0 @@
-[submodule "packages/nango"]
-	path = packages/nango
-	url = https://github.com/samuelandert/nango.git
