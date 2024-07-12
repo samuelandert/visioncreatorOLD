@@ -2,13 +2,20 @@ import { createOperation, z } from '../generated/wundergraph.factory';
 
 export default createOperation.mutation({
     input: z.object({
-        // Add any input fields if needed
+        customer: z.object({
+            given_name: z.string(),
+            family_name: z.string(),
+            email: z.string().email(),
+            address_line1: z.string(),
+            city: z.string(),
+            postal_code: z.string(),
+        })
     }),
     requireAuthentication: true,
     rbac: {
         requireMatchAll: ['authenticated'],
     },
-    handler: async ({ context }) => {
+    handler: async ({ input, context }) => {
         try {
             const billingRequest = await context.gocardless.billingRequests.create({
                 mandate_request: {
@@ -25,12 +32,7 @@ export default createOperation.mutation({
                     billing_request: billingRequest.id,
                 },
                 prefilled_customer: {
-                    given_name: 'Chielo',
-                    family_name: 'Jai',
-                    email: 'chielo.jai@vc.earth',
-                    address_line1: '123 Main St',
-                    city: 'Earth',
-                    postal_code: '12345',
+                    ...input.customer,
                     country_code: 'DE'
                 },
                 lock_currency: true,

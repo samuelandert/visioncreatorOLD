@@ -3,6 +3,7 @@
 	import { useMachine } from '@xstate/svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { derived, writable } from 'svelte/store';
+	import { log } from '$lib/stores';
 
 	export let me;
 
@@ -104,6 +105,7 @@
 		const validationResult = await validate(currentFieldName);
 
 		if (validationResult && !validationResult.valid) {
+			log('error', `Validation failed for field: ${currentFieldName}`);
 			return;
 		}
 
@@ -114,15 +116,17 @@
 			try {
 				const result = await submitForm($state.context.formData);
 				submissionResult.set({ success: true, message: result.message });
+				log('success', 'Form submitted successfully', result);
 			} catch (error) {
+				const errorMessage = error.message || 'An error occurred while submitting the form.';
 				submissionResult.set({
 					success: false,
-					message: error.message || 'An error occurred while submitting the form.'
+					message: errorMessage
 				});
+				log('error', 'Form submission failed', { error: errorMessage });
 			}
 		}
 	}
-
 	async function handleNext() {
 		if (isLastStep) {
 			await handleSubmit();
@@ -131,6 +135,7 @@
 			const validationResult = await validate(currentFieldName);
 
 			if (validationResult && !validationResult.valid) {
+				log('error', `Validation failed for field: ${currentFieldName}`);
 				return;
 			}
 
@@ -138,7 +143,6 @@
 			send('NEXT', { fieldValue });
 		}
 	}
-
 	function handleKeyDown(event) {
 		if (event.key === 'Enter') {
 			event.preventDefault();
