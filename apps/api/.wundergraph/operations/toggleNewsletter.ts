@@ -44,7 +44,7 @@ export default createOperation.mutation({
             const subscribers = checkResponse.data.data.results;
 
             if (subscribers.length === 0) {
-                // No subscriber, create new at list [3]
+                // No subscriber, create new and confirm subscription to list [3]
                 const addResponse = await context.nango.proxy({
                     method: 'POST',
                     endpoint: '/subscribers',
@@ -55,9 +55,10 @@ export default createOperation.mutation({
                         name: userName,
                         status: 'enabled',
                         lists: [3],
+                        preconfirm_subscriptions: true // This ensures the subscription is confirmed
                     }
                 });
-                return { action: 'added', success: addResponse.data.data };
+                return { action: 'added', success: addResponse.data.data, isSubscribed: true };
             } else {
                 const subscriber = subscribers[0];
                 const isBlocklisted = subscriber.status === 'blocklisted';
@@ -71,9 +72,9 @@ export default createOperation.mutation({
                         connectionId: 'listmonk-vc',
                         providerConfigKey: 'listmonk'
                     });
-                    return { action: 'blocklisted', success: blockResponse.data.data };
+                    return { action: 'blocklisted', success: blockResponse.data.data, isSubscribed: false };
                 } else {
-                    // Either blocklisted or not subscribed to list 3, resubscribe
+                    // Either blocklisted or not subscribed to list 3, resubscribe and confirm
                     const updateResponse = await context.nango.proxy({
                         method: 'PUT',
                         endpoint: `/subscribers/${subscriber.id}`,
@@ -86,7 +87,7 @@ export default createOperation.mutation({
                         }
                     });
 
-                    // Add to list [3]
+                    // Add to list [3] and confirm subscription
                     const addToListResponse = await context.nango.proxy({
                         method: 'PUT',
                         endpoint: '/subscribers/lists',
@@ -100,7 +101,11 @@ export default createOperation.mutation({
                         }
                     });
 
-                    return { action: 'resubscribed', success: updateResponse.data.data && addToListResponse.data };
+                    return {
+                        action: 'resubscribed',
+                        success: updateResponse.data.data && addToListResponse.data,
+                        isSubscribed: true
+                    };
                 }
             }
         } catch (error) {

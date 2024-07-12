@@ -49,7 +49,7 @@
 		</div>
 	</div>
 	<div bind:this={logContainer} class="flex-grow overflow-y-auto">
-		<div class="space-y-2">
+		<div class="">
 			{#each filteredLogs as entry}
 				<div class="p-2 rounded card variant-soft">
 					<span

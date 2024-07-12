@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createQuery, createMutation } from '$lib/wundergraph';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
+	import { log } from '$lib/stores';
 
 	export let me: { email: string; id: string };
 
@@ -16,14 +17,32 @@
 		operationName: 'ToggleNewsletter'
 	});
 
+	$: {
+		if ($newsletterStatus.isSuccess) {
+			log(
+				'info',
+				`Newsletter status loaded: ${$newsletterStatus.data ? 'Subscribed' : 'Not subscribed'}`
+			);
+		}
+	}
+
 	const handleToggleNewsletter = async () => {
 		try {
-			await $toggleNewsletterMutation.mutateAsync({
+			log('info', 'Toggling newsletter subscription...');
+			const response = await $toggleNewsletterMutation.mutateAsync({
 				id: me.id,
 				email: me.email
 			});
-			$newsletterStatus.refetch();
+			log('success', `Newsletter subscription toggled. Response: ${JSON.stringify(response)}`);
+			await $newsletterStatus.refetch();
+			log(
+				'info',
+				`Newsletter status refetched. New status: ${
+					$newsletterStatus.data ? 'Subscribed' : 'Not subscribed'
+				}`
+			);
 		} catch (error) {
+			log('error', `Error during newsletter toggle process: ${error}`);
 			console.error('Error during newsletter toggle process:', error);
 		}
 	};

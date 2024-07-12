@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createQuery } from '$lib/wundergraph';
+	import { createQuery, createMutation } from '$lib/wundergraph';
 	import { writable } from 'svelte/store';
 	import { futureMe, Me, eventStream } from '$lib/stores';
 	import { onMount } from 'svelte';
@@ -14,12 +14,14 @@
 
 	function setActiveTab(tab: string) {
 		activeTab.set(tab);
+		log('info', `Tab changed to: ${tab}`);
 	}
 
 	onMount(async () => {
-		log.log('info', 'Me page mounted');
+		log('info', 'Me page mounted');
 		const supabaseMe = await supabase.auth.getUser();
 		Me.update((store) => ({ ...store, id: supabaseMe.data.user?.id || '' }));
+		log('success', `User ID updated: ${supabaseMe.data.user?.id || 'Not available'}`);
 
 		if (
 			!supabaseMe.data.user?.user_metadata.inviter &&
@@ -30,23 +32,50 @@
 					data: { inviter: $futureMe.visionid, full_name: $futureMe.name || 'UpdateMyName' }
 				});
 				if (error) throw error;
+				log('success', 'Supabase user metadata updated successfully');
+
+				await $updateNameMutation.mutateAsync({
+					id: session.user.id,
+					full_name: $futureMe.name || 'MyName'
+				});
+				log('success', 'User name updated successfully');
+
+				await $createInviteMutation.mutateAsync({
+					invitee: session.user.id,
+					inviter: $futureMe.visionid
+				});
+				log('success', 'Invite created successfully');
+				await $me.refetch();
+				await $leaderboard.refetch();
+				log('success', 'Me and leaderboard data refreshed after invite creation');
+
+				await $toggleNewsletterMutation.mutateAsync({
+					id: session.user.id,
+					email: session?.user.email
+				});
+				log('success', 'Newsletter preference updated successfully');
 			} catch (error) {
+				log('error', `Error during signup process: ${error}`);
 				console.error('Error during signup process:', error);
 			}
 		}
+
 		const unsubscribe = eventStream.subscribe((events) => {
 			const latestEvent = events[events.length - 1];
 			if (latestEvent && latestEvent.type === 'updateMe') {
 				$me.refetch();
 				$leaderboard.refetch();
+				log('info', 'Me and leaderboard data refetched');
 				setTimeout(() => {
 					modalOpen.set(false);
+					log('info', 'Modal closed after update');
 				}, 1500);
 			}
 		});
 
 		return () => {
 			unsubscribe();
+			log('info', 'Me page unmounted');
 		};
 	});
 
@@ -62,10 +91,21 @@
 		operationName: 'queryLeaderboard',
 		liveQuery: true
 	});
+	const updateNameMutation = createMutation({
+		operationName: 'updateMe'
+	});
 
+	const createInviteMutation = createMutation({
+		operationName: 'createInvite'
+	});
+
+	const toggleNewsletterMutation = createMutation({
+		operationName: 'ToggleNewsletter'
+	});
 	function toggleModal(event?: MouseEvent) {
 		if (!event || event.target === event.currentTarget) {
 			modalOpen.update((n) => !n);
+			log('info', `Modal ${$modalOpen ? 'opened' : 'closed'}`);
 		}
 	}
 
@@ -74,6 +114,25 @@
 
 	$: streamPotential =
 		($leaderboard.data?.find((entry) => entry.id === session.user.id)?.suminvites || 0) * 5;
+
+	$: if ($me.isError) {
+		log('error', `Error fetching user data: ${$me.error?.message}`);
+	}
+
+	$: if ($leaderboard.isError) {
+		log('error', `Error fetching leaderboard data: ${$leaderboard.error?.message}`);
+	}
+
+	$: if ($me.data) {
+		log('success', `User data loaded: ${$me.data.full_name || $futureMe.name}`);
+	}
+
+	$: if ($leaderboard.data) {
+		log(
+			'success',
+			`Leaderboard data loaded. User rank: ${userRank}, Stream potential: ${streamPotential}`
+		);
+	}
 </script>
 
 <div

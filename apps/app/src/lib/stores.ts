@@ -29,7 +29,8 @@ export const eventStream = writable<Event[]>([]);
 export const futureMe = persist(writable<FutureMe>(defaultFutureMe), createLocalStorage(), 'futureMe');
 export const Me = persist(writable<Me>(defaultMe), createLocalStorage(), 'Me');
 
-type LogType = 'success' | 'error' | 'default';
+
+type LogType = 'success' | 'error' | 'info' | 'default';
 
 interface LogEntry {
     type: LogType;
@@ -38,45 +39,45 @@ interface LogEntry {
     file: string;
 }
 
-
-interface Logger {
+interface LogFunction {
+    (type: LogType, message: string): void;
     subscribe: (run: (value: LogEntry[]) => void) => () => void;
-    log: (type: LogType, message: string) => void;
     clear: () => void;
 }
-
 function getFilePath(): string {
     const stack = new Error().stack;
     const stackLines = stack?.split('\n') || [];
-    for (let i = 3; i < stackLines.length; i++) {
-        const match = stackLines[i].match(/\s+at\s+.+\s+\((.+)\)/);
-        if (match && match[1]) {
-            const fullPath = match[1];
-            const srcIndex = fullPath.indexOf('/src/');
-            if (srcIndex !== -1) {
-                let path = fullPath.slice(srcIndex + 1);
-                // Remove ?t= and everything after it
-                const queryIndex = path.indexOf('?t=');
-                if (queryIndex !== -1) {
-                    path = path.slice(0, queryIndex);
+    for (let i = 2; i < stackLines.length; i++) {
+        const line = stackLines[i];
+        if (line.includes('/src/') && !line.includes('/src/lib/stores.ts')) {
+            const match = line.match(/\((.*):\d+:\d+\)$/);
+            if (match && match[1]) {
+                const fullPath = match[1];
+                const srcIndex = fullPath.indexOf('/src/');
+                if (srcIndex !== -1) {
+                    let path = fullPath.slice(srcIndex + 5); // +5 to remove '/src/'
+                    // Remove ?t= and everything after it
+                    const queryIndex = path.indexOf('?t=');
+                    if (queryIndex !== -1) {
+                        path = path.slice(0, queryIndex);
+                    }
+                    return path;
                 }
-                return path;
             }
         }
     }
     return 'unknown';
 }
 
-const createLogger = (): Logger => {
+const createLogger = (): LogFunction => {
     const { subscribe, update } = persist(
         writable<LogEntry[]>([]),
         createLocalStorage(),
         'customLogger'
     );
 
-    const log = (type: LogType, message: string) => {
+    const logFunction = (type: LogType, message: string) => {
         const file = getFilePath();
-        console.log(`Logging: ${type} - ${message} - ${file}`); // Debug line
         update(logs => {
             const newLogs = [
                 ...logs,
@@ -87,19 +88,14 @@ const createLogger = (): Logger => {
                     file
                 }
             ];
-            console.log('Updated logs:', newLogs); // Debug line
             return newLogs;
         });
     };
 
-    return {
-        subscribe,
-        log,
-        clear: () => update(() => [])
-    };
+    logFunction.subscribe = subscribe;
+    logFunction.clear = () => update(() => []);
+
+    return logFunction;
 };
 
-export const log: Logger = createLogger();
-
-// Debug line
-console.log('Logger created:', log);
+export const log = createLogger();
