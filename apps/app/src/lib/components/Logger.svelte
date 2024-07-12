@@ -4,6 +4,7 @@
 
 	let logContainer: HTMLElement;
 	let filter: LogType | 'all' = 'all';
+	let expandedLogs: Set<number> = new Set();
 
 	afterUpdate(() => {
 		if (logContainer) {
@@ -18,6 +19,15 @@
 
 	function clearLogs() {
 		log.clear();
+	}
+
+	function toggleExpand(index: number) {
+		if (expandedLogs.has(index)) {
+			expandedLogs.delete(index);
+		} else {
+			expandedLogs.add(index);
+		}
+		expandedLogs = expandedLogs;
 	}
 </script>
 
@@ -49,24 +59,43 @@
 		</div>
 	</div>
 	<div bind:this={logContainer} class="flex-grow overflow-y-auto">
-		<div class="space-y-1">
-			{#each filteredLogs as entry}
-				<div class="p-1 rounded card variant-soft">
-					<div class="flex items-center">
-						<span
-							class="mr-1 font-semibold"
-							class:text-success-500={entry.type === 'success'}
-							class:text-error-500={entry.type === 'error'}
-							class:text-surface-600-300-token={entry.type === 'info'}
-						>
-							{entry.type.toUpperCase()}:
-						</span>
-						<span class="flex-grow">{entry.message}</span>
+		<div class="pb-12 space-y-1">
+			{#each filteredLogs as entry, index}
+				<div
+					class="p-1 rounded cursor-pointer card variant-soft"
+					on:click={() => entry.json && toggleExpand(index)}
+				>
+					<div class="flex items-center justify-between">
+						<div class="flex items-center flex-grow">
+							<span
+								class="mr-1 font-semibold"
+								class:text-success-500={entry.type === 'success'}
+								class:text-error-500={entry.type === 'error'}
+								class:text-surface-600-300-token={entry.type === 'info'}
+							>
+								{entry.type.toUpperCase()}:
+							</span>
+							<span>{entry.message}</span>
+						</div>
+						{#if entry.json}
+							<span
+								class="ml-2 text-xl"
+								class:text-success-500={!expandedLogs.has(index)}
+								class:text-error-500={expandedLogs.has(index)}
+							>
+								{expandedLogs.has(index) ? '×' : '+'}
+							</span>
+						{/if}
 					</div>
 					<div class="mt-0.5 text-2xs text-surface-600-300-token">
 						<span>{entry.file}</span>
 						<span class="ml-1">{new Date(entry.date).toLocaleString()}</span>
 					</div>
+					{#if entry.json && expandedLogs.has(index)}
+						<pre class="p-1 mt-1 overflow-x-auto rounded bg-surface-700 text-2xs">
+                            {JSON.stringify(entry.json, null, 2).trim()}
+                        </pre>
+					{/if}
 				</div>
 			{/each}
 		</div>

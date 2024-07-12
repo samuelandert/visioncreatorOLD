@@ -21,7 +21,6 @@
 		log('info', 'Me page mounted');
 		const supabaseMe = await supabase.auth.getUser();
 		Me.update((store) => ({ ...store, id: supabaseMe.data.user?.id || '' }));
-		log('success', `User ID updated: ${supabaseMe.data.user?.id || 'Not available'}`);
 
 		if (
 			!supabaseMe.data.user?.user_metadata.inviter &&
@@ -34,28 +33,29 @@
 				if (error) throw error;
 				log('success', 'Supabase user metadata updated successfully');
 
-				await $updateNameMutation.mutateAsync({
+				const updateNameResult = await $updateNameMutation.mutateAsync({
 					id: session.user.id,
 					full_name: $futureMe.name || 'MyName'
 				});
-				log('success', 'User name updated successfully');
+				log('success', 'User name updated successfully', updateNameResult);
 
-				await $createInviteMutation.mutateAsync({
+				const createInviteResult = await $createInviteMutation.mutateAsync({
 					invitee: session.user.id,
 					inviter: $futureMe.visionid
 				});
-				log('success', 'Invite created successfully');
+				log('success', 'Invite created successfully', createInviteResult);
+
 				await $me.refetch();
 				await $leaderboard.refetch();
 				log('success', 'Me and leaderboard data refreshed after invite creation');
 
-				await $toggleNewsletterMutation.mutateAsync({
+				const toggleNewsletterResult = await $toggleNewsletterMutation.mutateAsync({
 					id: session.user.id,
 					email: session?.user.email
 				});
-				log('success', 'Newsletter preference updated successfully');
+				log('success', 'Newsletter preference updated successfully', toggleNewsletterResult);
 			} catch (error) {
-				log('error', `Error during signup process: ${error}`);
+				log('error', 'Error during signup process', error);
 				console.error('Error during signup process:', error);
 			}
 		}
@@ -116,22 +116,23 @@
 		($leaderboard.data?.find((entry) => entry.id === session.user.id)?.suminvites || 0) * 5;
 
 	$: if ($me.isError) {
-		log('error', `Error fetching user data: ${$me.error?.message}`);
+		log('error', 'Error fetching user data', $me.error);
 	}
 
 	$: if ($leaderboard.isError) {
-		log('error', `Error fetching leaderboard data: ${$leaderboard.error?.message}`);
+		log('error', 'Error fetching leaderboard data', $leaderboard.error);
 	}
 
 	$: if ($me.data) {
-		log('success', `User data loaded: ${$me.data.full_name || $futureMe.name}`);
+		log('success', 'User data loaded', $me.data);
 	}
 
 	$: if ($leaderboard.data) {
-		log(
-			'success',
-			`Leaderboard data loaded. User rank: ${userRank}, Stream potential: ${streamPotential}`
-		);
+		log('success', 'Leaderboard data loaded', {
+			userRank,
+			streamPotential,
+			leaderboardData: $leaderboard.data
+		});
 	}
 </script>
 

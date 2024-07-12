@@ -32,18 +32,22 @@ export const Me = persist(writable<Me>(defaultMe), createLocalStorage(), 'Me');
 
 type LogType = 'success' | 'error' | 'info' | 'default';
 
+
 interface LogEntry {
     type: LogType;
     message: string;
     date: string;
     file: string;
+    json?: any; // Add this line
 }
 
 interface LogFunction {
-    (type: LogType, message: string): void;
+    (type: LogType, message: string, json?: any): void; // Update this line
     subscribe: (run: (value: LogEntry[]) => void) => () => void;
     clear: () => void;
-}function getFilePath(): string {
+}
+
+function getFilePath(): string {
     if (import.meta.env.DEV) {
         const stack = new Error().stack;
         const stackLines = stack?.split('\n') || [];
@@ -95,7 +99,7 @@ const createLogger = (): LogFunction => {
         'customLogger'
     );
 
-    const logFunction = (type: LogType, message: string) => {
+    const logFunction = (type: LogType, message: string, json?: any) => { // Update this line
         const file = getFilePath();
         update(logs => {
             const newLogs = [
@@ -104,7 +108,8 @@ const createLogger = (): LogFunction => {
                     type,
                     message,
                     date: new Date().toISOString(),
-                    file
+                    file,
+                    json // Add this line
                 }
             ];
             return newLogs;

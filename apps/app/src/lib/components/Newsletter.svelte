@@ -21,28 +21,34 @@
 		if ($newsletterStatus.isSuccess) {
 			log(
 				'info',
-				`Newsletter status loaded: ${$newsletterStatus.data ? 'Subscribed' : 'Not subscribed'}`
+				`Newsletter status loaded: ${$newsletterStatus.data ? 'Subscribed' : 'Not subscribed'}`,
+				{ status: $newsletterStatus.data }
 			);
+		} else if ($newsletterStatus.isError) {
+			log('error', `Error loading newsletter status: ${$newsletterStatus.error}`, {
+				error: $newsletterStatus.error
+			});
 		}
 	}
 
 	const handleToggleNewsletter = async () => {
 		try {
-			log('info', 'Toggling newsletter subscription...');
+			log('info', 'Toggling newsletter subscription...', { id: me.id, email: me.email });
 			const response = await $toggleNewsletterMutation.mutateAsync({
 				id: me.id,
 				email: me.email
 			});
-			log('success', `Newsletter subscription toggled. Response: ${JSON.stringify(response)}`);
+			log('success', `Newsletter subscription toggled.`, { response });
 			await $newsletterStatus.refetch();
 			log(
 				'info',
 				`Newsletter status refetched. New status: ${
 					$newsletterStatus.data ? 'Subscribed' : 'Not subscribed'
-				}`
+				}`,
+				{ newStatus: $newsletterStatus.data }
 			);
 		} catch (error) {
-			log('error', `Error during newsletter toggle process: ${error}`);
+			log('error', `Error during newsletter toggle process`, { error });
 			console.error('Error during newsletter toggle process:', error);
 		}
 	};
