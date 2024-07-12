@@ -1,19 +1,23 @@
 import { configureWunderGraphServer } from '@wundergraph/sdk/server';
 import { createClient } from '@supabase/supabase-js';
 import { Nango } from '@nangohq/node';
+import gocardless from 'gocardless-nodejs';
+import { Environments } from 'gocardless-nodejs/constants';
 
 class MyContext {
 	supabase: ReturnType<typeof createClient>;
 	nango: Nango;
+	gocardless: ReturnType<typeof gocardless>;
 
 	constructor() {
 		const supabaseUrl = process.env.SUPABASE_URL;
 		const supabaseKey = process.env.SUPABASE_SERVICE_ROLE;
 		const nangoHost = process.env.NANGO_HOST;
 		const nangoSecretKey = process.env.NANGO_SECRET_KEY;
+		const gocardlessAccessToken = process.env.SECRET_GOCARDLESS_ACCESS_TOKEN;
 
-		if (!supabaseUrl || !supabaseKey || !nangoHost || !nangoSecretKey) {
-			throw new Error("Supabase URL, Key, Nango Host, and Secret Key must be provided.");
+		if (!supabaseUrl || !supabaseKey || !nangoHost || !nangoSecretKey || !gocardlessAccessToken) {
+			throw new Error("Supabase URL, Key, Nango Host, Secret Key, and GoCardless Access Token must be provided.");
 		}
 
 		this.supabase = createClient(supabaseUrl, supabaseKey);
@@ -21,10 +25,10 @@ class MyContext {
 			host: nangoHost,
 			secretKey: nangoSecretKey
 		});
-	}
-
-	async cleanup() {
-		await this.supabase.removeAllChannels();
+		this.gocardless = gocardless(
+			gocardlessAccessToken,
+			Environments.Sandbox
+		);
 	}
 }
 
@@ -55,9 +59,6 @@ export default configureWunderGraphServer(() => ({
 		request: {
 			create: async () => {
 				return new MyContext();
-			},
-			release: async (ctx) => {
-				await ctx.cleanup();
 			},
 		},
 	},

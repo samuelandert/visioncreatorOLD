@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { createMutation } from '$lib/wundergraph';
+
 	export let loading = false;
 	export let error: string | null = null;
 	export let showResult = false;
@@ -7,20 +9,20 @@
 
 	let dropinHandler: any = null;
 
+	const createMandateMutation = createMutation({
+		operationName: 'CreateMandate'
+	});
+
 	async function setupDirectDebit() {
 		loading = true;
 		error = null;
 		showResult = false;
 		try {
-			const response = await fetch('/api/gocardless/mandate', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' }
-			});
-			const data = await response.json();
-			if (data.error) {
-				throw new Error(data.error);
+			const result = await $createMandateMutation.mutateAsync({});
+			if (result.error) {
+				throw new Error(result.error);
 			}
-			initializeDropin(data.flowId);
+			initializeDropin(result.data.flowId);
 		} catch (e) {
 			error = e.message || 'An unexpected error occurred';
 			showResult = true;
@@ -58,13 +60,17 @@
 	}
 </script>
 
-<button class="mb-4 btn variant-filled-primary" on:click={setupDirectDebit} disabled={loading}>
+<button
+	class="mb-4 btn variant-filled-primary"
+	on:click={setupDirectDebit}
+	disabled={loading || $createMandateMutation.isLoading}
+>
 	Subscribe New VC
 </button>
 
-{#if error}
+{#if error || $createMandateMutation.error}
 	<div class="mb-4 alert variant-filled-error">
-		<p>{error}</p>
+		<p>{error || $createMandateMutation.error?.message}</p>
 	</div>
 {/if}
 

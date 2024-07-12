@@ -1,35 +1,12 @@
 <script lang="ts">
+	import { createQuery } from '$lib/wundergraph';
 	export let customerId: string;
 
-	let subscriptions: any[] = [];
-	let loading = false;
-	let error: string | null = null;
-
-	$: if (customerId) {
-		loadSubscriptions(customerId);
-	}
-
-	async function loadSubscriptions(customerId: string) {
-		console.log('Loading subscriptions for customer ID:', customerId);
-		loading = true;
-		error = null;
-		try {
-			const response = await fetch(`/api/gocardless/subscriptions?customerId=${customerId}`);
-			console.log('Subscription API response status:', response.status);
-			if (!response.ok) {
-				throw new Error(`Failed to fetch subscriptions: ${response.statusText}`);
-			}
-			const data = await response.json();
-			console.log('Subscriptions data received:', JSON.stringify(data, null, 2));
-			subscriptions = data;
-			console.log('Subscriptions state updated:', JSON.stringify(subscriptions, null, 2));
-		} catch (err) {
-			console.error('Error loading subscriptions:', err);
-			error = 'Failed to load subscriptions';
-		} finally {
-			loading = false;
-		}
-	}
+	$: subscriptionsQuery = createQuery({
+		operationName: 'ListSubscriptions',
+		input: { customerId },
+		enabled: !!customerId
+	});
 
 	function formatDate(dateString: string): string {
 		const date = new Date(dateString);
@@ -42,15 +19,15 @@
 </script>
 
 <h4 class="mb-2 h4">Memberships</h4>
-{#if loading}
+{#if $subscriptionsQuery.isLoading}
 	<p>Loading subscriptions...</p>
-{:else if error}
-	<p class="text-error-500">{error}</p>
-{:else if subscriptions.length === 0}
+{:else if $subscriptionsQuery.error}
+	<p class="text-error-500">Failed to load subscriptions</p>
+{:else if $subscriptionsQuery.data?.subscriptions.length === 0}
 	<p>No active memberships found.</p>
 {:else}
 	<ul>
-		{#each subscriptions as subscription}
+		{#each $subscriptionsQuery.data?.subscriptions || [] as subscription}
 			<li class="flex items-center justify-between p-2 bg-surface-100-800-token rounded-token">
 				<div>
 					<span class="font-semibold">{subscription.name}</span>
