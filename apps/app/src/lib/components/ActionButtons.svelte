@@ -38,15 +38,10 @@
 {:else}
 	<div class="flex justify-center mb-4 space-x-4">
 		<form method="post" action="?/signout" use:enhance={handleSignOut}>
-			<button
-				class="px-6 py-2 font-bold rounded-full text-error-900 bg-error-500 hover:bg-error-400"
-				disabled={loading}>Sign Out</button
-			>
+			<button class="btn variant-ghost-error" disabled={loading}>Sign Out</button>
 		</form>
-		<button
-			class="px-6 py-2 font-bold rounded-full text-warning-900 bg-warning-500 hover:bg-warning-400"
-			on:click={toggleComposeView}
-			disabled={loading}>Update Name</button
+		<button class="btn variant-ghost-warning" on:click={toggleComposeView} disabled={loading}
+			>Update Name</button
 		>
 	</div>
 {/if}
