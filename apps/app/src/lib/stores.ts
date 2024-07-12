@@ -43,29 +43,48 @@ interface LogFunction {
     (type: LogType, message: string): void;
     subscribe: (run: (value: LogEntry[]) => void) => () => void;
     clear: () => void;
-}
-function getFilePath(): string {
-    const stack = new Error().stack;
-    const stackLines = stack?.split('\n') || [];
-    for (let i = 2; i < stackLines.length; i++) {
-        const line = stackLines[i];
-        if (line.includes('/src/') && !line.includes('/src/lib/stores.ts')) {
-            const match = line.match(/\((.*):\d+:\d+\)$/);
-            if (match && match[1]) {
-                const fullPath = match[1];
-                const srcIndex = fullPath.indexOf('/src/');
-                if (srcIndex !== -1) {
-                    let path = fullPath.slice(srcIndex + 5); // +5 to remove '/src/'
-                    // Remove ?t= and everything after it
-                    const queryIndex = path.indexOf('?t=');
-                    if (queryIndex !== -1) {
-                        path = path.slice(0, queryIndex);
+}function getFilePath(): string {
+    if (import.meta.env.DEV) {
+        const stack = new Error().stack;
+        const stackLines = stack?.split('\n') || [];
+        for (let i = 2; i < stackLines.length; i++) {
+            const line = stackLines[i];
+            if (line.includes(import.meta.env.BASE_PATH) && !line.includes('/src/lib/stores.ts')) {
+                const match = line.match(/\((.*):\d+:\d+\)$/);
+                if (match && match[1]) {
+                    const fullPath = match[1];
+                    const basePathIndex = fullPath.indexOf(import.meta.env.BASE_PATH);
+                    if (basePathIndex !== -1) {
+                        let path = fullPath.slice(basePathIndex + import.meta.env.BASE_PATH.length);
+                        // Remove ?t= and everything after it
+                        const queryIndex = path.indexOf('?t=');
+                        if (queryIndex !== -1) {
+                            path = path.slice(0, queryIndex);
+                        }
+                        return path;
                     }
-                    return path;
                 }
             }
         }
     }
+
+    // Fallback for production or if stack trace is unavailable
+    try {
+        throw new Error();
+    } catch (error) {
+        if (error instanceof Error && error.stack) {
+            const stackLines = error.stack.split('\n');
+            for (const line of stackLines) {
+                if (line.includes('at ') && !line.includes('/stores.ts')) {
+                    const match = line.match(/at (?:.*\()?(.+?)(?::\d+:\d+)?(?:\))?$/);
+                    if (match && match[1]) {
+                        return match[1].split('/').slice(-2).join('/');
+                    }
+                }
+            }
+        }
+    }
+
     return 'unknown';
 }
 

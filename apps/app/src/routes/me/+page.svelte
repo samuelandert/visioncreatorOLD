@@ -136,7 +136,7 @@
 </script>
 
 <div class="flex h-screen overflow-hidden">
-	<main class="relative w-2/3 overflow-y-auto">
+	<main class="relative w-full overflow-y-auto">
 		<div
 			class={`@container h-full ${$modalOpen ? 'blur-md' : ''}`}
 			style="-webkit-overflow-scrolling: touch;"
@@ -255,10 +255,10 @@
 		</div>
 
 		<button
-			class="fixed z-40 flex items-center justify-center text-4xl rounded-full text-primary-900 bottom-4 bg-primary-500 w-14 h-14 {$modalOpen
+			class="absolute z-40 flex items-center justify-center text-4xl rounded-full text-primary-900 bg-primary-500 w-14 h-14 {$modalOpen
 				? 'hidden sm:flex'
 				: 'flex'}"
-			style="left: calc(37.5% - 28px);"
+			style="bottom: 1rem; left: calc(50% - 1.75rem);"
 			on:click={toggleModal}
 		>
 			+
@@ -279,10 +279,6 @@
 						{:else if $activeTab === 'settings'}
 							<div class="mb-4">
 								<Newsletter me={{ email: session.user.email, id: session.user.id }} />
-							</div>
-						{:else if $activeTab === 'logs'}
-							<div class="h-[calc(100vh-12rem)] overflow-hidden">
-								<Logger />
 							</div>
 						{/if}
 
@@ -314,19 +310,6 @@
 										Settings
 									</a>
 								</li>
-								<li class="mr-2">
-									<a
-										href="#"
-										class={`inline-block p-4 rounded-t-lg ${
-											$activeTab === 'logs'
-												? 'text-primary-500 border-b-2 border-primary-500'
-												: 'text-tertiary-400 hover:text-tertiary-300'
-										}`}
-										on:click|preventDefault={() => setActiveTab('logs')}
-									>
-										Logs
-									</a>
-								</li>
 							</ul>
 						</div>
 					</div>
@@ -334,8 +317,4 @@
 			</div>
 		{/if}
 	</main>
-
-	<aside class="w-1/3 p-4 overflow-y-auto bg-surface-700">
-		<Logger />
-	</aside>
 </div>

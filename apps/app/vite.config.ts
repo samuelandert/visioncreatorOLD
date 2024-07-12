@@ -21,7 +21,11 @@ export default defineConfig({
 		}),
 		sveltekit(),
 		purgeCss(),
+
 	],
+	define: {
+		'import.meta.env.BASE_PATH': JSON.stringify('/src/')
+	},
 	build: {
 		rollupOptions: {
 			preserveEntrySignatures: 'strict'

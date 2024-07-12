@@ -12,8 +12,14 @@
 	import { browser } from '$app/environment';
 	import { writable } from 'svelte/store';
 	import { dev } from '$app/environment';
+	import { slide } from 'svelte/transition';
 
 	let authReady = writable(false);
+	let isLoggerExpanded = writable(false);
+
+	function toggleLogger() {
+		isLoggerExpanded.update((value) => !value);
+	}
 
 	export let data: LayoutData;
 
@@ -93,8 +99,28 @@
 	</Drawer>
 
 	<AppShell>
-		<slot />
+		<div class="flex h-screen overflow-hidden">
+			<main class="relative w-full md:w-full overflow-y-auto {$isLoggerExpanded ? 'md:w-2/3' : ''}">
+				<slot />
+			</main>
+
+			{#if $isLoggerExpanded}
+				<aside
+					class="w-full p-4 overflow-y-auto md:w-1/3 bg-surface-700"
+					transition:slide={{ duration: 300, axis: 'x' }}
+				>
+					<Logger />
+				</aside>
+			{/if}
+		</div>
 	</AppShell>
+
+	<button
+		class="fixed z-50 rounded-full bottom-4 right-4 btn-sm variant-ghost-secondary"
+		on:click={toggleLogger}
+	>
+		{$isLoggerExpanded ? 'Close' : 'Logs'}
+	</button>
 </QueryClientProvider>
 <!-- 
 {#if !session}

@@ -11,7 +11,8 @@ export default {
 	theme: {
 		extend: {
 			fontSize: {
-				'xxs': '10px',
+				'3xs': '8px',
+				'2xs': '10px',
 				'7xl': '5rem',
 				'8xl': '6rem',
 				'9xl': '7rem'
