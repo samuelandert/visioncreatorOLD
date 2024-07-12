@@ -3,6 +3,7 @@
 	import { writable } from 'svelte/store';
 	import { futureMe, Me, eventStream } from '$lib/stores';
 	import { onMount } from 'svelte';
+	import { log } from '$lib/stores'; // Import the logger
 
 	export let data;
 
@@ -13,11 +14,14 @@
 
 	function setActiveTab(tab: string) {
 		activeTab.set(tab);
+		log.log('info', `Active tab set to: ${tab}`, 'me/+page.svelte');
 	}
 
 	onMount(async () => {
+		log.log('info', 'Me page mounted', 'me/+page.svelte');
 		const supabaseMe = await supabase.auth.getUser();
 		Me.update((store) => ({ ...store, id: supabaseMe.data.user?.id || '' }));
+		log.log('info', 'User data fetched from Supabase', 'me/+page.svelte');
 
 		if (
 			!supabaseMe.data.user?.user_metadata.inviter &&
@@ -28,7 +32,9 @@
 					data: { inviter: $futureMe.visionid, full_name: $futureMe.name || 'UpdateMyName' }
 				});
 				if (error) throw error;
+				log.log('success', 'User metadata updated', 'me/+page.svelte');
 			} catch (error) {
+				log.log('error', `Error during signup process: ${error}`, 'me/+page.svelte');
 				console.error('Error during signup process:', error);
 			}
 		}
@@ -37,14 +43,17 @@
 			if (latestEvent && latestEvent.type === 'updateMe') {
 				$me.refetch();
 				$leaderboard.refetch();
+				log.log('info', 'Me and leaderboard data refetched', 'me/+page.svelte');
 				setTimeout(() => {
 					modalOpen.set(false);
+					log.log('info', 'Modal closed after update', 'me/+page.svelte');
 				}, 1500);
 			}
 		});
 
 		return () => {
 			unsubscribe();
+			log.log('info', 'Me page unmounted', 'me/+page.svelte');
 		};
 	});
 
@@ -64,6 +73,7 @@
 	function toggleModal(event?: MouseEvent) {
 		if (!event || event.target === event.currentTarget) {
 			modalOpen.update((n) => !n);
+			log.log('info', `Modal ${$modalOpen ? 'opened' : 'closed'}`, 'me/+page.svelte');
 		}
 	}
 
@@ -72,6 +82,30 @@
 
 	$: streamPotential =
 		($leaderboard.data?.find((entry) => entry.id === session.user.id)?.suminvites || 0) * 5;
+
+	$: {
+		if ($me.isLoading) {
+			log.log('info', 'Loading user details...', 'me/+page.svelte');
+		} else if ($me.isError) {
+			log.log('error', `Error loading user details: ${$me.error?.message}`, 'me/+page.svelte');
+		} else if ($me.data) {
+			log.log('success', 'User details loaded successfully', 'me/+page.svelte');
+		}
+	}
+
+	$: {
+		if ($leaderboard.isLoading) {
+			log.log('info', 'Loading leaderboard...', 'me/+page.svelte');
+		} else if ($leaderboard.isError) {
+			log.log(
+				'error',
+				`Error loading leaderboard: ${$leaderboard.error?.message}`,
+				'me/+page.svelte'
+			);
+		} else if ($leaderboard.data) {
+			log.log('success', 'Leaderboard loaded successfully', 'me/+page.svelte');
+		}
+	}
 </script>
 
 <div
@@ -201,7 +235,7 @@
 	>
 		{#if $me.data}
 			<div
-				class="w-full max-w-6xl p-4 @3xl:p-8 rounded-3xl bg-surface-600"
+				class="w-full max-h-full max-w-6xl p-4 @3xl:p-8 rounded-3xl bg-surface-600"
 				on:click|stopPropagation
 			>
 				{#if $activeTab === 'actions'}
@@ -209,6 +243,10 @@
 				{:else if $activeTab === 'settings'}
 					<div class="mb-4">
 						<Newsletter me={{ email: session.user.email, id: session.user.id }} />
+					</div>
+				{:else if $activeTab === 'logs'}
+					<div class="h-[calc(100vh-12rem)] overflow-hidden">
+						<Logger />
 					</div>
 				{/if}
 
@@ -238,6 +276,19 @@
 								on:click|preventDefault={() => setActiveTab('settings')}
 							>
 								Settings
+							</a>
+						</li>
+						<li class="mr-2">
+							<a
+								href="#"
+								class={`inline-block p-4 rounded-t-lg ${
+									$activeTab === 'logs'
+										? 'text-primary-500 border-b-2 border-primary-500'
+										: 'text-tertiary-400 hover:text-tertiary-300'
+								}`}
+								on:click|preventDefault={() => setActiveTab('logs')}
+							>
+								Logs
 							</a>
 						</li>
 					</ul>
