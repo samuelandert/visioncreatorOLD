@@ -42,6 +42,9 @@ NANGO_SECRET_KEY="copy-from-nango-dev-dashboard"
 NANGO_HOST=https://127.0.0.1:3003
 ```
 
+Also go to the nango dashboard 127.0.0.1:3003 and setup your listmonk (listmonk-vc) and coda (codavc) credentials. 
+
+After setting up all ENV var, restart again with npm run dev.
 
 ## Supabase CLI
 
