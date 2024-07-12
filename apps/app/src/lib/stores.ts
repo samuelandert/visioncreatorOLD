@@ -37,27 +37,48 @@ interface LogEntry {
     date: string;
     file: string;
 }
-function getFilePath(importMetaUrl: string): string {
-    try {
-        const url = new URL(importMetaUrl);
-        return url.pathname.split('/src/')[1] || '';
-    } catch (error) {
-        // If URL parsing fails, return the original string or a fallback
-        return importMetaUrl || 'unknown';
-    }
+
+
+interface Logger {
+    subscribe: (run: (value: LogEntry[]) => void) => () => void;
+    log: (type: LogType, message: string) => void;
+    clear: () => void;
 }
 
-const createLogger = () => {
+function getFilePath(): string {
+    const stack = new Error().stack;
+    const stackLines = stack?.split('\n') || [];
+    for (let i = 3; i < stackLines.length; i++) {
+        const match = stackLines[i].match(/\s+at\s+.+\s+\((.+)\)/);
+        if (match && match[1]) {
+            const fullPath = match[1];
+            const srcIndex = fullPath.indexOf('/src/');
+            if (srcIndex !== -1) {
+                let path = fullPath.slice(srcIndex + 1);
+                // Remove ?t= and everything after it
+                const queryIndex = path.indexOf('?t=');
+                if (queryIndex !== -1) {
+                    path = path.slice(0, queryIndex);
+                }
+                return path;
+            }
+        }
+    }
+    return 'unknown';
+}
+
+const createLogger = (): Logger => {
     const { subscribe, update } = persist(
         writable<LogEntry[]>([]),
         createLocalStorage(),
         'customLogger'
     );
 
-    return {
-        subscribe,
-        log: (type: LogType, message: string, file: string) => {
-            update(logs => [
+    const log = (type: LogType, message: string) => {
+        const file = getFilePath();
+        console.log(`Logging: ${type} - ${message} - ${file}`); // Debug line
+        update(logs => {
+            const newLogs = [
                 ...logs,
                 {
                     type,
@@ -65,10 +86,20 @@ const createLogger = () => {
                     date: new Date().toISOString(),
                     file
                 }
-            ]);
-        },
+            ];
+            console.log('Updated logs:', newLogs); // Debug line
+            return newLogs;
+        });
+    };
+
+    return {
+        subscribe,
+        log,
         clear: () => update(() => [])
     };
 };
 
-export const log = createLogger();
+export const log: Logger = createLogger();
+
+// Debug line
+console.log('Logger created:', log);
