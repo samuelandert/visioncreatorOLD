@@ -278,9 +278,7 @@
 						{#if $activeTab === 'actions'}
 							<ActionButtons me={{ id: session.user.id }} />
 						{:else if $activeTab === 'settings'}
-							<div class="mb-4">
-								<Newsletter me={{ email: session.user.email, id: session.user.id }} />
-							</div>
+							<Newsletter me={{ email: session.user.email, id: session.user.id }} />
 						{/if}
 
 						<div class="border-t border-surface-500">

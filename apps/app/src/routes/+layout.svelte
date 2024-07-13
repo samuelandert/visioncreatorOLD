@@ -12,7 +12,7 @@
 	import { browser } from '$app/environment';
 	import { writable } from 'svelte/store';
 	import { dev } from '$app/environment';
-	import { slide } from 'svelte/transition';
+	import { fly } from 'svelte/transition';
 
 	let authReady = writable(false);
 	let isLoggerExpanded = writable(false);
@@ -99,15 +99,19 @@
 	</Drawer>
 
 	<AppShell>
-		<div class="flex h-screen overflow-hidden">
-			<main class="relative w-full md:w-full overflow-y-auto {$isLoggerExpanded ? 'md:w-2/3' : ''}">
+		<div class="flex flex-col h-screen overflow-hidden md:flex-row">
+			<main
+				class="relative w-full h-full overflow-y-auto {$isLoggerExpanded
+					? 'hidden md:block md:w-3/4'
+					: ''}"
+			>
 				<slot />
 			</main>
 
 			{#if $isLoggerExpanded}
 				<aside
-					class="w-full p-4 overflow-y-auto md:w-1/3 bg-surface-700"
-					transition:slide={{ duration: 300, axis: 'x' }}
+					class="w-full h-full p-4 overflow-y-auto md:w-1/4 bg-surface-700"
+					transition:fly={{ duration: 300, x: 300 }}
 				>
 					<Logger />
 				</aside>

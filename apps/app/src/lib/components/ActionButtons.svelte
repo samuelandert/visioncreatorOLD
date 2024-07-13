@@ -32,24 +32,48 @@
 		showComposeView = !showComposeView;
 		showNewMandate = false;
 	};
+
+	const toggleNewMandate = () => {
+		showNewMandate = !showNewMandate;
+		showComposeView = false;
+	};
 </script>
 
-{#if showComposeView}
-	<div class="p-4">
-		<ComposeView {view} on:close={toggleComposeView} />
-	</div>
-{:else if showNewMandate}
-	<div class="p-4">
-		<NewMandate />
-	</div>
-{:else}
-	<div class="flex justify-center mb-4 space-x-4">
-		<form method="post" action="?/signout" use:enhance={handleSignOut}>
-			<button class="btn variant-ghost-error" disabled={loading}>Sign Out</button>
-		</form>
-		<button class="btn variant-ghost-warning" on:click={toggleComposeView} disabled={loading}
-			>Update Name</button
-		>
-		<NewMandate />
-	</div>
-{/if}
+<div class="@container">
+	{#if showComposeView}
+		<div class="p-4">
+			<ComposeView {view} on:close={toggleComposeView} />
+		</div>
+	{:else if showNewMandate}
+		<div class="p-4">
+			<NewMandate />
+		</div>
+	{:else}
+		<div class="grid grid-cols-1 @sm:grid-cols-2 @md:grid-cols-3 gap-2 mb-4">
+			<form
+				method="post"
+				action="?/signout"
+				use:enhance={handleSignOut}
+				class="@sm:col-span-2 @md:col-span-1"
+			>
+				<button class="btn @sm:btn-sm @lg:btn-md variant-ghost-error w-full" disabled={loading}>
+					Sign Out
+				</button>
+			</form>
+			<button
+				class="btn @sm:btn-sm @lg:btn-md variant-ghost-warning w-full"
+				on:click={toggleComposeView}
+				disabled={loading}
+			>
+				Update Name
+			</button>
+			<button
+				class="btn @sm:btn-sm @lg:btn-md variant-ghost-secondary w-full"
+				on:click={toggleNewMandate}
+				disabled={loading}
+			>
+				Create Mandate
+			</button>
+		</div>
+	{/if}
+</div>
