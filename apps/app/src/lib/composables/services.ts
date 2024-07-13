@@ -19,8 +19,8 @@ export const coreServices = {
     testAlert: () => {
         alert("core service alert")
     },
-    submitForm: async (formData: any) => {
-        console.log("Form submitted with data:", formData);
+    submitUserForm: async (formData: any) => {
+        console.log("User form submitted with data:", formData);
         const userId = get(Me).id;
 
         if (!userId) {
@@ -51,5 +51,8 @@ export const coreServices = {
             console.error("Error updating user:", error);
             throw error;
         }
+    },
+    submitCustomerForm: async (formData: any) => {
+        console.log("Customer form submitted with data:", formData);
     }
 };
