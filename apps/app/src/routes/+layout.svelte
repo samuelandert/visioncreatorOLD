@@ -101,7 +101,7 @@
 	<AppShell>
 		<div class="flex flex-col h-screen overflow-hidden md:flex-row">
 			<main
-				class="relative w-full h-full overflow-y-auto {$isLoggerExpanded
+				class="relative w-full h-full overflow-hidden {$isLoggerExpanded
 					? 'hidden md:block md:w-3/4'
 					: ''}"
 			>
@@ -126,6 +126,7 @@
 		{$isLoggerExpanded ? 'Close' : 'Logs'}
 	</button>
 </QueryClientProvider>
+
 <!-- 
 {#if !session}
 	<footer class="fixed inset-x-0 bottom-0 p-4 text-xs text-center text-white">
