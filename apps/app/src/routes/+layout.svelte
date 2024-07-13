@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { Drawer, AppShell, initializeStores, getDrawerStore } from '@skeletonlabs/skeleton';
+	import { Drawer, initializeStores, getDrawerStore } from '@skeletonlabs/skeleton';
 	import { QueryClientProvider } from '@tanstack/svelte-query';
 	import type { LayoutData } from './$types';
 	import { invalidate } from '$app/navigation';
@@ -92,22 +92,5 @@
 		</div>
 	</Drawer>
 
-	<!-- <AppShell> -->
 	<slot />
-	<!-- </AppShell> -->
 </QueryClientProvider>
-<!-- 
-{#if !session}
-	<footer class="fixed inset-x-0 bottom-0 p-4 text-xs text-center text-white">
-		<button
-			on:click={() =>
-				drawerStore.open({
-					position: 'bottom'
-				})}
-			class="mx-2">Login</button
-		>
-		<a href="/data-privacy" class="mx-2">Datenschutz</a>
-		<a href="/terms-of-service" class="mx-2">AGB</a>
-		<a href="/imprint" class="mx-2">Impressum</a>
-	</footer>
-{/if} -->
