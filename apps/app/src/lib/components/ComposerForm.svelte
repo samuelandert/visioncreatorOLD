@@ -4,18 +4,19 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import { derived, writable } from 'svelte/store';
 	import { log } from '$lib/stores';
+	import { coreServices } from '$lib/composables/services';
 
 	export let me;
 
-	const { fields, validators } = $me.context;
-	const { submitForm } = $me.do.core;
+	const { fields, validators, submitAction } = $me.context;
+	const submitForm = coreServices[submitAction];
 
 	let stepperState = writable({ current: 0, total: fields.length });
 
 	$: stepperState.update((state) => ({ ...state, current: $state.context.currentField }));
 
 	let initialFormData = fields.reduce((acc, field) => {
-		acc[field.name] = field.placeholder;
+		acc[field.name] = field.placeholder || '';
 		return acc;
 	}, {});
 
@@ -100,6 +101,13 @@
 		}));
 	}
 
+	$: {
+		if ($state.changed && $state.context.currentField !== undefined) {
+			const currentFieldName = fields[$state.context.currentField].name;
+			$form[currentFieldName] = $state.context.formData[currentFieldName] || '';
+		}
+	}
+
 	async function handleSubmit() {
 		const currentFieldName = fields[$state.context.currentField].name;
 		const validationResult = await validate(currentFieldName);
@@ -114,6 +122,9 @@
 
 		if (isLastStep) {
 			try {
+				if (typeof submitForm !== 'function') {
+					throw new Error(`Submit action "${submitAction}" is not a function`);
+				}
 				const result = await submitForm($state.context.formData);
 				submissionResult.set({ success: true, message: result.message });
 				log('success', 'Form submitted successfully', result);
@@ -127,6 +138,7 @@
 			}
 		}
 	}
+
 	async function handleNext() {
 		if (isLastStep) {
 			await handleSubmit();
@@ -143,6 +155,7 @@
 			send('NEXT', { fieldValue });
 		}
 	}
+
 	function handleKeyDown(event) {
 		if (event.key === 'Enter') {
 			event.preventDefault();
@@ -152,11 +165,21 @@
 
 	let childInput;
 	$: {
+		const currentField = fields[$state.context.currentField];
+		const fieldProxy = new Proxy(currentField, {
+			get(target, prop) {
+				if (prop === 'name') {
+					return currentField.name;
+				}
+				return target[prop];
+			}
+		});
+
 		childInput = {
 			form,
 			errors,
 			validate,
-			field: fields[$state.context.currentField],
+			field: fieldProxy,
 			constraints
 		};
 	}
@@ -166,7 +189,6 @@
 	);
 
 	$: isLastStep = $state.context.currentField === fields.length - 1;
-
 	$: isOnlyOneField = fields.length === 1;
 	$: isFirstField = $state.context.currentField === 0;
 </script>
@@ -194,25 +216,27 @@
 				</div>
 			{/if}
 
-			{#if fields[$state.context.currentField].type === 'text'}
-				<TextInput {childInput} />
-			{:else if fields[$state.context.currentField].type === 'email'}
-				<TextInput {childInput} />
-			{:else if fields[$state.context.currentField].type === 'textarea'}
-				<TextAreaInput {childInput} />
-			{:else if fields[$state.context.currentField].type === 'select'}
-				<SelectInput {childInput} />
-			{:else if fields[$state.context.currentField].type === 'slider'}
-				<SliderInput {childInput} />
-			{:else if fields[$state.context.currentField].type === 'toggle'}
-				<ToggleInput {childInput} />
-			{:else if fields[$state.context.currentField].type === 'number'}
-				<NumberInput {childInput} />
-			{:else if fields[$state.context.currentField].type === 'cardSelect'}
-				<CardSelectInput {childInput} />
-			{:else if fields[$state.context.currentField].type === 'dateRange'}
-				<DateRangeInput {childInput} />
-			{/if}
+			{#key $state.context.currentField}
+				{#if fields[$state.context.currentField].type === 'text'}
+					<TextInput {childInput} />
+				{:else if fields[$state.context.currentField].type === 'email'}
+					<TextInput {childInput} />
+				{:else if fields[$state.context.currentField].type === 'textarea'}
+					<TextAreaInput {childInput} />
+				{:else if fields[$state.context.currentField].type === 'select'}
+					<SelectInput {childInput} />
+				{:else if fields[$state.context.currentField].type === 'slider'}
+					<SliderInput {childInput} />
+				{:else if fields[$state.context.currentField].type === 'toggle'}
+					<ToggleInput {childInput} />
+				{:else if fields[$state.context.currentField].type === 'number'}
+					<NumberInput {childInput} />
+				{:else if fields[$state.context.currentField].type === 'cardSelect'}
+					<CardSelectInput {childInput} />
+				{:else if fields[$state.context.currentField].type === 'dateRange'}
+					<DateRangeInput {childInput} />
+				{/if}
+			{/key}
 		</div>
 	{/if}
 
@@ -254,19 +278,6 @@
 				{/each}
 			{/if}
 		</div>
-		<!-- <div>
-			{#each $possibleActions as action (action)}
-				{#if action !== 'NEXT' && action !== 'PREV'}
-					<button
-						type="button"
-						on:click={() => send(action)}
-						class="font-semibold btn btn-sm md:btn-base variant-filled"
-					>
-						{action}
-					</button>
-				{/if}
-			{/each}
-		</div> -->
 		<div>
 			{#if $possibleActions.includes('NEXT')}
 				<button
