@@ -1,27 +1,37 @@
-<slot />
+<script lang="ts">
+	import { writable } from 'svelte/store';
+	import { fly } from 'svelte/transition';
+	import Logger from '$lib/components/Logger.svelte'; // Adjust the import path as needed
 
-<!-- <nav class="fixed bottom-0 left-0 right-0 flex justify-center mx-auto shadow-md">
-	<div class="w-full max-w-6xl pb-1.5 bg-blue-950 rounded-t-3xl sm:p-0.5">
-		<div class="inline-flex items-center justify-start w-full p-3 px-5 space-x-4">
-			<button on:click={() => goto('/me')}>
-				<img src="/logo.png" alt="Logo" class="h-10 border-white rounded-full" />
-			</button>
-			<button
-				on:click={() => goto('/me/countries')}
-				type="button"
-				class="btn variant-filled-secondary"
-			>
-				Countries
-			</button>
-			<button on:click={() => goto('/me/edit')} type="button" class="btn variant-filled-secondary">
-				Edit
-			</button>
-			<button on:click={() => goto('/me/coda')} type="button" class="btn variant-filled-secondary">
-				Coda
-			</button>
-			<button on:click={() => goto('/me/slube')} type="button" class="btn variant-filled-secondary">
-				Slube
-			</button>
-		</div>
-	</div>
-</nav> -->
+	let isLoggerExpanded = writable(false);
+
+	function toggleLogger() {
+		isLoggerExpanded.update((value) => !value);
+	}
+</script>
+
+<div class="flex flex-col w-full h-full overflow-hidden md:flex-row">
+	<main
+		class="relative w-full h-full overflow-hidden {$isLoggerExpanded
+			? 'hidden md:block md:w-3/4'
+			: ''}"
+	>
+		<slot />
+	</main>
+
+	{#if $isLoggerExpanded}
+		<aside
+			class="w-full h-full p-4 overflow-y-auto md:w-1/4 bg-surface-700"
+			transition:fly={{ duration: 300, x: 300 }}
+		>
+			<Logger />
+		</aside>
+	{/if}
+</div>
+
+<button
+	class="fixed z-50 rounded-full bottom-4 right-4 btn-sm variant-ghost-secondary"
+	on:click={toggleLogger}
+>
+	{$isLoggerExpanded ? 'Close' : 'Logs'}
+</button>
