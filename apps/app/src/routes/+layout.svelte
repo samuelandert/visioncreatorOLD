@@ -92,9 +92,9 @@
 		</div>
 	</Drawer>
 
-	<AppShell>
-		<slot />
-	</AppShell>
+	<!-- <AppShell> -->
+	<slot />
+	<!-- </AppShell> -->
 </QueryClientProvider>
 <!-- 
 {#if !session}

@@ -40,4 +40,4 @@
 	});
 </script>
 
-<div use:composeAction={view} class="grid w-full h-full" />
+<div use:composeAction={view} class="grid w-full h-full overflow-hidden" />

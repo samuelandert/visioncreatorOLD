@@ -3,6 +3,8 @@
 	import { Me, eventStream } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import { log } from '$lib/stores';
+	import { fade } from 'svelte/transition';
+	import { view } from '$lib/views/Default.js';
 
 	export let data;
 
@@ -41,16 +43,15 @@
 </script>
 
 <div
-	class={`@container h-full ${$modalOpen ? 'blur-md' : ''}`}
+	class={`@container overflow-hidden w-full h-full ${$modalOpen ? 'blur-md' : ''}`}
 	style="-webkit-overflow-scrolling: touch;"
 >
 	<slot />
 </div>
 
 <button
-	class="fixed z-40 flex items-center justify-center text-4xl rounded-full text-primary-900 bg-primary-500 w-14 h-14 {$modalOpen
-		? 'hidden sm:flex'
-		: 'flex'}"
+	class="fixed z-40 flex items-center justify-center text-4xl rounded-full text-primary-900 bg-primary-500 w-14 h-14"
+	class:hidden={$modalOpen}
 	style="bottom: 1rem; left: calc(50% - 1.75rem);"
 	on:click={toggleModal}
 >
@@ -59,22 +60,29 @@
 
 {#if $modalOpen}
 	<div
-		class="absolute inset-0 flex items-end justify-center mx-4 mb-4 sm:mb-24"
+		class="fixed inset-0 flex items-end justify-center p-4 sm:p-6"
 		on:click={toggleModal}
+		transition:fade
 	>
 		{#if $Me}
 			<div
-				class="w-full max-h-full max-w-6xl p-4 @3xl:p-8 rounded-3xl bg-surface-600"
+				class="w-full max-w-6xl bg-surface-600 rounded-3xl flex flex-col max-h-[90vh] overflow-hidden"
 				on:click|stopPropagation
 			>
-				{#if $activeTab === 'actions'}
-					<ActionButtons me={{ id: session.user.id }} />
-				{:else if $activeTab === 'settings'}
-					<Newsletter me={{ email: session.user.email, id: session.user.id }} />
-				{/if}
+				<div class="flex flex-col flex-grow w-full h-full p-4 overflow-hidden">
+					{#if $activeTab === 'actions'}
+						<ActionButtons me={{ id: session.user.id }} />
+					{:else if $activeTab === 'settings'}
+						<Newsletter me={{ email: session.user.email, id: session.user.id }} />
+					{:else if $activeTab === 'logs'}
+						<div class="h-full overflow-hidden" style="display: contents;">
+							<ComposeView {view} />
+						</div>
+					{/if}
+				</div>
 
-				<div class="border-t border-surface-500">
-					<ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
+				<div class="flex items-center justify-between p-2 border-t border-surface-500">
+					<ul class="flex flex-wrap text-sm font-medium text-center">
 						<li class="mr-2">
 							<a
 								href="#"
@@ -101,7 +109,39 @@
 								Settings
 							</a>
 						</li>
+						<li class="mr-2">
+							<a
+								href="#"
+								class={`inline-block p-4 rounded-t-lg ${
+									$activeTab === 'logs'
+										? 'text-primary-500 border-b-2 border-primary-500'
+										: 'text-tertiary-400 hover:text-tertiary-300'
+								}`}
+								on:click|preventDefault={() => setActiveTab('logs')}
+							>
+								Logs
+							</a>
+						</li>
 					</ul>
+					<button
+						class="p-2 text-tertiary-400 hover:text-tertiary-300"
+						on:click={() => toggleModal()}
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="w-6 h-6"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M6 18L18 6M6 6l12 12"
+							/>
+						</svg>
+					</button>
 				</div>
 			</div>
 		{/if}
