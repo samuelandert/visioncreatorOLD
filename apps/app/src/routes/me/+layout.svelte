@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
-	import { fly } from 'svelte/transition';
-	import Logger from '$lib/components/Logger.svelte'; // Adjust the import path as needed
 
 	let isLoggerExpanded = writable(false);
 
@@ -10,6 +8,8 @@
 	}
 </script>
 
+<slot />
+<!-- 
 <div class="flex flex-col w-full h-full overflow-hidden md:flex-row">
 	<main
 		class="relative w-full h-full overflow-hidden {$isLoggerExpanded
@@ -20,10 +20,7 @@
 	</main>
 
 	{#if $isLoggerExpanded}
-		<aside
-			class="w-full h-full p-4 overflow-y-auto md:w-1/4 bg-surface-700"
-			transition:fly={{ duration: 300, x: 300 }}
-		>
+		<aside class="w-full h-full p-4 overflow-y-auto md:w-1/4 bg-surface-700">
 			<Logger />
 		</aside>
 	{/if}
@@ -34,4 +31,4 @@
 	on:click={toggleLogger}
 >
 	{$isLoggerExpanded ? 'Close' : 'Logs'}
-</button>
+</button> -->
