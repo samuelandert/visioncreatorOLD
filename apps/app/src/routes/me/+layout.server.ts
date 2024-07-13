@@ -8,5 +8,5 @@ export const load: LayoutServerLoad = async ({ locals: { safeGetSession } }) => 
         throw redirect(303, '/');
     }
     // Continue rendering the route if the session exists
-    return {};
+    return { session };
 };
