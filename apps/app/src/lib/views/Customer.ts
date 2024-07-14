@@ -11,12 +11,10 @@ export const view = {
     children: [
         {
             id: 'ComposerForm',
-            component: 'ComposerForm',
+            component: 'ComposerForm2',
             slot: 'main',
-            machine: {
-                id: 'validation',
-                initial: 'notValidated',
-                context: {
+            data: {
+                form: {
                     fields: [
                         {
                             name: 'family_name',
@@ -37,32 +35,26 @@ export const view = {
                             description: 'Please enter your city'
                         },
                         {
+                            name: 'guests',
+                            type: 'number',
+                            title: 'How many guests?',
+                            description: 'Please tell us how many guests are arriving'
+                        },
+                        {
+                            name: 'email',
+                            type: 'email',
+                            title: 'What is your email?',
+                            description: 'Please enter your email'
+                        },
+                        {
                             name: 'postal_code',
                             type: 'text',
                             title: 'What is your postal code?',
                             description: 'Please enter your postal code'
-                        }
+                        },
                     ],
                     validators: CustomerSchema,
-                    submitAction: 'submitCustomerForm'
-                },
-                states: {
-                    notValidated: {
-                        on: {
-                            VALIDATE: {
-                                target: 'isValidated',
-                                actions: 'setValidated'
-                            }
-                        }
-                    },
-                    isValidated: {
-                        on: {
-                            INVALIDATE: {
-                                target: 'notValidated',
-                                actions: 'setNotValidated'
-                            }
-                        }
-                    }
+                    submitAction: 'setupDirectDebit'
                 }
             }
         }

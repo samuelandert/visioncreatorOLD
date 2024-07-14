@@ -1,5 +1,6 @@
 <script>
 	import { getContext } from 'svelte';
+	import { fade } from 'svelte/transition';
 
 	export let stepperState;
 	export let stepStateName = '';

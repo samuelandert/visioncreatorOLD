@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { createMutation } from '$lib/wundergraph';
 	import { log } from '$lib/stores';
-	import { view } from '$lib/views/Customer';
 
 	export let loading = false;
 	export let error: string | null = null;
@@ -82,7 +81,6 @@
 	}
 </script>
 
-<ComposeView {view} />
 <button
 	class="btn variant-ghost-secondary"
 	on:click={setupDirectDebit}
