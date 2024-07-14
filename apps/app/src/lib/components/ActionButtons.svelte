@@ -4,7 +4,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { view } from '$lib/views/UpdateName';
 	import ComposeView from '$lib/components/ComposeView.svelte';
-	import NewMandate from '$lib/components/NewMandate.svelte';
+	import { viewForm } from '$lib/views/Form';
 
 	interface ActionButtonsProps {
 		me: {
@@ -46,7 +46,7 @@
 		</div>
 	{:else if showNewMandate}
 		<div class="p-4">
-			<NewMandate />
+			<ComposeView view={viewForm} />
 		</div>
 	{:else}
 		<div class="grid grid-cols-1 @sm:grid-cols-2 @md:grid-cols-3 gap-2 mb-4">

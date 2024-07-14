@@ -1,6 +1,6 @@
 import { UserSchema } from "../composables/UserSchema";
 
-export const view = {
+export const viewForm = {
     id: 'FormContainer',
     layout: {
         rows: '1fr auto',
@@ -13,11 +13,15 @@ export const view = {
             id: 'ComposerForm',
             component: 'ComposerForm',
             slot: 'main',
-            machine: {
-                id: 'validation',
-                initial: 'notValidated',
-                context: {
+            data: {
+                form: {
                     fields: [
+                        {
+                            name: 'staytime',
+                            type: 'dateRange',
+                            title: 'When do you want to visit?',
+                            description: 'Please choose your date range'
+                        },
                         {
                             name: 'location',
                             type: 'cardSelect',
@@ -27,38 +31,32 @@ export const view = {
                                 {
                                     value: 'Neustrelitz',
                                     label: 'Neustrelitz',
-                                    image: 'Neustrelitz.png',
+                                    image: 'sun.jpeg',
                                     description:
                                         'In Neustrelitz übernachtest Du in unseren slubes direkt am Stadthafen, zwischen Bootsstegen und typisch historischen Backsteinspeichern. Perfekt um morgens in den Zierker See zu springen'
                                 },
                                 {
                                     value: 'Krakow am See',
                                     label: 'Krakow am See',
-                                    image: 'KrakowAmSee.png',
+                                    image: 'sun.jpeg',
                                     description:
                                         'Übernachten an einem der schönsten Seen in Mecklenburg-Vorpommern. Direk am Krakower See gelegen, kannst du den Sonnenverlauf von der Dachterasse Deines slubes aus genießen. Ein idealer Ort zum Radfahren, Wandern und Wassersport'
                                 },
                                 {
                                     value: 'Rostock',
                                     label: 'Rostock',
-                                    image: 'Rostock.png',
+                                    image: 'sun.jpeg',
                                     description:
                                         'Raus aus der Stadt, rein in die Natur. Unsere slubes in Rostock bieten einen idealen Rückzugsort für alle Ruhesuchenden. Sie stehen mitten im Brandenburger Wald auf der Forellenfarm 25 Teiche'
                                 },
                                 {
                                     value: 'Greifswald',
                                     label: 'Greifswald',
-                                    image: 'Greifswald.png',
+                                    image: 'sun.jpeg',
                                     description:
                                         'Küstenfeeling trifft coole Studentenstadt: Unsere slubes stehen mitten im Herzen von Greifswald am Yachtahfen mit Blick auf den Ryck. Direkt zwischen Rügen und Usedom is es nicht weit zum Osteestrand und großartigen Segelstandorten'
                                 }
                             ]
-                        },
-                        {
-                            name: 'staytime',
-                            type: 'dateRange',
-                            title: 'When do you want to visit?',
-                            description: 'Please choose your date range'
                         },
                         {
                             name: 'towertype',
@@ -69,7 +67,7 @@ export const view = {
                                 {
                                     value: 'slubehome',
                                     label: 'Slube Home',
-                                    image: 'SlubeHome.png',
+                                    image: 'sun.jpeg',
                                     description:
                                         '69€ / night',
                                     squareImage: true
@@ -77,7 +75,7 @@ export const view = {
                                 {
                                     value: 'slubetower',
                                     label: 'Slube Tower',
-                                    image: 'SlubeTower.png',
+                                    image: 'sun.jpeg',
                                     description:
                                         '89€ / night',
                                     squareImage: true
@@ -125,24 +123,6 @@ export const view = {
                         }
                     ],
                     validators: UserSchema
-                },
-                states: {
-                    notValidated: {
-                        on: {
-                            VALIDATE: {
-                                target: 'isValidated',
-                                actions: 'setValidated'
-                            }
-                        }
-                    },
-                    isValidated: {
-                        on: {
-                            INVALIDATE: {
-                                target: 'notValidated',
-                                actions: 'setNotValidated'
-                            }
-                        }
-                    }
                 }
             }
         }

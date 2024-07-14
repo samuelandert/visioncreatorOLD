@@ -87,7 +87,7 @@
 
 {#if selectedDays.length > 0}
 	<div
-		class="w-full text-center bg-secondary-500 text-white text-md lg:text-xl font-semibold my-2 rounded-lg p-1 lg:p-2"
+		class="w-full p-1 my-2 font-semibold text-center text-white rounded-lg bg-secondary-500 text-md lg:text-xl lg:p-2"
 	>
 		{selectedDays.length > 1
 			? Math.abs(
@@ -101,17 +101,17 @@
 		) > 1
 			? 's'
 			: ''}<br />
-		<span class="text-xxs lg:text-xs font-normal">
+		<span class="font-normal text-xxs lg:text-xs">
 			from {selectedDays.map((day) => day.fullDate.toLocaleDateString()).join(' to ')}
 		</span>
 	</div>
 {/if}
-<div class="flex flex-wrap max-h-72 w-full md:max-h-96 overflow-y-auto">
-	<div class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-16 gap-2 w-full mr-1">
+<div class="flex flex-wrap w-full overflow-y-auto max-h-72 md:max-h-84">
+	<div class="grid w-full grid-cols-5 gap-2 mr-1 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-16">
 		{#each days as day, index (day.fullDate)}
 			{#if index === 0 || days[index - 1].month !== day.month}
 				<div
-					class="p-4 h-12 md:h-16 rounded-xl bg-secondary-400 text-white flex items-center justify-center"
+					class="flex items-center justify-center h-12 p-4 text-white md:h-16 rounded-xl bg-secondary-400"
 				>
 					{day.month}
 				</div>

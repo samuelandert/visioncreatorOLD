@@ -13,10 +13,8 @@ export const view = {
             id: 'ComposerForm',
             component: 'ComposerForm',
             slot: 'main',
-            machine: {
-                id: 'validation',
-                initial: 'notValidated',
-                context: {
+            data: {
+                form: {
                     fields: [
                         {
                             name: 'full_name',
@@ -27,24 +25,6 @@ export const view = {
                     ],
                     validators: UserSchema,
                     submitAction: 'submitUserForm'
-                },
-                states: {
-                    notValidated: {
-                        on: {
-                            VALIDATE: {
-                                target: 'isValidated',
-                                actions: 'setValidated'
-                            }
-                        }
-                    },
-                    isValidated: {
-                        on: {
-                            INVALIDATE: {
-                                target: 'notValidated',
-                                actions: 'setNotValidated'
-                            }
-                        }
-                    }
                 }
             }
         }

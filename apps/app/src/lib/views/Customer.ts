@@ -11,7 +11,7 @@ export const view = {
     children: [
         {
             id: 'ComposerForm',
-            component: 'ComposerForm2',
+            component: 'ComposerForm',
             slot: 'main',
             data: {
                 form: {
@@ -39,18 +39,6 @@ export const view = {
                             type: 'number',
                             title: 'How many guests?',
                             description: 'Please tell us how many guests are arriving'
-                        },
-                        {
-                            name: 'email',
-                            type: 'email',
-                            title: 'What is your email?',
-                            description: 'Please enter your email'
-                        },
-                        {
-                            name: 'postal_code',
-                            type: 'text',
-                            title: 'What is your postal code?',
-                            description: 'Please enter your postal code'
                         },
                     ],
                     validators: CustomerSchema,
