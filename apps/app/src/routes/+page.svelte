@@ -39,14 +39,14 @@
 		'Ich führe ein Leben, indem ich tagtäglich entscheiden kann,',
 		'in welche sinnreiche Arbeit ich meine wertvolle Lebenszeit investiere.',
 		'Ich bin so froh, dass ich das alte und verstaubte Konzept',
-		'“Zeit gegen Geld tauschen“ abgelegt habe und ich jetzt',
-		'über 21 unabhängige Einkommensströme mit 10.946 € im Monat habe',
-		'die mich und meine Familie, ein ereignisreiches und schönes Leben genießen lassen.',
+		'“Zeit gegen Geld tauschen“ endlich abgelegt habe und mir jetzt',
+		'über 21 unabhängige Einkommensströme einfach so monatlich zufließen',
+		'und mich und meine Familie, ein ereignisreiches und schönes Leben genießen lassen.',
 		'Ich bin dankbar und glücklich dafür, dass ich 2024 Visioncreator geworden bin.',
 		'Jeder von uns investiert jeden Tag 1€ in sich selbst,',
 		'und damit in neue Gewohnheiten, die das volle Lebenspotenzial jedes Einzelnen entfalten.',
 		'Wir entdecken, entwickeln und kreieren jeden Tag mit brennender Leidenschaft',
-		'gesellschaftsbewegende Großvisionen, an dessen Erfolge wir alle beteiligt sind.',
+		'gesellschaftsbewegende Großvisionen, an dessen Erfolgen wir alle beteiligt sind.',
 		'Wir haben es geschafft, jedes Quartal ein Community-Startup',
 		'aus unserer Mitte heraus zu finanzieren',
 		'und so das Leben auf unserem Planeten',
@@ -59,7 +59,7 @@
 		'Ich habe richtige Gänsehaut und kann es kaum erwarten.',
 		'Draußen schießen schon die Feuerwerks-Raketen',
 		'und ich werde mich jetzt ins Partygetümmel schmeißen.',
-		'Danke das ich damals an mich geglaubt habe',
+		'Danke, dass ich damals an mich geglaubt habe',
 		'und mich dafür entschieden habe Visioncreator zu sein.',
 		'In tiefer Dankbarkeit dein Visioncreator xyz'
 	];
@@ -157,16 +157,15 @@
 						<img src="logo.png" alt="visioncreator" />
 					</div>
 					<h1
-						class="h1 text-4xl @md:text-5xl @4xl:text-6xl @5xl:text-7xl @6xl:text-8xl @7xl:text-9xl"
+						class="h1 text-xl @md:text-2xl @4xl:text-3xl @5xl:text-4xl @6xl:text-5xl @7xl:text-6xl"
 					>
-						Es ist an der Zeit...
+						Zeit-gegen-Geld-tauschen war gestern
 					</h1>
 					<div class="text-sm @md:text-lg @4xl:text-xl @5xl:text-2xl">
-						...mein volles Lebenspotenzial zu entfalten und jeden Tag mit einem Strahlen und Lächeln
-						durchs Leben zu gehen.
+						Es ist an der Zeit das zu ändern und mein ... zu entdecken
 					</div>
-					<div class="text-2xl @4xl:text-3xl @5xl:text-4xl @6xl:text-5xl font-normal mb-4">
-						Jetzt oder nie!
+					<div class="text-lg @4xl:text-xl @5xl:text-2xl @6xl:text-3xl font-normal mb-4">
+						Mein neuer Lebensweg beginnt jetzt
 					</div>
 					<button
 						type="button"
