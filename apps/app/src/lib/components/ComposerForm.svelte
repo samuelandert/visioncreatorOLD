@@ -128,6 +128,18 @@
 					constraints
 			  }
 			: null;
+
+	$: isFieldValid =
+		$form &&
+		fields[$currentField]?.name in $form &&
+		$form[fields[$currentField]?.name] !== '' &&
+		!$errors[fields[$currentField]?.name];
+
+	$: isFormValid =
+		$form &&
+		Object.keys($form).length === fields.length &&
+		Object.values($form).every((value) => value !== '') &&
+		Object.keys($errors).length === 0;
 </script>
 
 {#if fields.length > 0 && childInput}
@@ -221,7 +233,7 @@
 					type="button"
 					on:click={handleNext}
 					class="font-semibold btn variant-filled-secondary btn-sm md:btn-base"
-					disabled={$errors[fields[$currentField].name]}
+					disabled={!isFieldValid || (isLastStep && !isFormValid)}
 				>
 					{isLastStep ? 'Submit' : 'Next'}
 				</button>
