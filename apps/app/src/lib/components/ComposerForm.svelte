@@ -2,7 +2,7 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import { derived, writable, get } from 'svelte/store';
 	import { log } from '$lib/stores';
-	import { coreServices } from '$lib/composables/services';
+	import { submitForm } from '$lib/composables/flowOperations';
 
 	export let me;
 
@@ -95,13 +95,21 @@
 
 	async function handleSubmit() {
 		try {
-			const submitForm = coreServices[submitAction];
-			if (typeof submitForm !== 'function') {
-				throw new Error(`Submit action "${submitAction}" is not a function`);
-			}
 			const formData = get(form);
 			log('info', 'Submitting form', { formData });
-			const result = await submitForm(formData);
+
+			// Map fields to input
+			const input = fields.reduce((acc, field) => {
+				acc[field.name] = formData[field.name];
+				return acc;
+			}, {});
+
+			const result = await submitForm({
+				operation: submitAction,
+				input: input,
+				eventType: submitAction // Using submitAction as eventType
+			});
+
 			submissionResult.set({ success: true, message: result.message });
 			log('success', 'Form submitted successfully', result);
 		} catch (error) {
