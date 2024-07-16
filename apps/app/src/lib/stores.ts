@@ -93,13 +93,9 @@ function getFilePath(): string {
 }
 
 const createLogger = (): LogFunction => {
-    const { subscribe, update } = persist(
-        writable<LogEntry[]>([]),
-        createLocalStorage(),
-        'customLogger'
-    );
+    const { subscribe, update } = writable<LogEntry[]>([]);
 
-    const logFunction = (type: LogType, message: string, json?: any) => { // Update this line
+    const logFunction = (type: LogType, message: string, json?: any) => {
         const file = getFilePath();
         update(logs => {
             const newLogs = [
@@ -109,7 +105,7 @@ const createLogger = (): LogFunction => {
                     message,
                     date: new Date().toISOString(),
                     file,
-                    json // Add this line
+                    json
                 }
             ];
             return newLogs;
