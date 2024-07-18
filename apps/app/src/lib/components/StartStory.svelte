@@ -20,10 +20,61 @@
 	let typeWriter;
 
 	let paragraphs = [
-		'21. März 2031 - Uhrzeit - 23:31',
 		'Liebes Tagebuch,',
-		'heute strahlen und blitzen meine Augen vor Freude.'
-		// ... (rest of the paragraphs)
+
+		'heute strahlen und blitzen meine Augen vor Freude.',
+
+		'Ich führe ein Leben, indem ich tagtäglich entscheiden kann,',
+
+		'in welche sinnreiche Arbeit ich meine wertvolle Lebenszeit investiere.',
+
+		'Ich bin so froh, dass ich das alte und verstaubte Konzept',
+
+		'“Zeit gegen Geld tauschen“ endlich abgelegt habe und mir jetzt',
+
+		'über 21 unabhängige Einkommensströme einfach so monatlich zufließen',
+
+		'und mich und meine Familie, ein ereignisreiches und schönes Leben genießen lassen.',
+
+		'Ich bin dankbar und glücklich dafür, dass ich 2024 Visioncreator geworden bin.',
+
+		'Jeder von uns investiert jeden Tag 1€ und 1 Minute oder mehr in sich selbst,',
+
+		'und damit in neue Herausforderungen, die das volle Lebenspotenzial jedes Einzelnen entfalten.',
+
+		'Wir entdecken, entwickeln und kreieren jeden Tag mit brennender Leidenschaft',
+
+		'gesellschaftsbewegende Großvisionen, an dessen Erfolgen wir alle beteiligt sind.',
+
+		'Wir haben es geschafft, jedes Quartal ein Community-Startup',
+
+		'aus unserer Mitte heraus zu finanzieren',
+
+		'und so das Leben auf unserem Planeten',
+
+		'für jeden Menschen immer lebenswerter zu machen.',
+
+		'Heute ist ein besonderer Tag!',
+
+		'In einer Stunde ist es so weit',
+
+		'dass zum ersten Mal 1.346.269 Visioncreators',
+
+		'eine Vision mit 44,87 Millionen Euro finanzieren werden.',
+
+		'Einfach unglaublich und faszinierend zugleich, dass wir das heute erreichen.',
+
+		'Ich habe richtige Gänsehaut und kann es kaum erwarten.',
+
+		'Draußen schießen schon die Feuerwerks-Raketen',
+
+		'und ich werde mich jetzt ins Partygetümmel schmeißen.',
+
+		'Danke, dass ich damals an mich geglaubt habe',
+
+		'und mich dafür entschieden habe Visioncreator zu sein.',
+
+		'In tiefer Dankbarkeit dein Visioncreator xyz'
 	];
 
 	let firstSentence = paragraphs[0];

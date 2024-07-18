@@ -15,6 +15,29 @@
 	let backgroundMusic: HTMLAudioElement;
 	let isMuted = false;
 
+	let targetAudience = 'dreamer';
+	const targetAudiences = [
+		'student',
+		'innovator',
+		'freelancer',
+		'changemaker',
+		'side-hustler',
+		'visionary',
+		'business owner',
+		'mother',
+		'entrepreneur',
+		'artist',
+		'developer',
+		'student',
+		'activist',
+		'dreamer',
+		'teacher',
+		'father',
+		'designer',
+		'writer',
+		'creator'
+	];
+
 	$: {
 		const urlParams = $page.url.searchParams;
 		const urlVisionId = urlParams.get('visionid');
@@ -48,29 +71,43 @@
 		if (typeof window !== 'undefined') {
 			typingSound = new Audio('typing.mp3');
 			backgroundMusic = new Audio('inthenameoflove.mp3');
+
+			let currentIndex = 0;
+			setInterval(() => {
+				currentIndex = (currentIndex + 1) % targetAudiences.length;
+				targetAudience = targetAudiences[currentIndex];
+			}, 2000);
 		}
 	});
 
 	const labels = {
 		welcome: {
-			title: 'Zeit-gegen-Geld-tauschen war gestern',
-			subtitle: 'Es ist an der Zeit das zu ändern und mein ... zu entdecken',
-			description: 'Mein neuer Lebensweg beginnt jetzt',
-			buttonText: 'Ich bin bereit'
+			heading: 'to every',
+			description: 'craving more than a job to survive',
+			callToActionPrefix: 'are you ready for',
+			callToActionSuffix: 'start now with just 1 hour & 1 € a day',
+			callToActionOptions: [
+				'designing a life you love',
+				'building prosperity for your family and the world',
+				'becoming a master of a craft you enjoy',
+				'creating multiple streams of meaningful income',
+				'building society-shaping startups and visions'
+			],
+			buttonText: 'I am Ready'
 		},
 		nameInput: {
-			placeholder: 'Mein Name ist?',
-			buttonText: 'Lass mich träumen'
+			placeholder: 'Whats your name?',
+			buttonText: 'Start the dream'
 		},
 		greeting: {
-			title: 'Schön das du da bist, {name}!',
-			description: 'Lass uns in deine Zukunft schauen und in dein neues Leben eintauchen',
-			buttonText: 'Starte Video'
+			title: 'Wonderful to have you around, {name}!',
+			description: "Let's look into your future and dive into your new life",
+			buttonText: 'Start Video'
 		},
 		story: {
 			muteButtonText: 'mute',
 			unmuteButtonText: 'play sound',
-			waitlistButtonText: 'Jetzt auf Warteliste setzen'
+			waitlistButtonText: 'Join Waitlist Now'
 		}
 	};
 </script>
@@ -86,7 +123,12 @@
 				class="min-h-full flex flex-col justify-end text-center items-center mx-auto max-w-xl @4xl:max-w-6xl p-2 gap-4 pb-12 @3xl:pb-16"
 			>
 				{#if state === 1}
-					<StartWelcome labels={labels.welcome} on:next={nextState} />
+					<StartWelcome
+						labels={labels.welcome}
+						{targetAudience}
+						{targetAudiences}
+						on:next={nextState}
+					/>
 				{:else if state === 2}
 					<StartNameInput labels={labels.nameInput} on:next={nextState} />
 				{:else if state === 3}
