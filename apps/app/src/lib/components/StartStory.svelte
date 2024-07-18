@@ -20,61 +20,35 @@
 	let typeWriter;
 
 	let paragraphs = [
-		'Liebes Tagebuch,',
-
-		'heute strahlen und blitzen meine Augen vor Freude.',
-
-		'Ich führe ein Leben, indem ich tagtäglich entscheiden kann,',
-
-		'in welche sinnreiche Arbeit ich meine wertvolle Lebenszeit investiere.',
-
-		'Ich bin so froh, dass ich das alte und verstaubte Konzept',
-
-		'“Zeit gegen Geld tauschen“ endlich abgelegt habe und mir jetzt',
-
-		'über 21 unabhängige Einkommensströme einfach so monatlich zufließen',
-
-		'und mich und meine Familie, ein ereignisreiches und schönes Leben genießen lassen.',
-
-		'Ich bin dankbar und glücklich dafür, dass ich 2024 Visioncreator geworden bin.',
-
-		'Jeder von uns investiert jeden Tag 1€ und 1 Minute oder mehr in sich selbst,',
-
-		'und damit in neue Herausforderungen, die das volle Lebenspotenzial jedes Einzelnen entfalten.',
-
-		'Wir entdecken, entwickeln und kreieren jeden Tag mit brennender Leidenschaft',
-
-		'gesellschaftsbewegende Großvisionen, an dessen Erfolgen wir alle beteiligt sind.',
-
-		'Wir haben es geschafft, jedes Quartal ein Community-Startup',
-
-		'aus unserer Mitte heraus zu finanzieren',
-
-		'und so das Leben auf unserem Planeten',
-
-		'für jeden Menschen immer lebenswerter zu machen.',
-
-		'Heute ist ein besonderer Tag!',
-
-		'In einer Stunde ist es so weit',
-
-		'dass zum ersten Mal 1.346.269 Visioncreators',
-
-		'eine Vision mit 44,87 Millionen Euro finanzieren werden.',
-
-		'Einfach unglaublich und faszinierend zugleich, dass wir das heute erreichen.',
-
-		'Ich habe richtige Gänsehaut und kann es kaum erwarten.',
-
-		'Draußen schießen schon die Feuerwerks-Raketen',
-
-		'und ich werde mich jetzt ins Partygetümmel schmeißen.',
-
-		'Danke, dass ich damals an mich geglaubt habe',
-
-		'und mich dafür entschieden habe Visioncreator zu sein.',
-
-		'In tiefer Dankbarkeit dein Visioncreator xyz'
+		'March 21, 2031 - Time - 23:31',
+		'Dear Diary,',
+		'Today my eyes are shining and sparkling with joy.',
+		'I lead a life where I can decide every single day',
+		'which meaningful work I invest my precious lifetime in.',
+		"I'm so glad that I've finally shed the old and dusty concept",
+		'of "trading time for money" and now I effortlessly receive',
+		'over 21 independent income streams flowing to me monthly,',
+		'allowing me and my family to enjoy an eventful and beautiful life.',
+		"I'm grateful and happy that I became a Visioncreator in 2024.",
+		'Each of us invests €1 and 1min in ourselves every day,',
+		'and thus in new habits that unlock the full life potential of every individual.',
+		'We discover, develop, and create society-shaping grand visions every day',
+		'with burning passion, in whose successes we all participate.',
+		"We've managed to finance a community startup",
+		'from within our ranks every quarter,',
+		'making life on our planet',
+		'more and more worth living for every person.',
+		'Today is a special day!',
+		'In an hour, it will be time',
+		'for 1,346,269 Visioncreators to finance',
+		'a vision with 44.87 million euros for the first time.',
+		"It's simply incredible and fascinating that we're achieving this today.",
+		'I have goosebumps and can hardly wait.',
+		'Outside, fireworks are already shooting into the sky',
+		"and I'm about to throw myself into the party crowd.",
+		'Thank you for believing in myself back then',
+		'and for deciding to be a Visioncreator.',
+		'With deep gratitude, your Visioncreator xyz'
 	];
 
 	let firstSentence = paragraphs[0];

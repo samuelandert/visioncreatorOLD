@@ -51,9 +51,13 @@
 	}
 
 	const nextState = () => {
-		state++;
-		if (state === 4) {
-			startStory();
+		if (state < 4) {
+			state++;
+			if (state === 4) {
+				startStory();
+			}
+		} else {
+			drawerStore.open({ position: 'bottom' });
 		}
 	};
 
@@ -67,6 +71,12 @@
 		backgroundMusic.muted = isMuted;
 	};
 
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Enter') {
+			nextState();
+		}
+	}
+
 	onMount(() => {
 		if (typeof window !== 'undefined') {
 			typingSound = new Audio('typing.mp3');
@@ -77,7 +87,17 @@
 				currentIndex = (currentIndex + 1) % targetAudiences.length;
 				targetAudience = targetAudiences[currentIndex];
 			}, 2000);
+
+			// Add global keydown event listener
+			window.addEventListener('keydown', handleKeydown);
 		}
+
+		// Clean up the event listener when the component is destroyed
+		return () => {
+			if (typeof window !== 'undefined') {
+				window.removeEventListener('keydown', handleKeydown);
+			}
+		};
 	});
 
 	const labels = {
@@ -85,7 +105,7 @@
 			heading: 'to every',
 			description: 'craving more than a job to survive',
 			callToActionPrefix: 'are you ready for',
-			callToActionSuffix: 'start now with just 1 hour & 1 € a day',
+			callToActionSuffix: 'start now with just 1 min & 1 € a day',
 			callToActionOptions: [
 				'designing a life you love',
 				'building prosperity for your family and the world',
@@ -112,6 +132,7 @@
 	};
 </script>
 
+<svelte:window on:keydown={handleKeydown} />
 <div class="video-container">
 	<video autoplay loop muted playsinline class="background-video">
 		<source src="wald.mp4" type="video/mp4" />
@@ -139,7 +160,7 @@
 						{isMuted}
 						{toggleMute}
 						{typingSound}
-						on:openDrawer={() => drawerStore.open({ position: 'bottom' })}
+						on:openDrawer={nextState}
 					/>
 				{/if}
 			</div>
