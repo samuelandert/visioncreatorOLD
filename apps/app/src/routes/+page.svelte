@@ -15,28 +15,109 @@
 	let backgroundMusic: HTMLAudioElement;
 	let isMuted = false;
 
-	let targetAudience = 'dreamer';
+	const names = [
+		'Emma',
+		'Liam',
+		'Olivia',
+		'Noah',
+		'Ava',
+		'Ethan',
+		'Sophia',
+		'Mason',
+		'Isabella',
+		'William',
+		'Mia',
+		'James',
+		'Charlotte',
+		'Benjamin',
+		'Amelia',
+		'Lucas',
+		'Harper',
+		'Henry',
+		'Evelyn',
+		'Alexander',
+		'Abigail',
+		'Michael',
+		'Emily',
+		'Daniel',
+		'Elizabeth'
+	];
+
 	const targetAudiences = [
+		'employee',
 		'student',
-		'innovator',
 		'freelancer',
 		'changemaker',
-		'side-hustler',
-		'visionary',
-		'business owner',
+		'hustler',
 		'mother',
+		'father',
+		'visionary',
+		'designer',
+		'writer',
+		'creator',
+		'business owner',
 		'entrepreneur',
 		'artist',
 		'developer',
 		'student',
-		'activist',
-		'dreamer',
-		'teacher',
-		'father',
-		'designer',
-		'writer',
-		'creator'
+		'dreamer'
 	];
+
+	const labels = {
+		welcome: {
+			heading: 'to every',
+			description: 'craving more than a job to survive',
+			subline: 'There is a better life - with fire in the belly every day - waiting for you',
+			buttonText: 'I want this'
+		},
+		readyFor: {
+			callToActionPrefix: 'are you ready for',
+			callToActionOptions: [
+				'building prosperity for your family and the world',
+				'designing a passionful life you love',
+				'creating multiple streams of meaningful income',
+				'building society-shaping startups and visions',
+				'becoming a master of a craft you enjoy',
+				'owning your lifes tracetory towards abundance'
+			],
+			buttonText: 'I am Ready'
+		},
+		nameInput: {
+			placeholder: "What's your name?",
+			buttonText: "Let's go",
+			persuasiveText:
+				'Unlock your true potential: Becoming a Visioncreator is your gateway to discovering your passion and turning it into a sustainable fulltime income, while mastering skills you love.'
+		},
+		greeting: {
+			title: 'Wonderful to have you around, {name}!',
+			description: "Let's look into your future and dive into your new life",
+			buttonText: 'Start Video'
+		},
+		story: {
+			muteButtonText: 'mute',
+			unmuteButtonText: 'play sound',
+			waitlistButtonText: 'Give me my first free challenge'
+		}
+	};
+
+	let totalVisioncreators = 10000;
+
+	onMount(() => {
+		if (typeof window !== 'undefined') {
+			typingSound = new Audio('typing.mp3');
+			backgroundMusic = new Audio('inthenameoflove.mp3');
+
+			// Add global keydown event listener
+			window.addEventListener('keydown', handleKeydown);
+		}
+
+		// Clean up the event listener when the component is destroyed
+		return () => {
+			if (typeof window !== 'undefined') {
+				window.removeEventListener('keydown', handleKeydown);
+			}
+		};
+	});
 
 	$: {
 		const urlParams = $page.url.searchParams;
@@ -51,9 +132,11 @@
 	}
 
 	const nextState = () => {
-		if (state < 4) {
+		if (state < 5) {
+			// Changed from 4 to 5
 			state++;
-			if (state === 4) {
+			if (state === 5) {
+				// Changed from 4 to 5
 				startStory();
 			}
 		} else {
@@ -76,60 +159,6 @@
 			nextState();
 		}
 	}
-
-	onMount(() => {
-		if (typeof window !== 'undefined') {
-			typingSound = new Audio('typing.mp3');
-			backgroundMusic = new Audio('inthenameoflove.mp3');
-
-			let currentIndex = 0;
-			setInterval(() => {
-				currentIndex = (currentIndex + 1) % targetAudiences.length;
-				targetAudience = targetAudiences[currentIndex];
-			}, 2000);
-
-			// Add global keydown event listener
-			window.addEventListener('keydown', handleKeydown);
-		}
-
-		// Clean up the event listener when the component is destroyed
-		return () => {
-			if (typeof window !== 'undefined') {
-				window.removeEventListener('keydown', handleKeydown);
-			}
-		};
-	});
-
-	const labels = {
-		welcome: {
-			heading: 'to every',
-			description: 'craving more than a job to survive',
-			callToActionPrefix: 'are you ready for',
-			callToActionSuffix: 'start now with just 1 min & 1 € a day',
-			callToActionOptions: [
-				'designing a life you love',
-				'building prosperity for your family and the world',
-				'becoming a master of a craft you enjoy',
-				'creating multiple streams of meaningful income',
-				'building society-shaping startups and visions'
-			],
-			buttonText: 'I am Ready'
-		},
-		nameInput: {
-			placeholder: 'Whats your name?',
-			buttonText: 'Start the dream'
-		},
-		greeting: {
-			title: 'Wonderful to have you around, {name}!',
-			description: "Let's look into your future and dive into your new life",
-			buttonText: 'Start Video'
-		},
-		story: {
-			muteButtonText: 'mute',
-			unmuteButtonText: 'play sound',
-			waitlistButtonText: 'Join Waitlist Now'
-		}
-	};
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -138,6 +167,10 @@
 		<source src="wald.mp4" type="video/mp4" />
 	</video>
 
+	{#if state !== 5}
+		<StartNewsTicker {names} bind:totalVisioncreators />
+	{/if}
+
 	<div class="h-full overlay">
 		<div class="@container h-full">
 			<div
@@ -145,16 +178,26 @@
 			>
 				{#if state === 1}
 					<StartWelcome
-						labels={labels.welcome}
-						{targetAudience}
+						heading={labels.welcome.heading}
+						description={labels.welcome.description}
+						buttonText={labels.welcome.buttonText}
 						{targetAudiences}
+						subline={labels.welcome.subline}
 						on:next={nextState}
 					/>
 				{:else if state === 2}
-					<StartNameInput labels={labels.nameInput} on:next={nextState} />
+					<StartReadyFor
+						callToActionPrefix={labels.readyFor.callToActionPrefix}
+						callToActionSuffix={labels.readyFor.callToActionSuffix}
+						callToActionOptions={labels.readyFor.callToActionOptions}
+						buttonText={labels.readyFor.buttonText}
+						on:next={nextState}
+					/>
 				{:else if state === 3}
+					<StartNameInput labels={labels.nameInput} on:next={nextState} />
+				{:else if state === 4}
 					<StartGreeting labels={labels.greeting} on:next={nextState} />
-				{:else}
+				{:else if state === 5}
 					<StartStory
 						labels={labels.story}
 						{isMuted}
