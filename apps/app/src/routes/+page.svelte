@@ -73,11 +73,11 @@
 		readyFor: {
 			callToActionPrefix: 'are you ready for',
 			callToActionOptions: [
-				'building prosperity for your family and the world',
 				'designing a passionful life you love',
 				'creating multiple streams of meaningful income',
 				'building society-shaping startups and visions',
 				'becoming a master of a craft you enjoy',
+				'building prosperity for your family and the world',
 				'owning your lifes tracetory towards abundance'
 			],
 			buttonText: 'I am Ready'
