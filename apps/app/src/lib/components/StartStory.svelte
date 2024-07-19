@@ -104,10 +104,13 @@
 			centeredTextElement.textContent = centeredText;
 		}
 	});
+	function handleWaitlistClick() {
+		dispatch('next');
+	}
 </script>
 
 <h2
-	class="h2 text-2xl fixed transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-48 @md:text-3xl @2xl:text-4xl @4xl:text-5xl @5xl:text-6xl leading-relaxed w-4/5 md:w-9/10 max-w-full"
+	class="font-bold text-xl fixed transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-48 @md:text-2xl @2xl:text-3xl @4xl:text-4xl @5xl:text-5xl leading-relaxed w-4/5 md:w-9/10 max-w-full"
 >
 	{firstSentenceDisplayed}
 </h2>
@@ -130,8 +133,9 @@
 		<span class="text-sm mt-1 @3xl:text-base">{labels.muteButtonText}</span>
 	{/if}
 </button>
+
 <button
 	type="button"
 	class="btn bg-gradient-to-br variant-gradient-secondary-primary btn-md @3xl:btn-lg"
-	on:click={() => dispatch('openDrawer')}>{labels.waitlistButtonText}</button
+	on:click={handleWaitlistClick}>{labels.waitlistButtonText}</button
 >

@@ -13,7 +13,7 @@
 </script>
 
 <h2
-	class="h2 mb-2 text-2xl @md:text-3xl @4xl:text-4xl @5xl:text-5xl @6xl:text-6xl @7xl:text-7xl text-white"
+	class=" font-bold mb-2 text-lg @md:text-xl @4xl:text-2xl @5xl:text-3xl @6xl:text-4xl @7xl:text-5xl text-white"
 >
 	{labels.title.replace('{name}', $futureMe.name)}
 </h2>

@@ -70,23 +70,20 @@
 			subline: 'There is a better life - with fire in the belly every day - waiting for you',
 			buttonText: 'I want this'
 		},
-		readyFor: {
-			callToActionPrefix: 'are you ready for',
-			callToActionOptions: [
-				'designing a passionful life you love',
-				'creating multiple streams of meaningful income',
-				'building society-shaping startups and visions',
-				'becoming a master of a craft you enjoy',
-				'building prosperity for your family and the world',
-				'owning your lifes tracetory towards abundance'
-			],
-			buttonText: 'I am Ready'
-		},
 		nameInput: {
 			placeholder: "What's your name?",
 			buttonText: "Let's go",
 			persuasiveText:
-				'Unlock your true potential: Becoming a Visioncreator is your gateway to discovering your passion and turning it into a sustainable fulltime income, while mastering skills you love.'
+				'Unlock your true potential: Becoming a Visioncreator is your gateway to discovering your passion and turning it into a sustainable fulltime income, while mastering skills you love.',
+			callToActionPrefix: 'are you ready to',
+			callToActionOptions: [
+				'design a purposeful life you love',
+				'create multiple streams of meaningful income',
+				'build society-shaping startups and visions',
+				'become a master of a craft you enjoy',
+				'build prosperity for your family and the world',
+				'own your lifes tracetory towards abundance'
+			]
 		},
 		greeting: {
 			title: 'Wonderful to have you around, {name}!',
@@ -96,7 +93,7 @@
 		story: {
 			muteButtonText: 'mute',
 			unmuteButtonText: 'play sound',
-			waitlistButtonText: 'Give me my first free challenge'
+			waitlistButtonText: 'How does it work?'
 		}
 	};
 
@@ -133,10 +130,8 @@
 
 	const nextState = () => {
 		if (state < 5) {
-			// Changed from 4 to 5
 			state++;
-			if (state === 5) {
-				// Changed from 4 to 5
+			if (state === 4) {
 				startStory();
 			}
 		} else {
@@ -167,7 +162,7 @@
 		<source src="wald.mp4" type="video/mp4" />
 	</video>
 
-	{#if state !== 5}
+	{#if state !== 4 && state !== 5}
 		<StartNewsTicker {names} bind:totalVisioncreators />
 	{/if}
 
@@ -186,24 +181,23 @@
 						on:next={nextState}
 					/>
 				{:else if state === 2}
-					<StartReadyFor
-						callToActionPrefix={labels.readyFor.callToActionPrefix}
-						callToActionSuffix={labels.readyFor.callToActionSuffix}
-						callToActionOptions={labels.readyFor.callToActionOptions}
-						buttonText={labels.readyFor.buttonText}
-						on:next={nextState}
-					/>
-				{:else if state === 3}
 					<StartNameInput labels={labels.nameInput} on:next={nextState} />
-				{:else if state === 4}
+				{:else if state === 3}
 					<StartGreeting labels={labels.greeting} on:next={nextState} />
-				{:else if state === 5}
+				{:else if state === 4}
 					<StartStory
 						labels={labels.story}
 						{isMuted}
 						{toggleMute}
 						{typingSound}
-						on:openDrawer={nextState}
+						on:next={nextState}
+					/>
+				{:else if state === 5}
+					<StartReadyFor
+						callToActionPrefix={labels.nameInput.callToActionPrefix}
+						callToActionOptions={labels.nameInput.callToActionOptions}
+						buttonText={labels.nameInput.buttonText}
+						on:next={() => drawerStore.open({ position: 'bottom' })}
 					/>
 				{/if}
 			</div>
