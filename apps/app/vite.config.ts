@@ -2,6 +2,8 @@ import { purgeCss } from 'vite-plugin-tailwind-purgecss';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import autoImport from 'composer';
+import { SvelteKitPWA } from '@vite-pwa/sveltekit';
+
 
 export default defineConfig({
 	plugins: [
@@ -21,6 +23,45 @@ export default defineConfig({
 		}),
 		sveltekit(),
 		purgeCss(),
+		SvelteKitPWA({
+			srcDir: './src',
+			mode: 'development',
+			strategies: 'injectManifest',
+			filename: 'prompt-sw.ts',
+			scope: '/',
+			base: '/',
+			manifest: {
+				short_name: "VC",
+				name: "Visioncreator",
+				start_url: "/",
+				scope: "/",
+				display: "standalone",
+				theme_color: "#000000",
+				background_color: "#ffffff",
+				icons: [
+					{
+						src: "/android-chrome-192x192.png",
+						sizes: "192x192",
+						type: "image/png"
+					},
+					{
+						src: "/android-chrome-512x512.png",
+						sizes: "512x512",
+						type: "image/png"
+					}
+				]
+			},
+			injectManifest: {
+				globPatterns: ['client/**/*.{js,css,ico,png,svg,webp,woff,woff2}']
+			},
+			devOptions: {
+				enabled: true,
+				type: 'module',
+				navigateFallback: '/'
+			},
+			// if you have shared info in svelte config file put in a separate module and use it also here
+			kit: {}
+		})
 
 	],
 	define: {
