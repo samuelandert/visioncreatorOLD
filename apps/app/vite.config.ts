@@ -24,10 +24,11 @@ export default defineConfig({
 		sveltekit(),
 		purgeCss(),
 		SvelteKitPWA({
-			srcDir: './src',
-			mode: 'development',
-			strategies: 'injectManifest',
-			filename: 'prompt-sw.ts',
+			srcDir: 'src',
+			outDir: '.svelte-kit/output/client',
+			mode: 'production',
+			strategies: 'generateSW',
+			filename: 'service-worker.js',
 			scope: '/',
 			base: '/',
 			manifest: {
@@ -51,8 +52,9 @@ export default defineConfig({
 					}
 				]
 			},
-			injectManifest: {
-				globPatterns: ['client/**/*.{js,css,ico,png,svg,webp,woff,woff2}']
+			workbox: {
+				globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
+				globIgnores: ['**/node_modules/**/*', '**/chrome-extension://**/*']
 			},
 			devOptions: {
 				enabled: true,

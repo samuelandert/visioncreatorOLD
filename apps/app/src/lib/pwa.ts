@@ -11,6 +11,12 @@ export function registerServiceWorker() {
                 // Show a ready to work offline to the user
                 console.log('App ready to work offline');
             },
+            onRegistered(r) {
+                console.log('Service worker has been registered');
+            },
+            onRegisterError(error) {
+                console.error('Error during service worker registration:', error);
+            },
         });
     }
 }
