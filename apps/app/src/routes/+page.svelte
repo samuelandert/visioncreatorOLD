@@ -93,7 +93,7 @@
 		story: {
 			muteButtonText: 'mute',
 			unmuteButtonText: 'play sound',
-			waitlistButtonText: 'How does it work?'
+			waitlistButtonText: 'Join Waitinglist Now'
 		}
 	};
 
@@ -129,7 +129,7 @@
 	}
 
 	const nextState = () => {
-		if (state < 5) {
+		if (state < 4) {
 			state++;
 			if (state === 4) {
 				startStory();
@@ -190,13 +190,6 @@
 						{isMuted}
 						{toggleMute}
 						{typingSound}
-						on:next={nextState}
-					/>
-				{:else if state === 5}
-					<StartReadyFor
-						callToActionPrefix={labels.nameInput.callToActionPrefix}
-						callToActionOptions={labels.nameInput.callToActionOptions}
-						buttonText={labels.nameInput.buttonText}
 						on:next={() => drawerStore.open({ position: 'bottom' })}
 					/>
 				{/if}
