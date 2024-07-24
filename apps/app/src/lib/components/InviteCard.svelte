@@ -3,11 +3,11 @@
 	import { env } from '$env/dynamic/public';
 	import QRCode from '@castlenine/svelte-qrcode';
 
-	export let userId: string;
+	export let me;
 
 	let linkCopied = writable(false);
 	let showQRCode = writable(false);
-	let invitationLink = `${env.PUBLIC_BASE_URL}/?visionid=${userId}`;
+	let invitationLink = `${env.PUBLIC_BASE_URL}/?visionid=${$me.authID}`;
 
 	async function copyInvitationLink() {
 		try {

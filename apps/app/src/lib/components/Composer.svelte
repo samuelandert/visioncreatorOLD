@@ -17,6 +17,7 @@
 		rows?: string;
 		gap?: string;
 		style?: string;
+		overflow?: 'hidden' | 'auto';
 	}
 
 	interface IComposer {
@@ -136,7 +137,9 @@
 
 <QueryClientProvider client={queryClient}>
 	<div
-		class={`grid w-full h-full overflow-hidden ${composer?.layout?.style || ''}`}
+		class={`grid w-full h-full ${
+			composer?.layout?.overflow ? `overflow-${composer.layout.overflow}` : ''
+		} ${composer?.layout?.style || ''}`}
 		style={layoutStyle}
 	>
 		{#await loadComponentAndInitializeState(composer) then Component}
@@ -145,7 +148,9 @@
 		{#if composer?.children}
 			{#each composer.children as child (child.id)}
 				<div
-					class="grid w-full h-full overflow-hidden ${composer?.layout?.style || ''}"
+					class={`grid w-full h-full ${
+						child.layout?.overflow ? `overflow-${child.layout.overflow}` : ''
+					} ${child.layout?.style || ''}`}
 					style={`grid-area: ${child.slot}`}
 				>
 					{#await loadComponentAndInitializeState(child) then ChildComponent}

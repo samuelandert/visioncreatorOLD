@@ -3,8 +3,7 @@
 	import { futureMe, Me } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import { log } from '$lib/stores';
-	import { view as profileView } from '$lib/views/Profile';
-	import { view as leaderboardView } from '$lib/views/Leaderboard';
+	import { view as meView } from '$lib/views/Me';
 
 	export let data;
 
@@ -37,9 +36,6 @@
 					inviter: $futureMe.visionid
 				});
 				log('success', 'Invite created successfully', createInviteResult);
-
-				// await $me.refetch();
-				// await $leaderboard.refetch();
 				log('success', 'Me and leaderboard data refreshed after invite creation');
 
 				const toggleNewsletterResult = await $toggleNewsletterMutation.mutateAsync({
@@ -79,22 +75,12 @@
 	});
 </script>
 
-<div class="flex flex-col items-center justify-center w-full p-4 space-y-4 @3xl:space-y-8">
-	<div class="w-full max-w-6xl bg-surface-800 rounded-3xl">
-		<ComposeView view={profileView} />
-	</div>
-
-	{#if $me.isLoading}
-		<p class="flex items-center justify-center w-full p-10 h-72">Loading user details...</p>
-	{:else if $me.isError}
-		<p class="flex items-center justify-center w-full p-10 h-72 text-error-500">
-			Error: {$me.error?.message}
-		</p>
-	{:else}
-		<InviteCard userId={session.user.id} />
-	{/if}
-
-	<div class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto rounded-3xl bg-surface-800`}>
-		<ComposeView view={leaderboardView} />
-	</div>
-</div>
+{#if $me.isLoading}
+	<p class="flex items-center justify-center w-full p-10 h-72">Loading view...</p>
+{:else if $me.isError}
+	<p class="flex items-center justify-center w-full p-10 h-72 text-error-500">
+		Error: {$me.error?.message}
+	</p>
+{:else}
+	<ComposeView view={meView} />
+{/if}

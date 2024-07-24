@@ -10,8 +10,6 @@ interface SubmitFormParams {
 }
 
 export async function submitForm({ operation, input }: SubmitFormParams) {
-    console.log(`Form submitted for operation: ${operation}`, input);
-
     try {
         // Get the current user ID from the Me store
         const currentUser = get(Me);
@@ -36,10 +34,6 @@ export async function submitForm({ operation, input }: SubmitFormParams) {
             throw new Error(result.data?.message || `An error occurred during ${operation}`);
         }
 
-        console.log(`${operation} result:`, result);
-
-        // Emit the event after successful operation
-        console.log(`Emitting event: ${operation}`);
         eventBus.emit(operation);
 
         return {
@@ -48,7 +42,6 @@ export async function submitForm({ operation, input }: SubmitFormParams) {
             data: result.data
         };
     } catch (error) {
-        console.error(`Error during ${operation}:`, error);
         return {
             success: false,
             message: error.message || `An error occurred during ${operation}`,
