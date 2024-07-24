@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import { log } from '$lib/stores';
 	import { view as profileView } from '$lib/views/Profile';
+	import { view as leaderboardView } from '$lib/views/Leaderboard';
 
 	export let data;
 
@@ -37,8 +38,8 @@
 				});
 				log('success', 'Invite created successfully', createInviteResult);
 
-				await $me.refetch();
-				await $leaderboard.refetch();
+				// await $me.refetch();
+				// await $leaderboard.refetch();
 				log('success', 'Me and leaderboard data refreshed after invite creation');
 
 				const toggleNewsletterResult = await $toggleNewsletterMutation.mutateAsync({
@@ -77,26 +78,27 @@
 		liveQuery: true
 	});
 
-	const leaderboard = createQuery({
-		operationName: 'queryLeaderboard',
-		liveQuery: true
-	});
+	// const leaderboard = createQuery({
+	// 	operationName: 'queryLeaderboard',
+	// 	liveQuery: true
+	// });
 
-	$: if ($me.data) {
-		log('success', 'User data loaded', $me.data);
-	}
+	// $: if ($me.data) {
+	// 	log('success', 'User data loaded', $me.data);
+	// }
 
-	$: if ($leaderboard.data) {
-		log('success', 'Leaderboard data loaded', {
-			leaderboardData: $leaderboard.data
-		});
-	}
+	// $: if ($leaderboard.data) {
+	// 	log('success', 'Leaderboard data loaded', {
+	// 		leaderboardData: $leaderboard.data
+	// 	});
+	// }
 </script>
 
 <div class="flex flex-col items-center justify-center w-full p-4 space-y-4 @3xl:space-y-8">
 	<div class="w-full max-w-6xl bg-surface-800 rounded-3xl">
 		<ComposeView view={profileView} />
 	</div>
+
 	{#if $me.isLoading}
 		<p class="flex items-center justify-center w-full p-10 h-72">Loading user details...</p>
 	{:else if $me.isError}
@@ -108,7 +110,8 @@
 	{/if}
 
 	<div class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto rounded-3xl bg-surface-800`}>
-		{#if $leaderboard.isLoading}
+		<ComposeView view={leaderboardView} />
+		<!-- {#if $leaderboard.isLoading}
 			<p class="flex items-center justify-center w-full p-10 h-72">Loading user details...</p>
 		{:else if $leaderboard.isError}
 			<p class="flex items-center justify-center w-full p-10 h-72 text-error-500">
@@ -152,6 +155,6 @@
 					</li>
 				{/each}
 			</ul>
-		{/if}
+		{/if} -->
 	</div>
 </div>

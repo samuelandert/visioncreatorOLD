@@ -35,9 +35,7 @@
 
 	$: {
 		layoutStyle = computeLayoutStyle(composer?.layout);
-
 		loadComponentAndInitializeState(composer);
-
 		if (composer?.children) {
 			composer.children.forEach((child) => {
 				loadComponentAndInitializeState(child);
@@ -47,6 +45,8 @@
 
 	async function loadComponentAndInitializeState(component: IComposer) {
 		if (!component || !component.component) return;
+
+		const currentUserId = get(Me).id;
 
 		if (component.id) {
 			component.store = createComposerStore(component.id, component.store || {});
@@ -67,15 +67,11 @@
 		if (component.queries) {
 			component.queries.forEach((query) => {
 				let input = { ...query.input };
-
-				// Replace 'authID' with actual user ID from Me store
-				const currentUserId = get(Me).id;
 				for (const key in input) {
 					if (input[key] === 'authID') {
 						input[key] = currentUserId;
 					}
 				}
-
 				const queryInstance = createQuery({
 					operationName: query.operation,
 					input: input,
@@ -94,6 +90,7 @@
 		getComposerStore(component.id).update((storeValue) => ({
 			...storeValue,
 			id: component.id,
+			authID: currentUserId, // Add authID to every component's store
 			do: {
 				core: coreServices
 			},
