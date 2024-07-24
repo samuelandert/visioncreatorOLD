@@ -8,11 +8,21 @@
 	let ollama: Ollama;
 	let streamingMessage = '';
 	let isStreaming = false;
+	let isThinking = false;
 	let systemPrompt = systemPromptText;
 
 	onMount(() => {
 		ollama = new Ollama({ host: 'https://ollama-demo.fly.dev' });
 	});
+
+	function formatCodeBlocks(content: string): string {
+		const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
+		return content.replace(codeBlockRegex, (match, language, code) => {
+			return `<pre class="p-4 rounded-lg bg-surface-700"><code class="language-${
+				language || 'plaintext'
+			}">${code.trim()}</code></pre>`;
+		});
+	}
 
 	async function sendMessage() {
 		if (!inputMessage.trim()) return;
@@ -20,7 +30,8 @@
 		const userMessage = { role: 'user', content: inputMessage };
 		messages = [...messages, userMessage];
 		inputMessage = '';
-		isStreaming = true;
+		isThinking = true;
+		isStreaming = false;
 		streamingMessage = '';
 
 		try {
@@ -30,11 +41,15 @@
 				stream: true
 			});
 
+			isThinking = false;
+			isStreaming = true;
+
 			for await (const chunk of stream) {
 				streamingMessage += chunk.message.content;
 			}
 
-			const assistantMessage = { role: 'assistant', content: streamingMessage };
+			const formattedContent = formatCodeBlocks(streamingMessage);
+			const assistantMessage = { role: 'assistant', content: formattedContent };
 			messages = [...messages, assistantMessage];
 		} catch (error) {
 			console.error('Error communicating with Ollama:', error);
@@ -43,6 +58,7 @@
 				{ role: 'assistant', content: 'Sorry, there was an error processing your request.' }
 			];
 		} finally {
+			isThinking = false;
 			isStreaming = false;
 			streamingMessage = '';
 		}
@@ -58,13 +74,21 @@
 					: 'variant-soft-surface mr-auto'} max-w-[70%]"
 			>
 				<p class="font-bold">{message.role}:</p>
-				<p>{message.content}</p>
+				{#if message.role === 'assistant'}
+					{@html message.content}
+				{:else}
+					<p>{message.content}</p>
+				{/if}
 			</div>
 		{/each}
-		{#if isStreaming}
+		{#if isThinking}
 			<div class="card p-4 variant-soft-surface mr-auto max-w-[70%]">
-				<p class="font-bold">assistant:</p>
-				<p>{streamingMessage}</p>
+				<p class="font-bold">Assistant: thinking...</p>
+			</div>
+		{:else if isStreaming}
+			<div class="card p-4 variant-soft-surface mr-auto max-w-[70%]">
+				<p class="font-bold">Assistant:</p>
+				{@html formatCodeBlocks(streamingMessage)}
 			</div>
 		{/if}
 	</div>
@@ -74,12 +98,16 @@
 				class="bg-transparent border-0 ring-0 focus:ring-0"
 				type="text"
 				bind:value={inputMessage}
-				on:keypress={(e) => e.key === 'Enter' && !isStreaming && sendMessage()}
+				on:keypress={(e) => e.key === 'Enter' && !isStreaming && !isThinking && sendMessage()}
 				placeholder="Type your message..."
-				disabled={isStreaming}
+				disabled={isStreaming || isThinking}
 			/>
-			<button class="variant-filled-primary" on:click={sendMessage} disabled={isStreaming}>
-				{isStreaming ? 'Streaming...' : 'Send'}
+			<button
+				class="variant-filled-primary"
+				on:click={sendMessage}
+				disabled={isStreaming || isThinking}
+			>
+				{isThinking ? 'Thinking...' : isStreaming ? 'Streaming...' : 'Send'}
 			</button>
 		</div>
 	</div>
