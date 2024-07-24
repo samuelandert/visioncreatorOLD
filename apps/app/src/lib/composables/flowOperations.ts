@@ -1,19 +1,33 @@
 import { client } from '$lib/wundergraph';
-import { emitEvent } from '$lib/stores';
+import { get } from 'svelte/store';
+import { Me } from '$lib/stores';
 
 interface SubmitFormParams {
     operation: string;
     input: Record<string, any>;
-    eventType?: string;
 }
 
-export async function submitForm({ operation, input, eventType }: SubmitFormParams) {
+export async function submitForm({ operation, input }: SubmitFormParams) {
     console.log(`Form submitted for operation: ${operation}`, input);
 
     try {
+        // Get the current user ID from the Me store
+        const currentUser = get(Me);
+        const userId = currentUser.id;
+
+        if (!userId) {
+            throw new Error('User ID not found. Please ensure you are logged in.');
+        }
+
+        // Merge the user ID with the input
+        const fullInput = {
+            ...input,
+            id: userId
+        };
+
         const result = await client.mutate({
             operationName: operation,
-            input: input
+            input: fullInput
         });
 
         if (!result.data || !result.data.success) {
@@ -21,10 +35,6 @@ export async function submitForm({ operation, input, eventType }: SubmitFormPara
         }
 
         console.log(`${operation} result:`, result);
-
-        if (eventType) {
-            emitEvent({ type: eventType, payload: result });
-        }
 
         return {
             success: true,

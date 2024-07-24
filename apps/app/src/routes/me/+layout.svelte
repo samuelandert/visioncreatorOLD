@@ -15,7 +15,6 @@
 
 	function setActiveTab(tab: string) {
 		activeTab.set(tab);
-		log('info', `Tab changed to: ${tab}`);
 	}
 
 	onMount(() => {

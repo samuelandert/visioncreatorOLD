@@ -1,7 +1,4 @@
-import { client } from '$lib/wundergraph';
 import { getComposerStore } from './composerStores';
-import { get } from 'svelte/store';
-import { Me, emitEvent } from '$lib/stores';
 
 export const coreServices = {
     mutateStore: (storeID: string, value: any) => {

@@ -8,7 +8,7 @@
 
 	const components = writable([
 		{ name: 'Countries', value: 'Countries' },
-		{ name: 'Green', value: 'Green' },
+		{ name: 'Green', value: 'o-Green' },
 		{ name: 'Levels', value: 'Levels' }
 	]);
 
@@ -37,7 +37,7 @@
 	}
 </script>
 
-<div class="h-screen w-screen flex p-10">
+<div class="flex w-screen h-screen p-10">
 	<div class="w-1/4 h-full overflow-auto">
 		<label>
 			<select

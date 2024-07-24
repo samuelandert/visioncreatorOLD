@@ -24,7 +24,7 @@ export const view = {
                         }
                     ],
                     validators: UserSchema,
-                    submitAction: 'submitUserForm'
+                    submitAction: 'updateMe'
                 }
             }
         }

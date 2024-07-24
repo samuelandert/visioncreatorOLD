@@ -5,6 +5,8 @@
 	import Composer from './Composer.svelte';
 	import { createQuery } from '../../lib/wundergraph';
 	import { QueryClientProvider } from '@tanstack/svelte-query';
+	import { Me } from '$lib/stores';
+	import { get } from 'svelte/store';
 
 	interface IComposerLayout {
 		areas: string;
@@ -21,7 +23,8 @@
 		slot?: string;
 		children?: IComposer[];
 		data?: Record<string, any>;
-		queries?: { operation: string; input?: any }[]; //
+		queries?: { operation: string; input?: any }[];
+		authID?: string;
 	}
 
 	export let composer: IComposer;
@@ -47,9 +50,6 @@
 
 		if (component.id) {
 			component.store = createComposerStore(component.id, component.store || {});
-			// if (component.data?.map) {
-			// 	subscribeAndMapQueries(component.id, component.data.map);
-			// }
 			if (component.data?.gql) {
 				getComposerStore(component.id).update((storeValue) => {
 					return {
@@ -62,18 +62,30 @@
 				});
 			}
 		}
+
 		// Initialize queries
 		if (component.queries) {
 			component.queries.forEach((query) => {
+				let input = { ...query.input };
+
+				// Replace 'authID' with actual user ID from Me store
+				const currentUserId = get(Me).id;
+				for (const key in input) {
+					if (input[key] === 'authID') {
+						input[key] = currentUserId;
+					}
+				}
+
 				const queryInstance = createQuery({
 					operationName: query.operation,
-					input: query.input
-				}); // Update this line
+					input: input,
+					liveQuery: true
+				});
 				getComposerStore(component.id).update((storeValue) => ({
 					...storeValue,
 					queries: {
 						...storeValue.queries,
-						[query.operation]: queryInstance // Update this line
+						[query.operation]: queryInstance
 					}
 				}));
 			});
