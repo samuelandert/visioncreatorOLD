@@ -66,6 +66,7 @@ export default defineConfig({
 		})
 
 	],
+	assetsInclude: ['**/*.txt'],
 	define: {
 		'import.meta.env.BASE_PATH': JSON.stringify('/src/')
 	},
