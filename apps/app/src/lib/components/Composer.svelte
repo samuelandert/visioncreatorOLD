@@ -2,7 +2,6 @@
 	import { onDestroy } from 'svelte';
 	import { createComposerStore, getComposerStore } from '$lib/composables/composerStores';
 	import { coreServices } from '$lib/composables/services';
-	import { Machine, interpret } from 'xstate';
 	import Composer from './Composer.svelte';
 	import { createQuery } from '../../lib/wundergraph';
 	import { QueryClientProvider } from '@tanstack/svelte-query';
@@ -22,7 +21,6 @@
 		slot?: string;
 		children?: IComposer[];
 		data?: Record<string, any>;
-		machine?: any;
 		queries?: { operation: string; input?: any }[]; //
 	}
 
@@ -40,14 +38,6 @@
 		if (composer?.children) {
 			composer.children.forEach((child) => {
 				loadComponentAndInitializeState(child);
-			});
-		}
-
-		initializeAndStartMachine(composer);
-
-		if (composer?.children) {
-			composer.children.forEach((child) => {
-				initializeAndStartMachine(child);
 			});
 		}
 	}
@@ -93,11 +83,9 @@
 			...storeValue,
 			id: component.id,
 			do: {
-				core: coreServices,
-				state: component.machineService || null
+				core: coreServices
 			},
-			data: component.data || {},
-			context: component.machine?.context || {} // Add context here
+			data: component.data || {}
 		}));
 
 		if (component.children) {
@@ -112,32 +100,6 @@
 			throw new Error(`Component ${component.component} not found`);
 		}
 		return ComponentModule;
-	}
-
-	function initializeAndStartMachine(composer: IComposer) {
-		if (composer?.machine) {
-			const machine = Machine(
-				{
-					...composer.machine,
-					id: composer.id
-				},
-				{
-					services: composer.machine.services
-				},
-				{
-					actions: composer.machine.actions
-				}
-			);
-			const machineService = interpret(machine).onTransition((state) => {
-				getComposerStore(composer.id).update((storeValue) => ({
-					...storeValue,
-					state: state.value,
-					context: state.context
-				}));
-			});
-			machineService.start();
-			composer.machineService = machineService;
-		}
 	}
 
 	function computeLayoutStyle(layout?: IComposerLayout): string {
