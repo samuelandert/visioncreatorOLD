@@ -7,6 +7,9 @@
 	import { QueryClientProvider } from '@tanstack/svelte-query';
 	import { Me } from '$lib/stores';
 	import { get } from 'svelte/store';
+	import { eventBus } from '$lib/composables/eventBus';
+	import { setupEventMapper } from '$lib/composables/eventMapper';
+	import { onMount } from 'svelte';
 
 	interface IComposerLayout {
 		areas: string;
@@ -42,6 +45,10 @@
 			});
 		}
 	}
+
+	onMount(() => {
+		setupEventMapper();
+	});
 
 	async function loadComponentAndInitializeState(component: IComposer) {
 		if (!component || !component.component) return;
@@ -92,7 +99,8 @@
 			id: component.id,
 			authID: currentUserId, // Add authID to every component's store
 			do: {
-				core: coreServices
+				core: coreServices,
+				emit: (event: string, ...args: any[]) => eventBus.emit(event, component.id, ...args)
 			},
 			data: component.data || {}
 		}));

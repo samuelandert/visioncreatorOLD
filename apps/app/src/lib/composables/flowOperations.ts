@@ -1,6 +1,8 @@
+// apps/app/src/lib/composables/flowOperations.ts
 import { client } from '$lib/wundergraph';
 import { get } from 'svelte/store';
 import { Me } from '$lib/stores';
+import { eventBus } from '$lib/composables/eventBus';
 
 interface SubmitFormParams {
     operation: string;
@@ -36,6 +38,10 @@ export async function submitForm({ operation, input }: SubmitFormParams) {
 
         console.log(`${operation} result:`, result);
 
+        // Emit the event after successful operation
+        console.log(`Emitting event: ${operation}`);
+        eventBus.emit(operation);
+
         return {
             success: true,
             message: result.data.message || `${operation} completed successfully`,
@@ -43,6 +49,10 @@ export async function submitForm({ operation, input }: SubmitFormParams) {
         };
     } catch (error) {
         console.error(`Error during ${operation}:`, error);
-        throw error;
+        return {
+            success: false,
+            message: error.message || `An error occurred during ${operation}`,
+            error: error
+        };
     }
 }

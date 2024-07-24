@@ -3,6 +3,7 @@
 	import { derived, writable, get } from 'svelte/store';
 	import { log } from '$lib/stores';
 	import { submitForm } from '$lib/composables/flowOperations';
+	import { eventBus } from '$lib/composables/eventBus';
 
 	export let me;
 
@@ -14,6 +15,7 @@
 	let errors;
 	let validate;
 	let constraints;
+	let componentId;
 
 	$: if (me) {
 		me.subscribe((value) => {
@@ -21,13 +23,14 @@
 			fields = formData.fields;
 			validators = formData.validators;
 			submitAction = formData.submitAction;
+			componentId = value.id; // Store the component ID
 
-			// Log the current state of me data context
 			log('info', 'Current me data context', {
 				formData,
 				fields: fields.length,
 				validators: Object.keys(validators).length,
-				submitAction
+				submitAction,
+				componentId
 			});
 		});
 	}
@@ -98,7 +101,6 @@
 			const formData = get(form);
 			log('info', 'Submitting form', { formData });
 
-			// Map fields to input
 			const input = fields.reduce((acc, field) => {
 				acc[field.name] = formData[field.name];
 				return acc;
@@ -106,12 +108,17 @@
 
 			const result = await submitForm({
 				operation: submitAction,
-				input: input,
-				eventType: submitAction // Using submitAction as eventType
+				input: input
 			});
 
-			submissionResult.set({ success: true, message: result.message });
-			log('success', 'Form submitted successfully', result);
+			if (result.success) {
+				submissionResult.set({ success: true, message: result.message });
+				log('success', 'Form submitted successfully', result);
+				// Use eventBus to emit the event with the component ID
+				eventBus.emit(submitAction, componentId);
+			} else {
+				throw new Error(result.message);
+			}
 		} catch (error) {
 			const errorMessage = error.message || 'An error occurred while submitting the form.';
 			submissionResult.set({ success: false, message: errorMessage });
@@ -144,10 +151,7 @@
 		!$errors[fields[$currentField]?.name];
 
 	$: isFormValid =
-		$form &&
-		Object.keys($form).length === fields.length &&
-		Object.values($form).every((value) => value !== '') &&
-		Object.keys($errors).length === 0;
+		$form && Object.keys($form).length > 0 && Object.values($form).every((value) => value !== '');
 </script>
 
 {#if fields.length > 0 && childInput}

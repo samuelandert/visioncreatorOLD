@@ -77,21 +77,6 @@
 		},
 		liveQuery: true
 	});
-
-	// const leaderboard = createQuery({
-	// 	operationName: 'queryLeaderboard',
-	// 	liveQuery: true
-	// });
-
-	// $: if ($me.data) {
-	// 	log('success', 'User data loaded', $me.data);
-	// }
-
-	// $: if ($leaderboard.data) {
-	// 	log('success', 'Leaderboard data loaded', {
-	// 		leaderboardData: $leaderboard.data
-	// 	});
-	// }
 </script>
 
 <div class="flex flex-col items-center justify-center w-full p-4 space-y-4 @3xl:space-y-8">
@@ -111,50 +96,5 @@
 
 	<div class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto rounded-3xl bg-surface-800`}>
 		<ComposeView view={leaderboardView} />
-		<!-- {#if $leaderboard.isLoading}
-			<p class="flex items-center justify-center w-full p-10 h-72">Loading user details...</p>
-		{:else if $leaderboard.isError}
-			<p class="flex items-center justify-center w-full p-10 h-72 text-error-500">
-				Error: {$leaderboard.error?.message}
-			</p>
-		{:else}
-			<ul class="space-y-2 @3xl:space-y-4">
-				{#each $leaderboard.data as { name, id, suminvites }, index}
-					<li
-						class={`flex items-center justify-between rounded-4xl  ${
-							id === session.user.id ? 'bg-surface-600' : 'bg-surface-700'
-						}`}
-					>
-						<Avatar
-							me={{
-								data: { seed: id },
-								design: { highlight: id === session.user.id },
-								size: 'sm'
-							}}
-						/>
-
-						<div class="flex-1 px-4 text-xl @3xl:text-2xl text-tertiary-400">
-							{name || $futureMe.name}
-						</div>
-
-						<div class="flex justify-between px-4 @3xl:px-6 space-x-4 max-h-12">
-							<div class="flex flex-col items-center text-right">
-								<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
-									{suminvites}
-								</p>
-								<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">invites</p>
-							</div>
-
-							<div class="flex flex-col items-center text-right">
-								<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
-									{index + 1}
-								</p>
-								<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">rank</p>
-							</div>
-						</div>
-					</li>
-				{/each}
-			</ul>
-		{/if} -->
 	</div>
 </div>

@@ -1,25 +1,38 @@
-<!-- apps/app/src/lib/components/Profile.svelte -->
 <script lang="ts">
 	import Avatar from './Avatar.svelte';
-	import { futureMe, Me } from '$lib/stores';
+	import { onMount, onDestroy } from 'svelte';
+	import { eventBus } from '$lib/composables/eventBus';
 
 	export let me;
 	const queryMe = $me.queries.queryMe;
 	const queryLeaderboard = $me.queries.queryLeaderboard;
 
-	$: userId = $Me.id;
 	$: userRank = $queryLeaderboard.data
-		? $queryLeaderboard.data.findIndex((entry) => entry.id === userId) + 1 || 'rechnet...'
+		? $queryLeaderboard.data.findIndex((entry) => entry.id === $me.authID) + 1 || 'rechnet...'
 		: 'rechnet...';
 	$: streamPotential = $queryLeaderboard.data
-		? ($queryLeaderboard.data.find((entry) => entry.id === userId)?.suminvites || 0) * 5
+		? ($queryLeaderboard.data.find((entry) => entry.id === $me.authID)?.suminvites || 0) * 5
 		: 0;
+
+	async function handleUpdateMe() {
+		console.log('PROFILE: Received updateMe event, refetching queries');
+		await $queryMe.refetch();
+		await $queryLeaderboard.refetch();
+	}
+
+	onMount(async () => {
+		eventBus.on('updateMe', handleUpdateMe);
+	});
+
+	onDestroy(() => {
+		eventBus.off('updateMe', handleUpdateMe);
+	});
 </script>
 
 <main class="overflow-auto">
 	<div class="w-full max-w-6xl bg-surface-800 rounded-3xl">
 		{#if $queryMe.isLoading || $queryLeaderboard.isLoading}
-			<p class="text-lg text-gray-500">Loading...</p>
+			<p class="text-lg text-gray-500">Loading Profile...</p>
 		{:else if $queryMe.error || $queryLeaderboard.error}
 			<pre class="text-red-500">Error: {JSON.stringify(
 					$queryMe.error || $queryLeaderboard.error,
@@ -46,7 +59,7 @@
 							}}
 						/>
 						<h1 class="text-2xl @3xl:text-5xl font-bold h1">
-							Hey {$queryMe.data?.full_name || $futureMe.name}
+							Hey {$queryMe.data?.full_name}
 						</h1>
 						<p class="text-md @3xl:text-2xl">wonderful to have you around</p>
 					</div>

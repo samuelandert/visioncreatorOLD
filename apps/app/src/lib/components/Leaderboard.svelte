@@ -1,8 +1,23 @@
-<!-- apps/app/src/lib/components/Leaderboard.svelte -->
 <script lang="ts">
 	import Avatar from './Avatar.svelte';
+	import { onMount, onDestroy } from 'svelte';
+	import { eventBus } from '$lib/composables/eventBus';
+
 	export let me;
 	const query = $me.queries.queryLeaderboard;
+
+	async function handleUpdateMe() {
+		console.log('PROFILE: Received updateMe event, refetching queries');
+		await $query.refetch();
+	}
+
+	onMount(async () => {
+		eventBus.on('updateMe', handleUpdateMe);
+	});
+
+	onDestroy(() => {
+		eventBus.off('updateMe', handleUpdateMe);
+	});
 </script>
 
 <div class={`w-full max-w-6xl p-2 @3xl:p-6 overflow-auto rounded-3xl bg-surface-800`}>
