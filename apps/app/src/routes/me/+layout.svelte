@@ -5,6 +5,7 @@
 	import { log } from '$lib/stores';
 	import { fade } from 'svelte/transition';
 	import { view } from '$lib/views/Default.js';
+	import { eventBus } from '$lib/composables/eventBus';
 
 	export let data;
 
@@ -24,12 +25,21 @@
 				setTimeout(() => {
 					modalOpen.set(false);
 					log('info', 'Modal closed after update');
-				}, 1500);
+				}, 1000);
 			}
+		});
+
+		// Listen for toggleModal event
+		eventBus.on('toggleModal', () => {
+			setTimeout(() => {
+				modalOpen.set(false);
+				log('info', 'Modal closed by toggleModal event');
+			}, 1000);
 		});
 
 		return () => {
 			unsubscribe();
+			eventBus.off('toggleModal');
 		};
 	});
 

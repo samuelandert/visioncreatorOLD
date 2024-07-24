@@ -1,5 +1,8 @@
 export const eventConfig = {
-    events: [
-        { updateMe: ['queryMe', 'queryLeaderboard'] }
-    ]
+    events: [{
+        updateMe: {
+            refetch: ['queryMe', 'queryLeaderboard'],
+            trigger: ['toggleModal']
+        }
+    }]
 };
