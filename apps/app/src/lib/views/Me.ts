@@ -73,9 +73,9 @@ export const view = {
                             query: 'queryLeaderboard',
                             prop: 'profiles',
                             mapProps: {
-                                primaryText: "name",
-                                identifier: "id",
-                                numericValue: "suminvites"
+                                primaryText: "prop.name",
+                                identifier: "prop.id",
+                                numericValue: "prop.suminvites"
                             }
                         }
                     }
@@ -101,16 +101,16 @@ export const view = {
                     },
                     prop: "countries_countries",
                     mapProps: {
-                        primaryText: 'name',
-                        identifier: 'code',
+                        primaryText: 'prop.name',
+                        identifier: 'prop.code',
                         label1: 'Capital',
-                        value1: 'capital',
+                        value1: 'prop.capital',
                         label2: 'Currency',
-                        value2: 'currencies',
+                        value2: 'prop.currencies',
                         label3: 'Phone Code',
-                        value3: 'phone',
+                        value3: 'prop.phone',
                         label4: 'Country Code',
-                        value4: 'code'
+                        value4: 'prop.code'
                     }
                 }
             }

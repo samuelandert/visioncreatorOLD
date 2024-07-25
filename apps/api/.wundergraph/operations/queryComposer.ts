@@ -58,7 +58,16 @@ export default createOperation.query({
                         result = result.map((item: any) => {
                             const mappedItem: any = {};
                             Object.entries(value.mapProps).forEach(([to, from]) => {
-                                mappedItem[to] = item[from];
+                                if (typeof from === 'object' && from !== null) {
+                                    mappedItem[to] = Object.entries(from).reduce((acc, [label, propPath]) => {
+                                        acc[label] = propPath.startsWith('prop.') ? item[propPath.slice(5)] : propPath;
+                                        return acc;
+                                    }, {});
+                                } else if (typeof from === 'string' && from.startsWith('prop.')) {
+                                    mappedItem[to] = item[from.slice(5)];
+                                } else {
+                                    mappedItem[to] = from;
+                                }
                             });
                             return mappedItem;
                         });
