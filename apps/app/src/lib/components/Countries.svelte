@@ -3,43 +3,44 @@
 	const query = $me.query;
 </script>
 
-<main class="overflow-auto @container">
-	<h1 class="mb-3 text-2xl font-bold @4xl:text-3xl @9xl:text-4xl @9xl:mb-4">Countries</h1>
-
-	<div class="grid grid-cols-1 gap-2 @4xl:grid-cols-2 @4xl:gap-3 @9xl:grid-cols-3 @9xl:gap-4">
+<main class="container p-4 mx-auto space-y-4">
+	<div class="grid grid-cols-1 gap-4 @container @6xl:grid-cols-2 @9xl:grid-cols-3">
 		{#if $query.isLoading}
-			<p class="text-base text-gray-500 @4xl:text-lg">Loading...</p>
+			<p class="p-4 col-span-full card variant-ghost-surface">Loading countries...</p>
 		{:else if $query.error}
-			<pre class="text-sm text-red-500 @4xl:text-base">Error: {JSON.stringify(
+			<pre class="p-4 whitespace-pre-wrap col-span-full card variant-filled-error">{JSON.stringify(
 					$query.error,
 					null,
 					2
 				)}</pre>
 		{:else if $query.data && $query.data.grid && Array.isArray($query.data.grid)}
 			{#each $query.data.grid as item (item.identifier)}
-				<div
-					class="m-2 overflow-hidden text-white rounded shadow-lg bg-secondary-700 @4xl:m-3 @9xl:m-4"
-				>
-					<div class="px-3 py-2 @4xl:px-4 @4xl:py-3 @9xl:px-6 @9xl:py-4">
-						<div
-							class="mb-1 text-base font-bold text-primary-500 @4xl:text-lg @4xl:mb-2 @9xl:text-xl"
-						>
-							{item.primaryText} ({item.identifier})
-						</div>
-						<p class="text-sm font-bold text-gray-300 @4xl:text-base @9xl:text-lg">
-							{item.secondaryText || 'N/A'}
+				<div class="p-4 space-y-2 card variant-filled-surface @3xl:p-6 @7xl:p-8">
+					<header class="flex items-center justify-between">
+						<h2 class="h3 @3xl:text-2xl @7xl:text-3xl">{item.primaryText}</h2>
+					</header>
+					<section class="space-y-2">
+						<p>
+							<span class="font-bold">{item.label1}</span>
+							<span>{item.value1 || 'N/A'}</span>
 						</p>
-						<p class="text-xs text-gray-300 @4xl:text-sm @9xl:text-base">
-							{item.tertiaryText}: {#each item.arrayField as value}{value}{/each}
+						<p>
+							<span class="font-bold">{item.label2}</span>
+							<span>{item.value2 || 'N/A'}</span>
 						</p>
-						<p class="text-xs text-gray-300 @4xl:text-sm @9xl:text-base">
-							{item.quaternaryText}: {item.numericValue}
+						<p>
+							<span class="text-sm @3xl:text-base @7xl:text-lg">{item.label3}:</span>
+							<span class="badge variant-soft">{item.value3 || 'N/A'}</span>
 						</p>
-					</div>
+						<p>
+							<span class=" text-sm @3xl:text-base @7xl:text-lg">{item.label4}:</span>
+							<span class="badge variant-soft">{item.value4 || 'N/A'}</span>
+						</p>
+					</section>
 				</div>
 			{/each}
 		{:else}
-			<p class="text-base text-gray-500 @4xl:text-lg">No countries found.</p>
+			<p class="p-4 col-span-full card variant-ghost-surface">No countries found.</p>
 		{/if}
 	</div>
 </main>

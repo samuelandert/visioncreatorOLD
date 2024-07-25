@@ -33,7 +33,7 @@ export const view = {
                         title: {
                             query: "queryMe",
                             input: { id: 'authID' },
-                            field: "full_name"
+                            prop: "full_name"
                         },
                         description: "wonderful to have you around",
                         stats: [
@@ -42,7 +42,7 @@ export const view = {
                                 value: {
                                     query: "queryUserStats",
                                     input: { id: 'authID' },
-                                    field: "userRank"
+                                    prop: "userRank"
                                 }
                             },
                             {
@@ -50,7 +50,7 @@ export const view = {
                                 value: {
                                     query: "queryUserStats",
                                     input: { id: 'authID' },
-                                    field: "streamPotential"
+                                    prop: "streamPotential"
                                 }
                             }
                         ]
@@ -71,12 +71,12 @@ export const view = {
                     map: {
                         list: {
                             query: 'queryLeaderboard',
-                            field: 'profiles',
-                            arrayFields: [
-                                { from: 'name', to: 'primaryText' },
-                                { from: 'id', to: 'identifier' },
-                                { from: 'suminvites', to: 'numericValue' }
-                            ]
+                            prop: 'profiles',
+                            mapProps: {
+                                primaryText: "name",
+                                identifier: "id",
+                                numericValue: "suminvites"
+                            }
                         }
                     }
                 }
@@ -92,17 +92,26 @@ export const view = {
             map: {
                 grid: {
                     query: 'Countries',
-                    input: { filter: {} },
-                    field: "countries_countries",
-                    arrayFields: [
-                        { from: 'name', to: 'primaryText' },
-                        { from: 'code', to: 'identifier' },
-                        { from: 'capital', to: 'secondaryText' },
-                        { from: 'currencies', to: 'arrayField' },
-                        { from: 'phone', to: 'numericValue' },
-                        { from: 'Currency', to: 'tertiaryText' },
-                        { from: 'Phone Code', to: 'quaternaryText' }
-                    ]
+                    input: {
+                        filter: {
+                            code: {
+                                in: ['ES', 'FR', 'DE', 'GB']
+                            }
+                        }
+                    },
+                    prop: "countries_countries",
+                    mapProps: {
+                        primaryText: 'name',
+                        identifier: 'code',
+                        label1: 'Capital',
+                        value1: 'capital',
+                        label2: 'Currency',
+                        value2: 'currencies',
+                        label3: 'Phone Code',
+                        value3: 'phone',
+                        label4: 'Country Code',
+                        value4: 'code'
+                    }
                 }
             }
         }

@@ -1,18 +1,13 @@
 import { createOperation, z, AuthorizationError } from '../generated/wundergraph.factory';
 
-const ArrayFieldMapping = z.object({
-    from: z.string(),
-    to: z.string()
-});
-
 const MapValueSchema = z.union([
     z.string(),
     z.number(),
     z.object({
         query: z.string(),
         input: z.record(z.any()).optional(),
-        field: z.string().optional(),
-        arrayFields: z.array(ArrayFieldMapping).optional()
+        prop: z.string().optional(),
+        mapProps: z.record(z.string()).optional()
     }),
 ]);
 
@@ -57,13 +52,13 @@ export default createOperation.query({
                         return null;
                     }
 
-                    let result = value.field ? data[value.field] : data;
+                    let result = value.prop ? data[value.prop] : data;
 
-                    if (value.arrayFields && Array.isArray(result)) {
+                    if (value.mapProps && Array.isArray(result)) {
                         result = result.map((item: any) => {
                             const mappedItem: any = {};
-                            value.arrayFields.forEach((mapping: { from: string; to: string }) => {
-                                mappedItem[mapping.to] = item[mapping.from];
+                            Object.entries(value.mapProps).forEach(([to, from]) => {
+                                mappedItem[to] = item[from];
                             });
                             return mappedItem;
                         });
