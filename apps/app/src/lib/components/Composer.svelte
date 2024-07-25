@@ -58,17 +58,6 @@
 
 		if (component.id) {
 			component.store = createComposerStore(component.id, component.store || {});
-			if (component.data?.gql) {
-				getComposerStore(component.id).update((storeValue) => {
-					return {
-						...storeValue,
-						store: {
-							...storeValue.store,
-							...component.data.gql
-						}
-					};
-				});
-			}
 		}
 
 		// Initialize queries
