@@ -4,11 +4,13 @@
 	import { eventBus } from '$lib/composables/eventBus';
 
 	export let me;
-	const query = $me.queries.queryLeaderboard;
+	const query = $me.query;
 
 	async function handleUpdateMe() {
 		await $query.refetch();
 	}
+
+	console.log('query data', $query.data);
 
 	onMount(async () => {
 		eventBus.on('updateMe', handleUpdateMe);

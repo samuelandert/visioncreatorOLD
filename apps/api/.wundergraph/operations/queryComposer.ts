@@ -25,6 +25,17 @@ export default createOperation.query({
             throw new Error('Failed to fetch user details');
         }
 
+        // Query User Stats
+        const { data: userStatsData, error: userStatsError } = await operations.query({
+            operationName: 'queryUserStats',
+            input: { id: input.id },
+        });
+
+        if (userStatsError) {
+            console.error('Error fetching user stats:', userStatsError);
+            throw new Error('Failed to fetch user stats');
+        }
+
         // Query Leaderboard
         const { data: leaderboardData, error: leaderboardError } = await operations.query({
             operationName: 'queryLeaderboard',
@@ -35,20 +46,22 @@ export default createOperation.query({
             throw new Error('Failed to fetch leaderboard data');
         }
 
-        // Calculate user rank and streaming potential
-        const userRank = leaderboardData.findIndex((entry) => entry.id === input.id) + 1 || null;
-        const userEntry = leaderboardData.find((entry) => entry.id === input.id);
-        const streamPotential = userEntry ? userEntry.suminvites * 5 : 0;
-
         return {
             me: {
                 id: meData.id,
                 full_name: meData.full_name,
-                newsletter: meData.newsletter,
             },
-            leaderboard: leaderboardData,
-            userRank,
-            streamPotential,
+            description: "wonderful to have you around",
+            stats: [
+                {
+                    label: "Waiting Position",
+                    value: userStatsData.userRank
+                },
+                {
+                    label: "Streaming Potential",
+                    value: userStatsData.streamPotential
+                }
+            ],
         };
     },
 });

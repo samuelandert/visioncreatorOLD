@@ -4,13 +4,10 @@
 	import { eventBus } from '$lib/composables/eventBus';
 
 	export let me;
-	const queryComposer = $me.queries.queryComposer;
-
-	$: userRank = $queryComposer.data?.userRank || 'rechnet...';
-	$: streamPotential = $queryComposer.data?.streamPotential || 0;
+	const query = $me.query;
 
 	async function handleUpdateMe() {
-		await $queryComposer.refetch();
+		await $query.refetch();
 	}
 
 	onMount(async () => {
@@ -23,10 +20,10 @@
 </script>
 
 <div class="w-full max-w-6xl bg-surface-800 rounded-3xl">
-	{#if $queryComposer.isLoading}
+	{#if $query.isLoading}
 		<p class="text-lg text-gray-500">Loading Profile...</p>
-	{:else if $queryComposer.error}
-		<pre class="text-red-500">Error: {JSON.stringify($queryComposer.error, null, 2)}</pre>
+	{:else if $query.error}
+		<pre class="text-red-500">Error: {JSON.stringify($query.error, null, 2)}</pre>
 	{:else}
 		<div
 			class="relative text-center bg-center bg-cover rounded-t-3xl"
@@ -41,30 +38,30 @@
 				<div class="flex flex-col items-center p-8">
 					<Avatar
 						me={{
-							data: { seed: $queryComposer.data.me.id },
+							data: { seed: $query.data.me.id },
 							design: { highlight: true },
 							size: 'lg'
 						}}
 					/>
 					<h1 class="text-2xl @3xl:text-5xl font-bold h1">
-						Hey {$queryComposer.data.me.full_name}
+						Hey {$query.data.me.full_name}
 					</h1>
-					<p class="text-md @3xl:text-2xl">wonderful to have you around</p>
+					<p class="text-md @3xl:text-2xl">{$query.data.description}</p>
 				</div>
 			</div>
 		</div>
 
 		<div class="flex items-center justify-evenly p-4 @3xl:p-8 space-x-4">
-			<div class="text-center">
-				<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">{userRank}</p>
-				<p class="text-tertiary-600 text-sm @3xl:text-lg">Waiting Position</p>
-			</div>
-			<div class="text-center">
-				<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">
-					{streamPotential} $/m
-				</p>
-				<p class="text-tertiary-600 text-sm @3xl:text-lg">Streaming Potential</p>
-			</div>
+			{#each $query.data.stats as stat}
+				<div class="text-center">
+					<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">
+						{stat.label === 'Streaming Potential'
+							? `${stat.value || 0} $/m`
+							: stat.value || 'rechnet...'}
+					</p>
+					<p class="text-tertiary-600 text-sm @3xl:text-lg">{stat.label}</p>
+				</div>
+			{/each}
 		</div>
 	{/if}
 </div>

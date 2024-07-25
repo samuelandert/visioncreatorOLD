@@ -16,9 +16,7 @@ export const view = {
             id: 'Profile',
             component: 'Profile',
             slot: 'profile',
-            queries: [
-                { operation: 'queryComposer', input: { id: 'authID' } }
-            ]
+            query: { operation: 'queryComposer', input: { id: 'authID' } }
         },
         {
             id: 'InviteCard',
@@ -32,9 +30,7 @@ export const view = {
             layout: {
                 style: 'min-h-[500px]',
             },
-            queries: [
-                { operation: 'queryLeaderboard' }
-            ]
+            query: { operation: 'queryLeaderboard' }
         }
     ]
 }

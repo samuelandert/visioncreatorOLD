@@ -27,7 +27,7 @@
 		slot?: string;
 		children?: IComposer[];
 		data?: Record<string, any>;
-		queries?: { operation: string; input?: any }[];
+		query?: { operation: string; input?: any };
 		authID?: string;
 	}
 
@@ -60,28 +60,23 @@
 			component.store = createComposerStore(component.id, component.store || {});
 		}
 
-		// Initialize queries
-		if (component.queries) {
-			component.queries.forEach((query) => {
-				let input = { ...query.input };
-				for (const key in input) {
-					if (input[key] === 'authID') {
-						input[key] = currentUserId;
-					}
+		// Initialize query
+		if (component.query) {
+			let input = { ...component.query.input };
+			for (const key in input) {
+				if (input[key] === 'authID') {
+					input[key] = currentUserId;
 				}
-				const queryInstance = createQuery({
-					operationName: query.operation,
-					input: input,
-					liveQuery: true
-				});
-				getComposerStore(component.id).update((storeValue) => ({
-					...storeValue,
-					queries: {
-						...storeValue.queries,
-						[query.operation]: queryInstance
-					}
-				}));
+			}
+			const queryInstance = createQuery({
+				operationName: component.query.operation,
+				input: input,
+				liveQuery: true
 			});
+			getComposerStore(component.id).update((storeValue) => ({
+				...storeValue,
+				query: queryInstance
+			}));
 		}
 
 		getComposerStore(component.id).update((storeValue) => ({
