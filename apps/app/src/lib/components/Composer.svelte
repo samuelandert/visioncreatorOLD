@@ -98,7 +98,7 @@
 		getComposerStore(component.id).update((storeValue) => ({
 			...storeValue,
 			id: component.id,
-			authID: currentUserId, // Add authID to every component's store
+			authID: currentUserId,
 			do: {
 				core: coreServices,
 				emit: (event: string, ...args: any[]) => eventBus.emit(event, component.id, ...args)
@@ -143,7 +143,7 @@
 		style={layoutStyle}
 	>
 		{#await loadComponentAndInitializeState(composer) then Component}
-			<svelte:component this={Component} id={composer.id} me={getComposerStore(composer.id)} />
+			<svelte:component this={Component} me={getComposerStore(composer.id)} />
 		{/await}
 		{#if composer?.children}
 			{#each composer.children as child (child.id)}
@@ -154,7 +154,7 @@
 					style={`grid-area: ${child.slot}`}
 				>
 					{#await loadComponentAndInitializeState(child) then ChildComponent}
-						<svelte:component this={ChildComponent} id={child.id} me={getComposerStore(child.id)} />
+						<svelte:component this={ChildComponent} me={getComposerStore(child.id)} />
 						{#if child.children && child.children.length}
 							<Composer composer={child} />
 						{/if}
