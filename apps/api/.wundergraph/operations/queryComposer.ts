@@ -5,8 +5,8 @@ const MapValueSchema = z.union([
     z.number(),
     z.object({
         query: z.string(),
-        input: z.record(z.any()).optional(), // Make input optional
-        field: z.string().optional(), // Make field optional
+        input: z.record(z.any()).optional(),
+        field: z.string().optional(),
     }),
 ]);
 
@@ -17,7 +17,7 @@ const MapSchema = z.record(z.union([
 
 export default createOperation.query({
     input: z.object({
-        id: z.string(),
+        data: z.record(z.any()),
         map: MapSchema,
     }),
     requireAuthentication: true,
@@ -25,9 +25,14 @@ export default createOperation.query({
         requireMatchAll: ['authenticated'],
     },
     handler: async ({ input, user, operations }) => {
-        if (!user || !user.customClaims || input.id !== user.customClaims.id) {
-            console.error('Authorization Error: User not authenticated or ID mismatch.');
+        if (!user || !user.customClaims) {
+            console.error('Authorization Error: User not authenticated.');
             throw new AuthorizationError({ message: 'Not authorized' });
+        }
+
+        // If input.data.id is 'authID', replace it with the actual user ID
+        if (input.data.id === 'authID') {
+            input.data.id = user.customClaims.id;
         }
 
         async function resolveMapValue(value: any) {
@@ -35,7 +40,7 @@ export default createOperation.query({
                 try {
                     const resolvedInput = value.input ? { ...value.input } : {};
 
-                    // Only replace 'authID' with the actual user ID if it exists
+                    // Replace 'authID' with the actual user ID if it exists
                     if (resolvedInput.id === 'authID') {
                         resolvedInput.id = user.customClaims.id;
                     }

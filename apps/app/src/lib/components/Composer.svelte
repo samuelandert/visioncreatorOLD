@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { createComposerStore, getComposerStore } from '$lib/composables/composerStores';
 	import { coreServices } from '$lib/composables/services';
 	import Composer from './Composer.svelte';
@@ -9,7 +9,6 @@
 	import { get } from 'svelte/store';
 	import { eventBus } from '$lib/composables/eventBus';
 	import { setupEventMapper } from '$lib/composables/eventMapper';
-	import { onMount } from 'svelte';
 
 	interface IComposerLayout {
 		areas: string;
@@ -27,7 +26,7 @@
 		slot?: string;
 		children?: IComposer[];
 		data?: Record<string, any>;
-		query?: { operation: string; input?: any };
+		query?: { data: Record<string, any>; map: any };
 		authID?: string;
 	}
 
@@ -62,15 +61,15 @@
 
 		// Initialize query
 		if (component.query) {
-			let input = { ...component.query.input };
-			for (const key in input) {
-				if (input[key] === 'authID') {
-					input[key] = currentUserId;
-				}
-			}
 			const queryInstance = createQuery({
-				operationName: component.query.operation,
-				input: input,
+				operationName: 'queryComposer',
+				input: {
+					data: {
+						id: component.query.data.id === 'authID' ? currentUserId : component.query.data.id,
+						...component.query.data
+					},
+					map: component.query.map
+				},
 				liveQuery: true
 			});
 			getComposerStore(component.id).update((storeValue) => ({
