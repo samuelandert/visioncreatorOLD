@@ -17,7 +17,7 @@ const MapSchema = z.record(z.union([
 
 export default createOperation.query({
     input: z.object({
-        data: z.record(z.any()),
+        id: z.string(),
         map: MapSchema,
     }),
     requireAuthentication: true,
@@ -30,10 +30,7 @@ export default createOperation.query({
             throw new AuthorizationError({ message: 'Not authorized' });
         }
 
-        // If input.data.id is 'authID', replace it with the actual user ID
-        if (input.data.id === 'authID') {
-            input.data.id = user.customClaims.id;
-        }
+        const userId = user.customClaims.id;
 
         async function resolveMapValue(value: any) {
             if (typeof value === 'object' && value.query) {
@@ -42,7 +39,7 @@ export default createOperation.query({
 
                     // Replace 'authID' with the actual user ID if it exists
                     if (resolvedInput.id === 'authID') {
-                        resolvedInput.id = user.customClaims.id;
+                        resolvedInput.id = userId;
                     }
 
                     const { data, error } = await operations.query({

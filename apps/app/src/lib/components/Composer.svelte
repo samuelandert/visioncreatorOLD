@@ -26,7 +26,7 @@
 		slot?: string;
 		children?: IComposer[];
 		data?: Record<string, any>;
-		query?: { data: Record<string, any>; map: any };
+		map?: any;
 		authID?: string;
 	}
 
@@ -60,15 +60,12 @@
 		}
 
 		// Initialize query
-		if (component.query) {
+		if (component.map) {
 			const queryInstance = createQuery({
 				operationName: 'queryComposer',
 				input: {
-					data: {
-						id: component.query.data.id === 'authID' ? currentUserId : component.query.data.id,
-						...component.query.data
-					},
-					map: component.query.map
+					id: currentUserId, // Always pass the current user ID
+					map: component.map
 				},
 				liveQuery: true
 			});
