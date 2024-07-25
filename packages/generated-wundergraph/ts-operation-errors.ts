@@ -8,7 +8,6 @@ export type OperationErrors = {
 	ListSubscriptions: ListSubscriptionsErrors;
 	LoadCustomers: LoadCustomersErrors;
 	MyNewsletterStatus: MyNewsletterStatusErrors;
-	ToggleNewsletter: ToggleNewsletterErrors;
 	createInvite: CreateInviteErrors;
 	listTodos: ListTodosErrors;
 	queryComposer: QueryComposerErrors;
@@ -17,6 +16,7 @@ export type OperationErrors = {
 	queryUserStats: QueryUserStatsErrors;
 	subLeaderboard: SubLeaderboardErrors;
 	subMe: SubMeErrors;
+	toggleNewsletter: ToggleNewsletterErrors;
 	updateMe: UpdateMeErrors;
 };
 
@@ -25,7 +25,6 @@ export type CreateSubscriptionErrors = ClientOperationErrors;
 export type ListSubscriptionsErrors = ClientOperationErrors;
 export type LoadCustomersErrors = ClientOperationErrors;
 export type MyNewsletterStatusErrors = ClientOperationErrors;
-export type ToggleNewsletterErrors = ClientOperationErrors;
 export type CreateInviteErrors = ClientOperationErrors;
 export type ListTodosErrors = ClientOperationErrors;
 export type QueryComposerErrors = ClientOperationErrors;
@@ -34,4 +33,5 @@ export type QueryMeErrors = ClientOperationErrors;
 export type QueryUserStatsErrors = ClientOperationErrors;
 export type SubLeaderboardErrors = ClientOperationErrors;
 export type SubMeErrors = ClientOperationErrors;
+export type ToggleNewsletterErrors = ClientOperationErrors;
 export type UpdateMeErrors = ClientOperationErrors;
