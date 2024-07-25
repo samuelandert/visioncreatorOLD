@@ -9,7 +9,7 @@
 	const components = writable([
 		{ name: 'Countries', value: 'Countries' },
 		{ name: 'Green', value: 'o-Green' },
-		{ name: 'Levels', value: 'Levels' }
+		{ name: 'Levels', value: 'o-Levels' }
 	]);
 
 	const codes = writable([
@@ -23,7 +23,7 @@
 	]);
 
 	function updateChildren(component, slot) {
-		view.children = [{ ...selectedChildren, component, slot }]; // Include queries when replacing the children array
+		view.children = [{ ...selectedChildren, component, slot }]; 
 	}
 
 	function updateQueryCode(code) {

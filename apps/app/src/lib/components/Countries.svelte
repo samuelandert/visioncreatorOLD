@@ -1,35 +1,37 @@
 <script lang="ts">
 	export let me;
-	const query = $me.queries.Countries;
+	const query = $me.query;
 </script>
 
-<main class=" overflow-auto">
-	<h1 class="text-4xl font-bold mb-4">Countries</h1>
+<main class="overflow-auto">
+	<h1 class="mb-4 text-4xl font-bold">Countries</h1>
 
-	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 		{#if $query.isLoading}
 			<p class="text-lg text-gray-500">Loading...</p>
 		{:else if $query.error}
 			<pre class="text-red-500">Error: {JSON.stringify($query.error, null, 2)}</pre>
-		{:else}
-			{#each $query.data.countries_countries as country (country.code)}
-				<div class="rounded overflow-hidden shadow-lg m-4 bg-secondary-700 text-white">
+		{:else if $query.data && $query.data.grid && Array.isArray($query.data.grid)}
+			{#each $query.data.grid as item (item.code)}
+				<div class="m-4 overflow-hidden text-white rounded shadow-lg bg-secondary-700">
 					<div class="px-6 py-4">
-						<div class="font-bold text-xl text-primary-500 mb-2">
-							{country.name} ({country.code})
+						<div class="mb-2 text-xl font-bold text-primary-500">
+							{item.name} ({item.code})
 						</div>
-						<p class="text-gray-300 text-lg font-bold">
-							{country.capital}
+						<p class="text-lg font-bold text-gray-300">
+							{item.capital || 'N/A'}
 						</p>
-						<p class="text-gray-300 text-base">
-							Currency: {#each country.currencies as currency (currency)}{currency}{/each}
+						<p class="text-base text-gray-300">
+							Currency: {#each item.currencies as currency}{currency}{/each}
 						</p>
-						<p class="text-gray-300 text-base">
-							Phone Code: {country.phone}
+						<p class="text-base text-gray-300">
+							Phone Code: {item.phone}
 						</p>
 					</div>
 				</div>
 			{/each}
+		{:else}
+			<p class="text-lg text-gray-500">No countries found.</p>
 		{/if}
 	</div>
 </main>

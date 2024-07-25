@@ -1,4 +1,4 @@
-import { createOperation, z } from '../generated/wundergraph.factory';
+import { createOperation, z, AuthorizationError } from '../generated/wundergraph.factory';
 
 export default createOperation.query({
     input: z.object({
@@ -8,7 +8,11 @@ export default createOperation.query({
     rbac: {
         requireMatchAll: ['authenticated'],
     },
-    handler: async ({ input, operations }) => {
+    handler: async ({ input, user, operations }) => {
+        if (input.id !== user?.customClaims?.id) {
+            console.error('Authorization Error: User ID does not match.');
+            throw new AuthorizationError({ message: 'User ID does not match.' });
+        }
         // Query Leaderboard
         const { data: leaderboardData, error: leaderboardError } = await operations.query({
             operationName: 'queryLeaderboard',
