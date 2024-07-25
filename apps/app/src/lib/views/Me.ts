@@ -17,8 +17,7 @@ export const view = {
             component: 'Profile',
             slot: 'profile',
             queries: [
-                { operation: 'queryMe', input: { id: 'authID' } },
-                { operation: 'queryLeaderboard', input: {} }
+                { operation: 'queryComposer', input: { id: 'authID' } }
             ]
         },
         {
@@ -34,7 +33,7 @@ export const view = {
                 style: 'min-h-[500px]',
             },
             queries: [
-                { operation: 'queryLeaderboard', input: {} }
+                { operation: 'queryLeaderboard' }
             ]
         }
     ]

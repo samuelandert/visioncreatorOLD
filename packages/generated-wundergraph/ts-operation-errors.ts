@@ -11,6 +11,7 @@ export type OperationErrors = {
 	ToggleNewsletter: ToggleNewsletterErrors;
 	createInvite: CreateInviteErrors;
 	listTodos: ListTodosErrors;
+	queryComposer: QueryComposerErrors;
 	queryLeaderboard: QueryLeaderboardErrors;
 	queryMe: QueryMeErrors;
 	subLeaderboard: SubLeaderboardErrors;
@@ -26,6 +27,7 @@ export type MyNewsletterStatusErrors = ClientOperationErrors;
 export type ToggleNewsletterErrors = ClientOperationErrors;
 export type CreateInviteErrors = ClientOperationErrors;
 export type ListTodosErrors = ClientOperationErrors;
+export type QueryComposerErrors = ClientOperationErrors;
 export type QueryLeaderboardErrors = ClientOperationErrors;
 export type QueryMeErrors = ClientOperationErrors;
 export type SubLeaderboardErrors = ClientOperationErrors;

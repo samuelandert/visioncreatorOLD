@@ -4,19 +4,13 @@
 	import { eventBus } from '$lib/composables/eventBus';
 
 	export let me;
-	const queryMe = $me.queries.queryMe;
-	const queryLeaderboard = $me.queries.queryLeaderboard;
+	const queryComposer = $me.queries.queryComposer;
 
-	$: userRank = $queryLeaderboard.data
-		? $queryLeaderboard.data.findIndex((entry) => entry.id === $me.authID) + 1 || 'rechnet...'
-		: 'rechnet...';
-	$: streamPotential = $queryLeaderboard.data
-		? ($queryLeaderboard.data.find((entry) => entry.id === $me.authID)?.suminvites || 0) * 5
-		: 0;
+	$: userRank = $queryComposer.data?.userRank || 'rechnet...';
+	$: streamPotential = $queryComposer.data?.streamPotential || 0;
 
 	async function handleUpdateMe() {
-		await $queryMe.refetch();
-		await $queryLeaderboard.refetch();
+		await $queryComposer.refetch();
 	}
 
 	onMount(async () => {
@@ -29,14 +23,10 @@
 </script>
 
 <div class="w-full max-w-6xl bg-surface-800 rounded-3xl">
-	{#if $queryMe.isLoading || $queryLeaderboard.isLoading}
+	{#if $queryComposer.isLoading}
 		<p class="text-lg text-gray-500">Loading Profile...</p>
-	{:else if $queryMe.error || $queryLeaderboard.error}
-		<pre class="text-red-500">Error: {JSON.stringify(
-				$queryMe.error || $queryLeaderboard.error,
-				null,
-				2
-			)}</pre>
+	{:else if $queryComposer.error}
+		<pre class="text-red-500">Error: {JSON.stringify($queryComposer.error, null, 2)}</pre>
 	{:else}
 		<div
 			class="relative text-center bg-center bg-cover rounded-t-3xl"
@@ -51,13 +41,13 @@
 				<div class="flex flex-col items-center p-8">
 					<Avatar
 						me={{
-							data: { seed: $queryMe.data?.id },
+							data: { seed: $queryComposer.data.me.id },
 							design: { highlight: true },
 							size: 'lg'
 						}}
 					/>
 					<h1 class="text-2xl @3xl:text-5xl font-bold h1">
-						Hey {$queryMe.data?.full_name}
+						Hey {$queryComposer.data.me.full_name}
 					</h1>
 					<p class="text-md @3xl:text-2xl">wonderful to have you around</p>
 				</div>

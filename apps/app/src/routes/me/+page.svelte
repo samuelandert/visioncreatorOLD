@@ -42,6 +42,7 @@
 					id: session.user.id,
 					email: session?.user.email
 				});
+
 				log('success', 'Newsletter preference updated successfully', toggleNewsletterResult);
 			} catch (error) {
 				log('error', 'Error during signup process', error);
