@@ -27,9 +27,9 @@
 	<p class="flex items-center justify-center w-full p-10 h-72 text-error-500">
 		Error: {$query.error?.message}
 	</p>
-{:else}
+{:else if $query.data && $query.data.leaderboard}
 	<ul class="space-y-2 @3xl:space-y-4">
-		{#each $query.data as { name, id, suminvites }, index}
+		{#each $query.data.leaderboard as { name, id, suminvites }, index}
 			<li
 				class={`flex items-center justify-between rounded-4xl  ${
 					id === $me.authID ? 'bg-surface-600' : 'bg-surface-700'
@@ -65,4 +65,6 @@
 			</li>
 		{/each}
 	</ul>
+{:else}
+	<p class="flex items-center justify-center w-full p-10 h-72">No leaderboard data available</p>
 {/if}

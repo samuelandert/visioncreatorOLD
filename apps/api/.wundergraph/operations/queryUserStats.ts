@@ -1,4 +1,4 @@
-import { createOperation, z, AuthorizationError } from '../generated/wundergraph.factory';
+import { createOperation, z } from '../generated/wundergraph.factory';
 
 export default createOperation.query({
     input: z.object({
@@ -8,12 +8,7 @@ export default createOperation.query({
     rbac: {
         requireMatchAll: ['authenticated'],
     },
-    handler: async ({ input, user, operations }) => {
-        if (input.id !== user?.customClaims?.id) {
-            console.error('Authorization Error: User ID does not match.');
-            throw new AuthorizationError({ message: 'User ID does not match.' });
-        }
-
+    handler: async ({ input, operations }) => {
         // Query Leaderboard
         const { data: leaderboardData, error: leaderboardError } = await operations.query({
             operationName: 'queryLeaderboard',
@@ -25,8 +20,8 @@ export default createOperation.query({
         }
 
         // Calculate user rank and streaming potential
-        const userRank = leaderboardData.findIndex((entry) => entry.id === input.id) + 1 || null;
-        const userEntry = leaderboardData.find((entry) => entry.id === input.id);
+        const userRank = leaderboardData.profiles.findIndex((entry) => entry.id === input.id) + 1 || null;
+        const userEntry = leaderboardData.profiles.find((entry) => entry.id === input.id);
         const streamPotential = userEntry ? userEntry.suminvites * 5 : 0;
 
         return {

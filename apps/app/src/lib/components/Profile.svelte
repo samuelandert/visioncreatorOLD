@@ -38,13 +38,13 @@
 				<div class="flex flex-col items-center p-8">
 					<Avatar
 						me={{
-							data: { seed: $query.data.me.id },
+							data: { seed: $me.authID },
 							design: { highlight: true },
 							size: 'lg'
 						}}
 					/>
 					<h1 class="text-2xl @3xl:text-5xl font-bold h1">
-						Hey {$query.data.me.full_name}
+						Hey {$query.data.title}
 					</h1>
 					<p class="text-md @3xl:text-2xl">{$query.data.description}</p>
 				</div>

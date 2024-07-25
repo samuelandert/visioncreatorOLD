@@ -30,6 +30,6 @@ export default createOperation.query({
                 return new Date(a.createdAt) - new Date(b.createdAt);
             }
         });
-        return profilesData;
+        return { profiles: profilesData };
     },
 });

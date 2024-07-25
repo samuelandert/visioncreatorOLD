@@ -16,7 +16,38 @@ export const view = {
             id: 'Profile',
             component: 'Profile',
             slot: 'profile',
-            query: { operation: 'queryComposer', input: { id: 'authID' } }
+            query: {
+                operation: 'queryComposer',
+                input: {
+                    id: 'authID',
+                    map: {
+                        title: {
+                            query: "queryMe",
+                            input: { id: 'authID' },
+                            field: "full_name"
+                        },
+                        description: "wonderful to have you around",
+                        stats: [
+                            {
+                                label: "Waiting Position",
+                                value: {
+                                    query: "queryUserStats",
+                                    input: { id: 'authID' },
+                                    field: "userRank"
+                                }
+                            },
+                            {
+                                label: "Streaming Potential",
+                                value: {
+                                    query: "queryUserStats",
+                                    input: { id: 'authID' },
+                                    field: "streamPotential"
+                                }
+                            }
+                        ]
+                    }
+                },
+            }
         },
         {
             id: 'InviteCard',
@@ -30,7 +61,18 @@ export const view = {
             layout: {
                 style: 'min-h-[500px]',
             },
-            query: { operation: 'queryLeaderboard' }
+            query: {
+                operation: 'queryComposer',
+                input: {
+                    id: 'authID',
+                    map: {
+                        leaderboard: {
+                            query: 'queryLeaderboard',
+                            field: 'profiles'
+                        }
+                    }
+                }
+            }
         }
     ]
 }
