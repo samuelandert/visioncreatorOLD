@@ -10,9 +10,7 @@
 		await $query.refetch();
 	}
 
-	console.log('query data', $query.data);
-
-	onMount(async () => {
+	onMount(() => {
 		eventBus.on('updateMe', handleUpdateMe);
 	});
 
@@ -29,28 +27,28 @@
 	</p>
 {:else if $query.data && $query.data.list}
 	<ul class="space-y-2 @3xl:space-y-4">
-		{#each $query.data.list as { name, id, suminvites }, index}
+		{#each $query.data.list as { primaryText, identifier, numericValue }, index}
 			<li
 				class={`flex items-center justify-between rounded-4xl  ${
-					id === $me.authID ? 'bg-surface-600' : 'bg-surface-700'
+					identifier === $me.authID ? 'bg-surface-600' : 'bg-surface-700'
 				}`}
 			>
 				<Avatar
 					me={{
-						data: { seed: id },
-						design: { highlight: id === $me.authID },
+						data: { seed: identifier },
+						design: { highlight: identifier === $me.authID },
 						size: 'sm'
 					}}
 				/>
 
 				<div class="flex-1 px-4 text-xl @3xl:text-2xl text-tertiary-400">
-					{name}
+					{primaryText}
 				</div>
 
 				<div class="flex justify-between px-4 @3xl:px-6 space-x-4 max-h-12">
 					<div class="flex flex-col items-center text-right">
 						<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
-							{suminvites}
+							{numericValue}
 						</p>
 						<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">invites</p>
 					</div>

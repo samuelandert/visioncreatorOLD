@@ -117,7 +117,7 @@
 
 <QueryClientProvider client={queryClient}>
 	<div
-		class={`grid w-full h-full ${
+		class={`grid w-full h-full @container ${
 			composer?.layout?.overflow ? `overflow-${composer.layout.overflow}` : ''
 		} ${composer?.layout?.style || ''}`}
 		style={layoutStyle}

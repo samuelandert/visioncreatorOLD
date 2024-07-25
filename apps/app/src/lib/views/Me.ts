@@ -7,7 +7,7 @@ export const view = {
         columns: '2fr 1fr',
         gap: '1rem',
         overflow: 'auto',
-        style: 'p-4 max-w-6xl mx-auto'
+
     },
     children: [
         {
@@ -21,6 +21,7 @@ export const view = {
                 `,
                 rows: 'auto auto auto',
                 gap: '1rem',
+                style: 'p-4 max-w-6xl mx-auto',
                 overflow: 'auto',
             },
             children: [
@@ -71,6 +72,11 @@ export const view = {
                         list: {
                             query: 'queryLeaderboard',
                             field: 'profiles',
+                            arrayFields: [
+                                { from: 'name', to: 'primaryText' },
+                                { from: 'id', to: 'identifier' },
+                                { from: 'suminvites', to: 'numericValue' }
+                            ]
                         }
                     }
                 }
@@ -88,6 +94,15 @@ export const view = {
                     query: 'Countries',
                     input: { filter: {} },
                     field: "countries_countries",
+                    arrayFields: [
+                        { from: 'name', to: 'primaryText' },
+                        { from: 'code', to: 'identifier' },
+                        { from: 'capital', to: 'secondaryText' },
+                        { from: 'currencies', to: 'arrayField' },
+                        { from: 'phone', to: 'numericValue' },
+                        { from: 'Currency', to: 'tertiaryText' },
+                        { from: 'Phone Code', to: 'quaternaryText' }
+                    ]
                 }
             }
         }

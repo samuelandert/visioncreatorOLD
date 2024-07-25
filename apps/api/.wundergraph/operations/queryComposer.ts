@@ -1,5 +1,10 @@
 import { createOperation, z, AuthorizationError } from '../generated/wundergraph.factory';
 
+const ArrayFieldMapping = z.object({
+    from: z.string(),
+    to: z.string()
+});
+
 const MapValueSchema = z.union([
     z.string(),
     z.number(),
@@ -7,6 +12,7 @@ const MapValueSchema = z.union([
         query: z.string(),
         input: z.record(z.any()).optional(),
         field: z.string().optional(),
+        arrayFields: z.array(ArrayFieldMapping).optional()
     }),
 ]);
 
@@ -37,7 +43,6 @@ export default createOperation.query({
                 try {
                     const resolvedInput = value.input ? { ...value.input } : {};
 
-                    // Replace 'authID' with the actual user ID if it exists
                     if (resolvedInput.id === 'authID') {
                         resolvedInput.id = userId;
                     }
@@ -52,8 +57,19 @@ export default createOperation.query({
                         return null;
                     }
 
-                    // If field is specified, return that field from the data, otherwise return all data
-                    return value.field ? data[value.field] : data;
+                    let result = value.field ? data[value.field] : data;
+
+                    if (value.arrayFields && Array.isArray(result)) {
+                        result = result.map((item: any) => {
+                            const mappedItem: any = {};
+                            value.arrayFields.forEach((mapping: { from: string; to: string }) => {
+                                mappedItem[mapping.to] = item[mapping.from];
+                            });
+                            return mappedItem;
+                        });
+                    }
+
+                    return result;
                 } catch (error) {
                     console.error(`Error executing query ${value.query}:`, error);
                     return null;
