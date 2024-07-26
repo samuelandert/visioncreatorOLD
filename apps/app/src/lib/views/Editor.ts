@@ -5,7 +5,8 @@ export const view = {
             "aside main"
         `,
         columns: '300px 1fr',
-        style: 'h-screen overflow-hidden'
+        style: 'h-screen',
+        overflow: "hidden"
     },
     children: [
         {
@@ -14,7 +15,6 @@ export const view = {
             layout: {
                 style: 'h-full bg-surface-200-700-token'
             },
-            component: 'div',
         },
         {
             id: 'MainArea',
@@ -26,7 +26,8 @@ export const view = {
                 `,
                 columns: '1fr 1fr',
                 rows: '1fr 1fr',
-                style: 'h-full gap-4 p-4 overflow-auto'
+                style: 'h-screen gap-4 p-4',
+                overflow: 'hidden'
             },
             children: [
                 {
@@ -34,7 +35,8 @@ export const view = {
                     slot: 'q1',
                     component: 'Grid',
                     layout: {
-                        style: 'h-full overflow-auto'
+                        scale: "sm",
+                        overflow: 'auto'
                     },
                     map: {
                         grid: {
@@ -65,25 +67,103 @@ export const view = {
                 {
                     id: 'Quadrant2',
                     slot: 'q2',
-                    component: 'div',
+                    component: 'Grid',
                     layout: {
-                        style: 'h-full bg-surface-100-800-token'
+                        scale: "md",
+                        overflow: 'auto'
+                    },
+                    map: {
+                        grid: {
+                            query: 'Countries',
+                            input: {
+                                filter: {
+                                    code: {
+                                        in: ['ES', 'FR', 'DE', 'GB', 'CR', 'SA', 'IN']
+                                    }
+                                }
+                            },
+                            prop: "countries_countries",
+                            mapProps: {
+                                primaryText: 'prop.name',
+                                identifier: 'prop.code',
+                                label1: 'Capital',
+                                value1: 'prop.capital',
+                                label2: 'Currency',
+                                value2: 'prop.currencies',
+                                label3: 'Phone Code',
+                                value3: 'prop.phone',
+                                label4: 'Country Code',
+                                value4: 'prop.code'
+                            }
+                        }
                     }
                 },
                 {
                     id: 'Quadrant3',
                     slot: 'q3',
-                    component: 'div',
+                    component: 'Grid',
                     layout: {
-                        style: 'h-full bg-surface-100-800-token'
+                        scale: "lg",
+                        overflow: 'auto'
+                    },
+                    map: {
+                        grid: {
+                            query: 'Countries',
+                            input: {
+                                filter: {
+                                    code: {
+                                        in: ['ES', 'FR', 'DE', 'GB', 'CR', 'SA', 'IN']
+                                    }
+                                }
+                            },
+                            prop: "countries_countries",
+                            mapProps: {
+                                primaryText: 'prop.name',
+                                identifier: 'prop.code',
+                                label1: 'Capital',
+                                value1: 'prop.capital',
+                                label2: 'Currency',
+                                value2: 'prop.currencies',
+                                label3: 'Phone Code',
+                                value3: 'prop.phone',
+                                label4: 'Country Code',
+                                value4: 'prop.code'
+                            }
+                        }
                     }
                 },
                 {
                     id: 'Quadrant4',
                     slot: 'q4',
-                    component: 'div',
+                    component: 'Grid',
                     layout: {
-                        style: 'h-full bg-surface-100-800-token'
+                        scale: "xl",
+                        overflow: 'auto'
+                    },
+                    map: {
+                        grid: {
+                            query: 'Countries',
+                            input: {
+                                filter: {
+                                    code: {
+                                        in: ['ES', 'FR', 'DE', 'GB', 'CR', 'SA', 'IN']
+                                    }
+                                }
+                            },
+                            prop: "countries_countries",
+                            mapProps: {
+                                primaryText: 'prop.name',
+                                identifier: 'prop.code',
+                                label1: 'Capital',
+                                value1: 'prop.capital',
+                                label2: 'Currency',
+                                value2: 'prop.currencies',
+                                label3: 'Phone Code',
+                                value3: 'prop.phone',
+                                label4: 'Country Code',
+                                value4: 'prop.code'
+                            }
+                        }
                     }
                 }
             ]

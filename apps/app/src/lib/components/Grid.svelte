@@ -3,7 +3,7 @@
 	const query = $me.query;
 </script>
 
-<main class="w-full p-4 mx-auto space-y-8 ">
+<main class="w-full p-4 mx-auto space-y-8">
 	{#if $query.isLoading}
 		<div class="p-4 card variant-ghost-surface animate-pulse">
 			<p class="w-full h-4 placeholder" />
@@ -14,14 +14,17 @@
 		</div>
 	{:else if $query.data && $query.data.grid && Array.isArray($query.data.grid)}
 		<div
-			class="grid grid-cols-1 gap-4 @sm:grid-cols-2 @md:grid-cols-3 @lg:grid-cols-4 @xl:grid-cols-5 @2xl:grid-cols-6 space-y-4"
+			class="grid gap-4 space-y-4"
+			style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));"
 		>
 			{#each $query.data.grid as item (item.identifier)}
 				<div
 					class="overflow-hidden transition-all duration-200 shadow-md bg-surface-700 rounded-2xl hover:shadow-xl"
 				>
 					<header class="p-2 text-white bg-surface-800">
-						<h2 class="h4 font-bold truncate @3xl:text-xl @7xl:text-2xl">{item.primaryText}</h2>
+						<h2 class="text-base font-bold truncate h4 sm:text-lg md:text-xl lg:text-2xl">
+							{item.primaryText}
+						</h2>
 					</header>
 					<section class="p-4 space-y-3">
 						{#each Array(4) as _, i}

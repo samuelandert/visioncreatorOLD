@@ -11,12 +11,13 @@
 	import { setupEventMapper } from '$lib/composables/eventMapper';
 
 	interface IComposerLayout {
-		areas: string;
+		areas?: string;
 		columns?: string;
 		rows?: string;
 		gap?: string;
 		style?: string;
 		overflow?: 'hidden' | 'auto';
+		scale?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 	}
 
 	interface IComposer {
@@ -109,6 +110,18 @@
             ${layout.rows ? `grid-template-rows: ${layout.rows};` : ''}
         `;
 	}
+	function getScaleStyle(scale?: string): string {
+		if (!scale) return '';
+		const scaleMap = {
+			xs: 'width: 320px; transform: scale(0.3125);', // 320px
+			sm: 'width: 480px; transform: scale(0.46875);', // 480px
+			md: 'width: 768px; transform: scale(0.75);', // 768px
+			lg: 'width: 1024px; transform: scale(1);', // 1024px
+			xl: 'width: 1280px; transform: scale(1.25);', // 1280px
+			'2xl': 'width: 1600px; transform: scale(1.5625);' // 1600px
+		};
+		return scaleMap[scale] || '';
+	}
 
 	onDestroy(() => {
 		unsubscribers.forEach((unsub) => unsub());
@@ -117,28 +130,32 @@
 
 <QueryClientProvider client={queryClient}>
 	<div
-		class={`grid w-full h-full @container ${
+		class={`grid w-full h-full ${
 			composer?.layout?.overflow ? `overflow-${composer.layout.overflow}` : ''
 		} ${composer?.layout?.style || ''}`}
 		style={layoutStyle}
 	>
-		{#await loadComponentAndInitializeState(composer) then Component}
-			<svelte:component this={Component} me={getComposerStore(composer.id)} />
-		{/await}
+		<div style={getScaleStyle(composer?.layout?.scale)} class="origin-top-left">
+			{#await loadComponentAndInitializeState(composer) then Component}
+				<svelte:component this={Component} me={getComposerStore(composer.id)} />
+			{/await}
+		</div>
 		{#if composer?.children}
 			{#each composer.children as child (child.id)}
 				<div
-					class={`grid w-full h-full @container ${
+					class={`grid w-full h-full ${
 						child.layout?.overflow ? `overflow-${child.layout.overflow}` : ''
 					} ${child.layout?.style || ''}`}
-					style={`grid-area: ${child.slot}`}
+					style={`grid-area: ${child.slot};`}
 				>
-					{#await loadComponentAndInitializeState(child) then ChildComponent}
-						<svelte:component this={ChildComponent} me={getComposerStore(child.id)} />
-						{#if child.children && child.children.length}
-							<Composer composer={child} />
-						{/if}
-					{/await}
+					<div style={getScaleStyle(child.layout?.scale)} class="origin-top-left">
+						{#await loadComponentAndInitializeState(child) then ChildComponent}
+							<svelte:component this={ChildComponent} me={getComposerStore(child.id)} />
+							{#if child.children && child.children.length}
+								<Composer composer={child} />
+							{/if}
+						{/await}
+					</div>
 				</div>
 			{/each}
 		{/if}
