@@ -1,50 +1,52 @@
 ---
-title: '@{{ .Campaign.Subject }}'
+title: "@{{ .Campaign.Subject }}"
 content: '@{{ template "content" . }}'
-name: '@{{ .Subscriber.Name }}'
-unsubscribeUrl: '@{{ UnsubscribeURL }}'
+name: "@{{ .Subscriber.Name }}"
+unsubscribeUrl: "@{{ UnsubscribeURL }}"
 emailUnsub: '@{{ L.T "email.unsub" }}'
 ---
 
 <x-main>
-  <div class="font-sans">
-    <table align="center">
-      <tr>
-        <td class="w-[720px] max-w-full">
-          <table class="w-full">
-            <tr>
-                <table class="w-full h-96 rounded-t-3xl" style="background-image: url('https://images.unsplash.com/photo-1719153863464-b2ee7e28b6df?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-position: center;">
-                  <tr>
-                    <td class="w-12 sm:w-6"></td>
-                    <td>
-                      <h1 class="m-0 mb-4 text-2xl text-white sm:text-xl sm:leading-10">
-                        {{ page.title }}
-                      </h1>
+  <div class="w-full mx-auto">
+    <div class="-mx-8 -mt-8 overflow-hidden rounded-t-3xl sm:-mx-4 sm:-mt-4">
+      <table class="w-full" cellpadding="0" cellspacing="0">
+        <tr>
+          <td
+            class="h-64 bg-center bg-no-repeat bg-cover"
+            style="
+              background-image: url('https://images.unsplash.com/photo-1719153863464-b2ee7e28b6df?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            "
+          >
+            <table class="w-full h-full" cellpadding="0" cellspacing="0">
+              <tr>
+                <td class="text-center align-middle">
+                  <div class="inline-block px-6 py-4 rounded-lg">
+                    <h1
+                      class="m-0 mb-4 text-2xl text-white sm:text-xl sm:leading-6"
+                    >
+                      {{ page.title }}
+                    </h1>
+                    <x-button href="https://example.com" class="w-auto mx-auto">
+                      Watch Video &rarr;
+                    </x-button>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="m-0 mt-8 leading-6">
+      <p class="mb-4 text-sm text-surface-400">OR READ THE SCRIPT HERE</p>
+      <p class="mb-4 text-base sm:text-sm">Hello {{ page.name }},</p>
+      <div class="text-base sm:text-sm">{{{ page.content }}}</div>
+    </div>
 
-                      <x-spacer class="leading-16 sm:leading-8" />
-
-                      <x-button href="https://example.com">
-                        Watch Video &rarr;
-                      </x-button>
-                    </td>
-                    <td class="w-12 sm:w-6"></td>
-                  </tr>
-                </table>
-                    <div class="p-8 m-0 leading-6 sm:p-4">
-                      <p class="text-sm text-surface-400">OR READ THE SCRIPT HERE</p>
-                      {{ page.name }}
-                      {{{ page.content }}}
-                    </div>
-                </x-v-fill>
-              </td>
-            </tr>
-            <tr>
-              <td><div class="m-8"><a class="text-primary-500" href="{{ page.unsubscribeUrl }}" >
-                {{{ page.emailUnsub }}}</a></div></td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
+    <div class="mt-8 text-center">
+      <a class="text-sm text-primary-500" href="{{ page.unsubscribeUrl }}">
+        {{{ page.emailUnsub }}}
+      </a>
+    </div>
   </div>
 </x-main>

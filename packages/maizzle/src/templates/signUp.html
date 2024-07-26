@@ -1,31 +1,32 @@
 ---
 title: "Signup for Visionletter"
+preheader: "Please confirm your email address to subscribe to our newsletter"
 confirmURL: "{{ .ConfirmationURL }}"
 buttonText: "Sign Up Now"
 ---
 
 <x-main>
-  <div class="p-10 sm:p-4 w-[720px]">
-    <h1 class="m-0 mb-6 text-2xl font-semibold text-tertiary-300 sm:leading-8">
+  <div class="w-full mx-auto">
+    <h1
+      class="m-0 mb-6 text-2xl font-semibold text-tertiary-300 sm:text-xl sm:leading-6"
+    >
       Your Visionletter
     </h1>
 
-    <p class="m-0 leading-6">
-      Great to have you here! <br />Please confirm your email address to
-      subscribe to our newsletter.
+    <p class="m-0 mb-6 leading-6 sm:text-sm">
+      Great to have you here! <br class="hidden sm:inline" />Please confirm your
+      email address to subscribe to our newsletter.
     </p>
 
-    <x-spacer height="24px" />
-
-    <x-button href="{{ page.confirmURL }}">
+    <x-button href="{{ page.confirmURL }}" class="w-auto mb-8">
       {{page.buttonText}} &rarr;
     </x-button>
-    <x-divider space-y="32px" class="bg-surface-400" />
 
-    <p class="m-0 text-xs">
+    <x-divider space-y="24px" class="bg-surface-400" />
+
+    <p class="m-0 mt-6 text-xs">
       If you didn't sign up for this, you can ignore this email.
-      <br />
-      <br />
+      <br /><br />
       Thank you, <br />Your Visioncreator Team
     </p>
   </div>

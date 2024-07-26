@@ -13,3 +13,9 @@
     word-break: break-word;
   }
 }
+
+@media screen and (max-width: 600px) {
+  .mobile-width-full {
+    width: 100% !important;
+  }
+}

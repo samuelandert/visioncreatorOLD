@@ -1,62 +1,108 @@
 <!DOCTYPE {{{ page.doctype || 'html' }}}>
-<html lang="{{ page.language || 'en' }}" xmlns:v="urn:schemas-microsoft-com:vml">
-<head>
-  <meta charset="{{ page.charset || 'utf-8' }}">
-  <meta name="x-apple-disable-message-reformatting">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
-  <meta name="color-scheme" content="light dark">
-  <meta name="supported-color-schemes" content="light dark">
-  <!--[if mso]>
-  <noscript>
-    <xml>
-      <o:OfficeDocumentSettings xmlns:o="urn:schemas-microsoft-com:office:office">
-        <o:PixelsPerInch>96</o:PixelsPerInch>
-      </o:OfficeDocumentSettings>
-    </xml>
-  </noscript>
-  <style>
-    td,th,div,p,a,h1,h2,h3,h4,h5,h6 {font-family: "Segoe UI", sans-serif; mso-line-height-rule: exactly;}
-  </style>
-  <![endif]-->
-  <if condition="page.title">
-    <title>{{{ page.title }}}</title>
-  </if>
-  <style>
-    {{{ page.css }}}
-  </style>
-  <stack name="head" />
-</head>
-<body class="m-0 p-0 w-full [word-break:break-word] [-webkit-font-smoothing:antialiased] {{ page.bodyClass || '' }} bg-surface-900">
-  <if condition="page.preheader">
-    <div class="hidden">
-      {{{ page.preheader }}}
-      <each loop="item in Array.from(Array(150))">&#8199;&#65279;&#847; </each>
+<html
+  lang="{{ page.language || 'en' }}"
+  xmlns:v="urn:schemas-microsoft-com:vml"
+>
+  <head>
+    <meta charset="{{ page.charset || 'utf-8' }}" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="format-detection"
+      content="telephone=no, date=no, address=no, email=no, url=no"
+    />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+    <!--[if mso]>
+      <noscript>
+        <xml>
+          <o:OfficeDocumentSettings
+            xmlns:o="urn:schemas-microsoft-com:office:office"
+          >
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+          </o:OfficeDocumentSettings>
+        </xml>
+      </noscript>
+      <style>
+        td,
+        th,
+        div,
+        p,
+        a,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          font-family: "Segoe UI", sans-serif;
+          mso-line-height-rule: exactly;
+        }
+      </style>
+    <![endif]-->
+    <if condition="page.title">
+      <title>{{{ page.title }}}</title>
+    </if>
+    <style>
+      {{{ page.css }}}
+    </style>
+    <stack name="head" />
+  </head>
+  <body
+    class="m-0 p-0 w-full  [word-break:break-word] [-webkit-font-smoothing:antialiased] {{ page.bodyClass || '' }} bg-surface-900"
+  >
+    <if condition="page.preheader">
+      <div class="hidden">
+        {{{ page.preheader }}}
+        <each loop="item in Array.from(Array(150))"
+          >&#8199;&#65279;&#847;
+        </each>
+      </div>
+    </if>
+    <div
+      role="article"
+      aria-roledescription="email"
+      aria-label="{{{ page.title || '' }}}"
+      lang="{{ page.language || 'en' }}"
+    >
+      <div class="py-12 text-center sm:py-8">
+        <a href="https://visioncreator.works">
+          <img
+            src="https://next.visioncreator.works/logo.png"
+            width="100"
+            alt="Visioncreator"
+            style="max-width: 100%; height: auto"
+            class="w-[100px] sm:w-[75px]"
+          />
+        </a>
+      </div>
+      <div class="font-sans text-center sm:px-4">
+        <table
+          align="center"
+          class="mobile-width-full"
+          style="max-width: 600px"
+          width="100%"
+        >
+          <tr>
+            <td class="mobile-padding">
+              <table class="w-full" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td
+                    class="p-12 text-base shadow-sm rounded-3xl bg-surface-800 text-tertiary-300 sm:p-6"
+                  >
+                    <content />
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <x-footer />
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
     </div>
-  </if>
-  <div role="article" aria-roledescription="email" aria-label="{{{ page.title || '' }}}" lang="{{ page.language || 'en' }}">
-    <div class="my-12 text-center sm:my-8">
-      <a href="https://visioncreator.works">
-        <img src="https://next.visioncreator.works/logo.png" width="100" alt="Visioncreator">
-      </a>
-    </div>
-    <div class="font-sans text-center sm:px-4">
-      <table align="center">
-        <tr>
-          <td class="w-[720px] max-w-full">
-
-            <table class="w-full">
-              <tr>
-                <td class="text-base shadow-sm rounded-3xl bg-surface-800 sm:px-6 text-tertiary-300">
-                  <content />
-                </td>
-              </tr>
-              <x-footer />
-            </table>
-          </td>
-        </tr>
-      </table>
-    </div>
-  </div>
-</body>
+  </body>
 </html>
