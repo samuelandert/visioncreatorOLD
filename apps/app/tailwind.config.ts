@@ -38,6 +38,14 @@ export default {
 				'6xl': '3rem',
 				'7xl': '3.5rem',
 			},
+			containers: {
+				'xs': '20rem',  // 320px - Classic mobile width (portrait)
+				'sm': '30rem',  // 480px - Mobile landscape
+				'md': '48rem',  // 768px - Tablet
+				'lg': '64rem',  // 1024px - Desktop
+				'xl': '80rem',  // 1280px - HD
+				'2xl': '100rem', // 1600px - Wide screens
+			},
 		},
 	},
 	plugins: [

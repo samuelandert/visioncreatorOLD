@@ -128,7 +128,7 @@
 		{#if composer?.children}
 			{#each composer.children as child (child.id)}
 				<div
-					class={`grid w-full h-full ${
+					class={`grid w-full h-full @container ${
 						child.layout?.overflow ? `overflow-${child.layout.overflow}` : ''
 					} ${child.layout?.style || ''}`}
 					style={`grid-area: ${child.slot}`}
