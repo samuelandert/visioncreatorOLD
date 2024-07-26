@@ -12,7 +12,6 @@
 	import { browser } from '$app/environment';
 	import { writable } from 'svelte/store';
 	import { dev } from '$app/environment';
-	import { registerServiceWorker } from '$lib/pwa';
 
 	let authReady = writable(false);
 
@@ -25,9 +24,6 @@
 	$: ({ supabase, session, queryClient, url } = data);
 
 	onMount(() => {
-		if (browser) {
-			registerServiceWorker();
-		}
 		drawerStore.subscribe((state) => {
 			if (state.open && browser) {
 				setTimeout(() => {
