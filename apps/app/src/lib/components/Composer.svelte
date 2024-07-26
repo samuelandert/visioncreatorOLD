@@ -9,6 +9,7 @@
 	import { get } from 'svelte/store';
 	import { eventBus } from '$lib/composables/eventBus';
 	import { setupEventMapper } from '$lib/composables/eventMapper';
+	import QueryStateWrapper from './QueryStateWrapper.svelte';
 
 	interface IComposerLayout {
 		areas?: string;
@@ -52,7 +53,7 @@
 	});
 
 	async function loadComponentAndInitializeState(component: IComposer) {
-		if (!component || !component.component) return;
+		if (!component || !component.component) return null;
 
 		const currentUserId = get(Me).id;
 
@@ -65,7 +66,7 @@
 			const queryInstance = createQuery({
 				operationName: 'queryComposer',
 				input: {
-					id: currentUserId, // Always pass the current user ID
+					id: currentUserId,
 					map: component.map
 				},
 				liveQuery: true
@@ -91,14 +92,8 @@
 			component.children.forEach(loadComponentAndInitializeState);
 		}
 
-		const components = import.meta.glob('/src/lib/components/*.svelte');
-		const ComponentModule = component.component
-			? (await components[`/src/lib/components/${component.component}.svelte`]()).default
-			: null;
-		if (!ComponentModule) {
-			throw new Error(`Component ${component.component} not found`);
-		}
-		return ComponentModule;
+		// Return the QueryStateWrapper component
+		return QueryStateWrapper;
 	}
 
 	function computeLayoutStyle(layout?: IComposerLayout): string {
@@ -110,6 +105,7 @@
             ${layout.rows ? `grid-template-rows: ${layout.rows};` : ''}
         `;
 	}
+
 	function getScaleStyle(scale?: string): string {
 		if (!scale) return '';
 		const scaleMap = {
@@ -156,8 +152,14 @@
 		style={layoutStyle}
 	>
 		<div use:createScaledContainer={composer?.layout?.scale}>
-			{#await loadComponentAndInitializeState(composer) then Component}
-				<svelte:component this={Component} me={getComposerStore(composer.id)} />
+			{#await loadComponentAndInitializeState(composer) then WrappedComponent}
+				{#if WrappedComponent}
+					<svelte:component
+						this={WrappedComponent}
+						me={getComposerStore(composer.id)}
+						ChildComponent={composer.component}
+					/>
+				{/if}
 			{/await}
 		</div>
 		{#if composer?.children}
@@ -169,10 +171,16 @@
 					style={`grid-area: ${child.slot};`}
 				>
 					<div use:createScaledContainer={child.layout?.scale}>
-						{#await loadComponentAndInitializeState(child) then ChildComponent}
-							<svelte:component this={ChildComponent} me={getComposerStore(child.id)} />
-							{#if child.children && child.children.length}
-								<Composer composer={child} />
+						{#await loadComponentAndInitializeState(child) then WrappedChildComponent}
+							{#if WrappedChildComponent}
+								<svelte:component
+									this={WrappedChildComponent}
+									me={getComposerStore(child.id)}
+									ChildComponent={child.component}
+								/>
+								{#if child.children && child.children.length}
+									<Composer composer={child} />
+								{/if}
 							{/if}
 						{/await}
 					</div>

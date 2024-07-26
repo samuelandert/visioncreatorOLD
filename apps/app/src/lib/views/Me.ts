@@ -58,6 +58,7 @@ export const view = {
                 list: {
                     query: 'queryLeaderboard',
                     prop: 'profiles',
+
                     mapProps: {
                         primaryText: "prop.name",
                         identifier: "prop.id",
