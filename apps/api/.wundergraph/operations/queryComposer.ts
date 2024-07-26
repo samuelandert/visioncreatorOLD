@@ -26,44 +26,47 @@ export default createOperation.query({
         requireMatchAll: ['authenticated'],
     },
     handler: async ({ input, user, operations }) => {
-        if (!user || !user.customClaims) {
-            console.error('Authorization Error: User not authenticated.');
+        if (!user?.customClaims?.id) {
             throw new AuthorizationError({ message: 'Not authorized' });
         }
 
         const userId = user.customClaims.id;
 
-        async function resolveMapValue(value: any) {
-            if (typeof value === 'object' && value.query) {
-                try {
-                    const resolvedInput = value.input ? { ...value.input } : {};
+        async function executeQuery(query, input) {
+            const { data, error } = await operations.query({
+                operationName: query,
+                input: input,
+            });
 
-                    if (resolvedInput.id === 'authID') {
-                        resolvedInput.id = userId;
+            if (error) {
+                console.error(`Error fetching data for ${query}:`, error);
+                return null;
+            }
+
+            return data;
+        }
+
+        async function resolveMap(map, depth = 0) {
+            if (depth > 10) return null; // Prevent deep nesting
+
+            const result = {};
+
+            for (const [key, value] of Object.entries(map)) {
+                if (Array.isArray(value)) {
+                    result[key] = await Promise.all(value.map(item => resolveMap(item, depth + 1)));
+                } else if (typeof value === 'object' && value.query) {
+                    const resolvedInput = { ...value.input, id: value.input?.id === 'authID' ? userId : value.input?.id };
+                    let queryResult = await executeQuery(value.query, resolvedInput);
+
+                    if (value.prop) {
+                        queryResult = queryResult[value.prop];
                     }
 
-                    const { data, error } = await operations.query({
-                        operationName: value.query,
-                        input: resolvedInput,
-                    });
-
-                    if (error) {
-                        console.error(`Error fetching data for ${value.query}:`, error);
-                        return null;
-                    }
-
-                    let result = value.prop ? data[value.prop] : data;
-
-                    if (value.mapProps && Array.isArray(result)) {
-                        result = result.map((item: any) => {
-                            const mappedItem: any = {};
+                    if (value.mapProps && Array.isArray(queryResult)) {
+                        queryResult = queryResult.map(item => {
+                            const mappedItem = {};
                             Object.entries(value.mapProps).forEach(([to, from]) => {
-                                if (typeof from === 'object' && from !== null) {
-                                    mappedItem[to] = Object.entries(from).reduce((acc, [label, propPath]) => {
-                                        acc[label] = propPath.startsWith('prop.') ? item[propPath.slice(5)] : propPath;
-                                        return acc;
-                                    }, {});
-                                } else if (typeof from === 'string' && from.startsWith('prop.')) {
+                                if (typeof from === 'string' && from.startsWith('prop.')) {
                                     mappedItem[to] = item[from.slice(5)];
                                 } else {
                                     mappedItem[to] = from;
@@ -73,35 +76,15 @@ export default createOperation.query({
                         });
                     }
 
-                    return result;
-                } catch (error) {
-                    console.error(`Error executing query ${value.query}:`, error);
-                    return null;
-                }
-            }
-            return value;
-        }
-
-        async function resolveMap(map: any) {
-            const result: any = {};
-            for (const [key, value] of Object.entries(map)) {
-                if (Array.isArray(value)) {
-                    result[key] = await Promise.all(value.map(async (item) => {
-                        const resolvedItem: any = {};
-                        for (const [itemKey, itemValue] of Object.entries(item)) {
-                            resolvedItem[itemKey] = await resolveMapValue(itemValue);
-                        }
-                        return resolvedItem;
-                    }));
+                    result[key] = queryResult;
                 } else {
-                    result[key] = await resolveMapValue(value);
+                    result[key] = value;
                 }
             }
+
             return result;
         }
 
-        const resolvedData = await resolveMap(input.map);
-
-        return resolvedData;
+        return await resolveMap(input.map);
     },
 });
