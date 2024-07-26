@@ -7,6 +7,7 @@ const MapValueSchema = z.union([
         query: z.string(),
         input: z.record(z.any()).optional(),
         prop: z.string().optional(),
+        display: z.string().optional(),
         mapProps: z.record(z.string()).optional()
     }),
 ]);
@@ -46,6 +47,12 @@ export default createOperation.query({
             return data;
         }
 
+        function formatDisplay(display, prop) {
+            return display.replace(/prop\.(\w+)/g, (_, key) => {
+                return prop && prop.hasOwnProperty(key) ? prop[key] : '';
+            });
+        }
+
         async function resolveMap(map, depth = 0) {
             if (depth > 10) return null; // Prevent deep nesting
 
@@ -59,7 +66,11 @@ export default createOperation.query({
                     let queryResult = await executeQuery(value.query, resolvedInput);
 
                     if (value.prop) {
-                        queryResult = queryResult[value.prop];
+                        queryResult = value.prop.split('.').reduce((acc, part) => acc && acc[part], queryResult);
+                    }
+
+                    if (value.display) {
+                        queryResult = formatDisplay(value.display, { [value.prop.split('.').pop()]: queryResult });
                     }
 
                     if (value.mapProps && Array.isArray(queryResult)) {

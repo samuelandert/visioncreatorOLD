@@ -30,7 +30,7 @@
 		{#each $query.data.list as { primaryText, identifier, numericValue }, index}
 			<li
 				class={`flex items-center justify-between rounded-4xl  ${
-					identifier === $me.authID ? 'bg-surface-600' : 'bg-surface-700'
+					identifier === $me.authID ? 'bg-surface-700' : 'bg-surface-800'
 				}`}
 			>
 				<Avatar
@@ -46,19 +46,14 @@
 				</div>
 
 				<div class="flex justify-between px-4 @3xl:px-6 space-x-4 max-h-12">
-					<div class="flex flex-col items-center text-right">
-						<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
-							{numericValue}
-						</p>
-						<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">invites</p>
-					</div>
-
-					<div class="flex flex-col items-center text-right">
-						<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
-							{index + 1}
-						</p>
-						<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">rank</p>
-					</div>
+					{#each $query.data.stats as stat}
+						<div class="flex flex-col items-center text-right">
+							<p class="text-tertiary-400 text-xl @3xl:text-2xl font-semibold leading-tight">
+								{stat.label === 'Rank' ? index + 1 : numericValue}
+							</p>
+							<p class="text-xxs @3xl:text-xs leading-none text-tertiary-700">{stat.label}</p>
+						</div>
+					{/each}
 				</div>
 			</li>
 		{/each}

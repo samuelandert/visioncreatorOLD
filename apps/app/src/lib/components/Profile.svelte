@@ -33,7 +33,7 @@
 
 			<div class="relative z-10 flex flex-col items-center text-tertiary-300">
 				<div class="px-6 py-2 font-bold text-white bg-transparent text-md rounded-t-3xl">
-					Profile
+					{$query.data.name}
 				</div>
 				<div class="flex flex-col items-center p-8">
 					<Avatar
@@ -56,8 +56,8 @@
 				<div class="text-center">
 					<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">
 						{stat.label === 'Streaming Potential'
-							? `${stat.value || 0} $/m`
-							: stat.value || 'rechnet...'}
+							? stat.value || 0
+							: stat.value || 'calculating...'}
 					</p>
 					<p class="text-tertiary-600 text-sm @3xl:text-lg">{stat.label}</p>
 				</div>

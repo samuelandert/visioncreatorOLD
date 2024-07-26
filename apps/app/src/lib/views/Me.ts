@@ -17,6 +17,7 @@ export const view = {
             component: 'Profile',
             slot: 'row1',
             map: {
+                name: "Profile",
                 title: {
                     query: "queryMe",
                     input: { id: 'authID' },
@@ -29,7 +30,7 @@ export const view = {
                         value: {
                             query: "queryUserStats",
                             input: { id: 'authID' },
-                            prop: "userRank"
+                            prop: "userRank",
                         }
                     },
                     {
@@ -37,7 +38,8 @@ export const view = {
                         value: {
                             query: "queryUserStats",
                             input: { id: 'authID' },
-                            prop: "streamPotential"
+                            prop: "streamPotential",
+                            display: "prop.streamPotential €/m"
                         }
                     }
                 ]
@@ -61,7 +63,17 @@ export const view = {
                         identifier: "prop.id",
                         numericValue: "prop.suminvites"
                     }
-                }
+                },
+                stats: [
+                    {
+                        label: "Invites",
+                        value: "prop.suminvites"
+                    },
+                    {
+                        label: "Rank",
+                        value: "prop.rank"
+                    }
+                ]
             }
         }
     ]

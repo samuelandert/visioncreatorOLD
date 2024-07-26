@@ -36,7 +36,7 @@
 	}
 
 	$: avatar = generateAvatar(me.data.seed);
-	$: bgColorClass = me.design.highlight ? 'bg-tertiary-400' : 'bg-surface-500';
+	$: bgColorClass = me.design.highlight ? 'bg-tertiary-500' : 'bg-surface-600';
 	$: sizeClass =
 		me.size === 'lg'
 			? 'w-24 h-24 mb-2 border-4 rounded-full'
