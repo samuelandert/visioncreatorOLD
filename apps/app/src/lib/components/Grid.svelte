@@ -3,7 +3,7 @@
 	const query = $me.query;
 </script>
 
-<main class="w-full p-4 mx-auto space-y-8">
+<main class="w-full max-w-full p-4 mx-auto space-y-8">
 	{#if $query.isLoading}
 		<div class="p-4 card variant-ghost-surface animate-pulse">
 			<p class="w-full h-4 placeholder" />

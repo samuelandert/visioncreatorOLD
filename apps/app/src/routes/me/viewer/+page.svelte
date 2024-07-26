@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 
 	// Get the component name from the URL parameter 'c', default to "Header"
+	// /me/viewer?c=ComponentName
 	$: componentName = $page.url.searchParams.get('c') || 'Header';
 
 	$: view = {

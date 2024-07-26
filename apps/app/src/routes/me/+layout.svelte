@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { log } from '$lib/stores';
 	import { fade } from 'svelte/transition';
-	import { view } from '$lib/views/Default.js';
+	import { view } from '$lib/views/Default';
 	import { eventBus } from '$lib/composables/eventBus';
 
 	export let data;

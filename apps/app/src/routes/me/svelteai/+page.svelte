@@ -1,5 +1,4 @@
-<!-- <script lang="ts">
-	import { chatWithClaude } from '$lib/api';
+<script lang="ts">
 	import SvelteMarkdown from 'svelte-markdown';
 	import Preview from '$lib/Preview.svelte';
 	import { onMount } from 'svelte';
@@ -44,7 +43,20 @@
 		}
 
 		try {
-			const assistantResponse = await chatWithClaude(messages);
+			const response = await fetch('/api/chat', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ messages })
+			});
+
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+
+			const data = await response.json();
+			const assistantResponse = data.content;
 			messages = [...messages, { role: 'assistant', content: assistantResponse }];
 
 			componentCode = extractSvelteCode(assistantResponse);
@@ -73,8 +85,12 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ messages, hardcodedContent: svelteCode })
+				body: JSON.stringify({ hardcodedContent: svelteCode })
 			});
+
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
 
 			const data = await response.json();
 			console.log(data.content);
@@ -172,4 +188,4 @@
 			<Preview />
 		</div>
 	</div>
-</main> -->
+</main>

@@ -1,153 +1,144 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+  import { writable } from 'svelte/store';
 
-	let board = Array(9).fill('');
-	let currentPlayer = 'X';
-	let winner = null;
-	let gameMode = 'dark';
+  interface Expense {
+    id: number;
+    description: string;
+    amount: number;
+    paidBy: string;
+    splitWith: string[];
+  }
 
-	function handleClick(index: number) {
-		if (board[index] === '' && winner === null) {
-			board[index] = currentPlayer;
-			currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-			checkWinner();
-			if (!winner && currentPlayer === 'O') {
-				setTimeout(computerMove, 500);
-			}
-		}
-	}
+  interface Balance {
+    [key: string]: number;
+  }
 
-	function computerMove() {
-		const bestMove = findBestMove(board);
-		if (bestMove !== -1) {
-			board[bestMove] = 'O';
-			currentPlayer = 'X';
-			checkWinner();
-		}
-	}
+  const expenses = writable<Expense[]>([]);
+  const balances = writable<Balance>({});
 
-	function findBestMove(board: string[]): number {
-		// Try to win
-		const winningMove = findWinningMove(board, 'O');
-		if (winningMove !== -1) return winningMove;
+  let description = '';
+  let amount = 0;
+  let paidBy = '';
+  let splitWith: string[] = [];
+  let newFriend = '';
 
-		// Block player from winning
-		const blockingMove = findWinningMove(board, 'X');
-		if (blockingMove !== -1) return blockingMove;
+  const friends = writable<string[]>(['Alice', 'Bob', 'Charlie']);
 
-		// Take center if available
-		if (board[4] === '') return 4;
+  function addExpense() {
+    if (description && amount > 0 && paidBy && splitWith.length > 0) {
+      expenses.update(exp => [...exp, {
+        id: Date.now(),
+        description,
+        amount,
+        paidBy,
+        splitWith
+      }]);
+      updateBalances();
+      resetForm();
+    }
+  }
 
-		// Take a corner
-		const corners = [0, 2, 6, 8];
-		for (let corner of corners) {
-			if (board[corner] === '') return corner;
-		}
+  function updateBalances() {
+    expenses.subscribe(exp => {
+      const newBalances: Balance = {};
+      exp.forEach(expense => {
+        const share = expense.amount / (expense.splitWith.length + 1);
+        newBalances[expense.paidBy] = (newBalances[expense.paidBy] || 0) + expense.amount;
+        expense.splitWith.forEach(friend => {
+          newBalances[friend] = (newBalances[friend] || 0) - share;
+        });
+        newBalances[expense.paidBy] -= share;
+      });
+      balances.set(newBalances);
+    });
+  }
 
-		// Take any available space
-		for (let i = 0; i < 9; i++) {
-			if (board[i] === '') return i;
-		}
+  function resetForm() {
+    description = '';
+    amount = 0;
+    paidBy = '';
+    splitWith = [];
+  }
 
-		return -1; // No move available
-	}
-
-	function findWinningMove(board: string[], player: string): number {
-		const winningCombos = [
-			[0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-			[0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-			[0, 4, 8], [2, 4, 6] // Diagonals
-		];
-
-		for (let combo of winningCombos) {
-			const [a, b, c] = combo;
-			if (board[a] === player && board[b] === player && board[c] === '') return c;
-			if (board[a] === player && board[c] === player && board[b] === '') return b;
-			if (board[b] === player && board[c] === player && board[a] === '') return a;
-		}
-
-		return -1; // No winning move found
-	}
-
-	function checkWinner() {
-		const winningCombos = [
-			[0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-			[0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-			[0, 4, 8], [2, 4, 6] // Diagonals
-		];
-
-		for (let combo of winningCombos) {
-			const [a, b, c] = combo;
-			if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-				winner = board[a] === 'X' ? 'You win!' : 'CPU wins!';
-				return;
-			}
-		}
-
-		if (!board.includes('')) {
-			winner = "It's a tie!";
-		}
-	}
-
-	function resetGame() {
-		board = Array(9).fill('');
-		currentPlayer = 'X';
-		winner = null;
-	}
-
-	function toggleGameMode() {
-		gameMode = gameMode === 'dark' ? 'light' : 'dark';
-	}
-
-	onMount(() => {
-		// Any initialization code can go here
-	});
+  function addFriend() {
+    if (newFriend && !$friends.includes(newFriend)) {
+      friends.update(f => [...f, newFriend]);
+      newFriend = '';
+    }
+  }
 </script>
 
-<div class={`flex items-center justify-center w-full h-full ${gameMode === 'dark' ? 'bg-navy-900' : 'bg-gray-100'}`}>
-	<div class="flex flex-col items-center font-sans game-container">
-		<div class="flex justify-between w-full mb-4">
-			<h2 class={`text-2xl font-bold ${gameMode === 'dark' ? 'text-white' : 'text-gray-800'}`}>
-				Tic Tac Toe
-			</h2>
-			<div>
-				<button
-					on:click={resetGame}
-					class="px-3 py-1 mr-2 text-sm text-gray-300 bg-gray-700 rounded-full">Reset</button
-				>
-				<button
-					on:click={toggleGameMode}
-					class="px-3 py-1 text-sm text-gray-300 bg-gray-700 rounded-full"
-				>
-					{gameMode === 'dark' ? '🌙' : '☀️'}
-				</button>
-			</div>
-		</div>
-		<div class="grid grid-cols-3 gap-2 board">
-			{#each board as cell, index}
-				<button
-					on:click={() => handleClick(index)}
-					disabled={cell !== '' || winner !== null}
-					class={`w-24 h-24 text-4xl font-bold rounded-lg ${
-						gameMode === 'dark' ? 'bg-navy-800 border-gray-600' : 'bg-white border-gray-300'
-					} border-2 flex items-center justify-center transition-all duration-300 hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-				>
-					{#if cell === 'X'}
-						<span class="text-green-400">X</span>
-					{:else if cell === 'O'}
-						<span class="text-red-400">O</span>
-					{/if}
-				</button>
-			{/each}
-		</div>
-		{#if winner}
-			<div
-				class={`p-4 mt-4 text-xl font-bold rounded-lg ${
-					gameMode === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
-				}`}
-			>
-				{winner}
-			</div>
-		{/if}
-	</div>
+<div class="flex items-center justify-center w-full h-full bg-surface-800 text-gray-100">
+  <div class="p-8 bg-surface-700 rounded-lg shadow-xl w-96">
+    <h1 class="mb-4 text-2xl font-bold text-center text-blue-300">Simple Splitwise Clone</h1>
+
+    <div class="mb-4">
+      <input
+        bind:value={newFriend}
+        placeholder="Add new friend"
+        class="w-3/4 p-2 mr-2 border rounded bg-surface-600 text-gray-100 border-gray-600 placeholder-gray-400"
+      />
+      <button
+        on:click={addFriend}
+        class="w-1/4 p-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+      >
+        Add
+      </button>
+    </div>
+
+    <div class="mb-4">
+      <input
+        bind:value={description}
+        placeholder="Expense description"
+        class="w-full p-2 mb-2 border rounded bg-surface-600 text-gray-100 border-gray-600 placeholder-gray-400"
+      />
+      <input
+        type="number"
+        bind:value={amount}
+        placeholder="Amount"
+        class="w-full p-2 mb-2 border rounded bg-surface-600 text-gray-100 border-gray-600 placeholder-gray-400"
+      />
+      <select bind:value={paidBy} class="w-full p-2 mb-2 border rounded bg-surface-600 text-gray-100 border-gray-600">
+        <option value="">Who paid?</option>
+        {#each $friends as friend}
+          <option value={friend}>{friend}</option>
+        {/each}
+      </select>
+      <div class="mb-2">Split with:</div>
+      {#each $friends as friend}
+        <label class="block">
+          <input type="checkbox" bind:group={splitWith} value={friend} class="mr-2 bg-surface-600 border-gray-600" />
+          {friend}
+        </label>
+      {/each}
+    </div>
+
+    <button
+      on:click={addExpense}
+      class="w-full p-2 mb-4 text-white bg-blue-600 rounded hover:bg-blue-700"
+    >
+      Add Expense
+    </button>
+
+    <h2 class="mb-2 text-xl font-bold text-blue-300">Expenses</h2>
+    {#each $expenses as expense}
+      <div class="mb-2 p-2 border rounded border-gray-600 bg-surface-600">
+        <p><strong>{expense.description}</strong> - ${expense.amount}</p>
+        <p>Paid by: {expense.paidBy}</p>
+        <p>Split with: {expense.splitWith.join(', ')}</p>
+      </div>
+    {/each}
+
+    <h2 class="mb-2 text-xl font-bold text-blue-300">Balances</h2>
+    {#each Object.entries($balances) as [friend, balance]}
+      <p>
+        {friend}: ${balance.toFixed(2)}
+        {#if balance > 0}
+          <span class="text-green-400">(to receive)</span>
+        {:else if balance < 0}
+          <span class="text-red-400">(to pay)</span>
+        {/if}
+      </p>
+    {/each}
+  </div>
 </div>

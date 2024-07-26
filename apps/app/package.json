@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.3",
     "@dicebear/collection": "^8.0.1",
     "@dicebear/core": "^8.0.1",
     "@h1dd3nsn1p3r/pdf-invoice": "^1.0.8",
@@ -28,12 +29,14 @@
     "ethers": "^6.13.1",
     "generated-wundergraph": "*",
     "gocardless-nodejs": "^3.26.0",
+    "groq-sdk": "^0.5.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "lodash.isequal": "^4.5.0",
     "monaco-editor": "^0.44.0",
     "ollama": "^0.5.6",
     "qrcode": "^1.5.3",
+    "svelte-markdown": "^0.4.1",
     "sveltekit-superforms": "^1.7.2",
     "web-push": "^3.6.7",
     "xstate": "^4.38.2",
