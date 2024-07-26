@@ -113,14 +113,34 @@
 	function getScaleStyle(scale?: string): string {
 		if (!scale) return '';
 		const scaleMap = {
-			xs: 'width: 320px; transform: scale(0.3125);', // 320px
-			sm: 'width: 480px; transform: scale(0.46875);', // 480px
-			md: 'width: 768px; transform: scale(0.75);', // 768px
-			lg: 'width: 1024px; transform: scale(1);', // 1024px
-			xl: 'width: 1280px; transform: scale(1.25);', // 1280px
-			'2xl': 'width: 1600px; transform: scale(1.5625);' // 1600px
+			xs: '320px',
+			sm: '480px',
+			md: '768px',
+			lg: '1024px',
+			xl: '1280px',
+			'2xl': '1600px'
 		};
 		return scaleMap[scale] || '';
+	}
+
+	function createScaledContainer(node: HTMLElement, scale: string) {
+		const resizeObserver = new ResizeObserver(() => {
+			const containerWidth = node.offsetWidth;
+			const fakeWidth = parseInt(getScaleStyle(scale));
+			const scaleFactor = containerWidth / fakeWidth;
+			node.style.transform = `scale(${scaleFactor})`;
+			node.style.transformOrigin = 'top left';
+			node.style.width = `${fakeWidth}px`;
+			node.style.height = `${node.offsetHeight / scaleFactor}px`;
+		});
+
+		resizeObserver.observe(node.parentElement);
+
+		return {
+			destroy() {
+				resizeObserver.disconnect();
+			}
+		};
 	}
 
 	onDestroy(() => {
@@ -130,12 +150,12 @@
 
 <QueryClientProvider client={queryClient}>
 	<div
-		class={`grid w-full h-full ${
+		class={`grid w-full h-full @container ${
 			composer?.layout?.overflow ? `overflow-${composer.layout.overflow}` : ''
 		} ${composer?.layout?.style || ''}`}
 		style={layoutStyle}
 	>
-		<div style={getScaleStyle(composer?.layout?.scale)} class="origin-top-left">
+		<div use:createScaledContainer={composer?.layout?.scale}>
 			{#await loadComponentAndInitializeState(composer) then Component}
 				<svelte:component this={Component} me={getComposerStore(composer.id)} />
 			{/await}
@@ -143,12 +163,12 @@
 		{#if composer?.children}
 			{#each composer.children as child (child.id)}
 				<div
-					class={`grid w-full h-full ${
+					class={`grid w-full h-full @container ${
 						child.layout?.overflow ? `overflow-${child.layout.overflow}` : ''
 					} ${child.layout?.style || ''}`}
 					style={`grid-area: ${child.slot};`}
 				>
-					<div style={getScaleStyle(child.layout?.scale)} class="origin-top-left">
+					<div use:createScaledContainer={child.layout?.scale}>
 						{#await loadComponentAndInitializeState(child) then ChildComponent}
 							<svelte:component this={ChildComponent} me={getComposerStore(child.id)} />
 							{#if child.children && child.children.length}

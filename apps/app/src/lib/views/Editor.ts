@@ -12,9 +12,37 @@ export const view = {
         {
             id: 'LeftAside',
             slot: 'aside',
+
+            component: 'Grid',
             layout: {
-                style: 'h-full bg-surface-200-700-token'
+                scale: "xs",
+                overflow: 'auto'
             },
+            map: {
+                grid: {
+                    query: 'Countries',
+                    input: {
+                        filter: {
+                            code: {
+                                in: ['ES', 'FR', 'DE', 'GB', 'CR', 'SA', 'IN']
+                            }
+                        }
+                    },
+                    prop: "countries_countries",
+                    mapProps: {
+                        primaryText: 'prop.name',
+                        identifier: 'prop.code',
+                        label1: 'Capital',
+                        value1: 'prop.capital',
+                        label2: 'Currency',
+                        value2: 'prop.currencies',
+                        label3: 'Phone Code',
+                        value3: 'prop.phone',
+                        label4: 'Country Code',
+                        value4: 'prop.code'
+                    }
+                }
+            }
         },
         {
             id: 'MainArea',
