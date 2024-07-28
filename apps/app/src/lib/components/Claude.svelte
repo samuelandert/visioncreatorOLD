@@ -15,14 +15,13 @@
 
   const expenses = writable<Expense[]>([]);
   const balances = writable<Balance>({});
+  const friends = writable<string[]>([]);
 
   let description = '';
   let amount = 0;
   let paidBy = '';
   let splitWith: string[] = [];
   let newFriend = '';
-
-  const friends = writable<string[]>(['Alice', 'Bob', 'Charlie']);
 
   function addExpense() {
     if (description && amount > 0 && paidBy && splitWith.length > 0) {
@@ -86,59 +85,63 @@
       </button>
     </div>
 
-    <div class="mb-4">
-      <input
-        bind:value={description}
-        placeholder="Expense description"
-        class="w-full p-2 mb-2 border rounded bg-surface-600 text-gray-100 border-gray-600 placeholder-gray-400"
-      />
-      <input
-        type="number"
-        bind:value={amount}
-        placeholder="Amount"
-        class="w-full p-2 mb-2 border rounded bg-surface-600 text-gray-100 border-gray-600 placeholder-gray-400"
-      />
-      <select bind:value={paidBy} class="w-full p-2 mb-2 border rounded bg-surface-600 text-gray-100 border-gray-600">
-        <option value="">Who paid?</option>
+    {#if $friends.length > 0}
+      <div class="mb-4">
+        <input
+          bind:value={description}
+          placeholder="Expense description"
+          class="w-full p-2 mb-2 border rounded bg-surface-600 text-gray-100 border-gray-600 placeholder-gray-400"
+        />
+        <input
+          type="number"
+          bind:value={amount}
+          placeholder="Amount"
+          class="w-full p-2 mb-2 border rounded bg-surface-600 text-gray-100 border-gray-600 placeholder-gray-400"
+        />
+        <select bind:value={paidBy} class="w-full p-2 mb-2 border rounded bg-surface-600 text-gray-100 border-gray-600">
+          <option value="">Who paid?</option>
+          {#each $friends as friend}
+            <option value={friend}>{friend}</option>
+          {/each}
+        </select>
+        <div class="mb-2">Split with:</div>
         {#each $friends as friend}
-          <option value={friend}>{friend}</option>
+          <label class="block">
+            <input type="checkbox" bind:group={splitWith} value={friend} class="mr-2 bg-surface-600 border-gray-600" />
+            {friend}
+          </label>
         {/each}
-      </select>
-      <div class="mb-2">Split with:</div>
-      {#each $friends as friend}
-        <label class="block">
-          <input type="checkbox" bind:group={splitWith} value={friend} class="mr-2 bg-surface-600 border-gray-600" />
-          {friend}
-        </label>
-      {/each}
-    </div>
-
-    <button
-      on:click={addExpense}
-      class="w-full p-2 mb-4 text-white bg-blue-600 rounded hover:bg-blue-700"
-    >
-      Add Expense
-    </button>
-
-    <h2 class="mb-2 text-xl font-bold text-blue-300">Expenses</h2>
-    {#each $expenses as expense}
-      <div class="mb-2 p-2 border rounded border-gray-600 bg-surface-600">
-        <p><strong>{expense.description}</strong> - ${expense.amount}</p>
-        <p>Paid by: {expense.paidBy}</p>
-        <p>Split with: {expense.splitWith.join(', ')}</p>
       </div>
-    {/each}
 
-    <h2 class="mb-2 text-xl font-bold text-blue-300">Balances</h2>
-    {#each Object.entries($balances) as [friend, balance]}
-      <p>
-        {friend}: ${balance.toFixed(2)}
-        {#if balance > 0}
-          <span class="text-green-400">(to receive)</span>
-        {:else if balance < 0}
-          <span class="text-red-400">(to pay)</span>
-        {/if}
-      </p>
-    {/each}
+      <button
+        on:click={addExpense}
+        class="w-full p-2 mb-4 text-white bg-blue-600 rounded hover:bg-blue-700"
+      >
+        Add Expense
+      </button>
+
+      <h2 class="mb-2 text-xl font-bold text-blue-300">Expenses</h2>
+      {#each $expenses as expense}
+        <div class="mb-2 p-2 border rounded border-gray-600 bg-surface-600">
+          <p><strong>{expense.description}</strong> - ${expense.amount}</p>
+          <p>Paid by: {expense.paidBy}</p>
+          <p>Split with: {expense.splitWith.join(', ')}</p>
+        </div>
+      {/each}
+
+      <h2 class="mb-2 text-xl font-bold text-blue-300">Balances</h2>
+      {#each Object.entries($balances) as [friend, balance]}
+        <p>
+          {friend}: ${balance.toFixed(2)}
+          {#if balance > 0}
+            <span class="text-green-400">(to receive)</span>
+          {:else if balance < 0}
+            <span class="text-red-400">(to pay)</span>
+          {/if}
+        </p>
+      {/each}
+    {:else}
+      <p class="text-center text-gray-400">Add friends to start splitting expenses!</p>
+    {/if}
   </div>
 </div>
