@@ -6,73 +6,71 @@ const ajv = new Ajv();
 ajv.addKeyword('x-schema-metadata');
 addFormats(ajv);
 
-const userSchema = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "object",
-    "required": ["uuid", "timestamp", "name"],
-    "properties": {
-        "uuid": { "type": "string", "format": "uuid" },
-        "$schema": { "type": "string" },
-        "age": { "type": "integer", "maximum": 120, "minimum": 18 },
-        "name": { "type": "string" },
-        "email": { "type": "string", "format": "email" },
-        "timestamp": { "type": "string", "format": "date-time" }
+const schemas = [
+    {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "required": ["uuid", "timestamp", "name"],
+        "properties": {
+            "uuid": { "type": "string", "format": "uuid" },
+            "$schema": { "type": "string" },
+            "age": { "type": "integer", "maximum": 120, "minimum": 18 },
+            "name": { "type": "string" },
+            "email": { "type": "string", "format": "email" },
+            "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false,
+        "x-schema-metadata": {
+            "author": "0x000000000000000000000000000000000000001",
+            "name": "User",
+            "version": "1"
+        }
     },
-    "additionalProperties": false,
-    "x-schema-metadata": {
-        "author": "0x000000000000000000000000000000000000001",
-        "name": "User",
-        "version": "1"
-    }
-};
-
-const productSchema = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "object",
-    "required": ["uuid", "timestamp", "name", "price"],
-    "properties": {
-        "uuid": { "type": "string", "format": "uuid" },
-        "$schema": { "type": "string" },
-        "name": { "type": "string" },
-        "price": { "type": "number", "minimum": 0 },
-        "category": { "type": "string" },
-        "inStock": { "type": "boolean" },
-        "timestamp": { "type": "string", "format": "date-time" }
+    {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "required": ["uuid", "timestamp", "name", "price"],
+        "properties": {
+            "uuid": { "type": "string", "format": "uuid" },
+            "$schema": { "type": "string" },
+            "name": { "type": "string" },
+            "price": { "type": "number", "minimum": 0 },
+            "category": { "type": "string" },
+            "inStock": { "type": "boolean" },
+            "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false,
+        "x-schema-metadata": {
+            "author": "0x000000000000000000000000000000000000001",
+            "name": "Product",
+            "version": "1"
+        }
     },
-    "additionalProperties": false,
-    "x-schema-metadata": {
-        "author": "0x000000000000000000000000000000000000001",
-        "name": "Product",
-        "version": "1"
+    {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "required": ["uuid", "timestamp", "orderNumber", "totalAmount"],
+        "properties": {
+            "uuid": { "type": "string", "format": "uuid" },
+            "$schema": { "type": "string" },
+            "orderNumber": { "type": "string" },
+            "totalAmount": { "type": "number", "minimum": 0 },
+            "customerName": { "type": "string" },
+            "items": { "type": "integer", "minimum": 1 },
+            "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false,
+        "x-schema-metadata": {
+            "author": "0x000000000000000000000000000000000000001",
+            "name": "Order",
+            "version": "1"
+        }
     }
-};
-
-const orderSchema = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "object",
-    "required": ["uuid", "timestamp", "orderNumber", "totalAmount"],
-    "properties": {
-        "uuid": { "type": "string", "format": "uuid" },
-        "$schema": { "type": "string" },
-        "orderNumber": { "type": "string" },
-        "totalAmount": { "type": "number", "minimum": 0 },
-        "customerName": { "type": "string" },
-        "items": { "type": "integer", "minimum": 1 },
-        "timestamp": { "type": "string", "format": "date-time" }
-    },
-    "additionalProperties": false,
-    "x-schema-metadata": {
-        "author": "0x000000000000000000000000000000000000001",
-        "name": "Order",
-        "version": "1"
-    }
-};
-
-const schemas = [userSchema, productSchema, orderSchema];
-
+];
 function generateRandomJson(forceValid = true) {
     const schema = schemas[Math.floor(Math.random() * schemas.length)];
-    const schemaUri = `${schema['x-schema-metadata'].author}/${schema['x-schema-metadata'].version}/${schema['x-schema-metadata'].name}`;
+    const { author, version, name } = schema['x-schema-metadata'];
+    const schemaUri = `${author}/${version}/${name}`;
 
     const baseJson: any = {
         $schema: schemaUri,
@@ -80,7 +78,7 @@ function generateRandomJson(forceValid = true) {
         timestamp: new Date().toISOString(),
     };
 
-    switch (schema['x-schema-metadata'].name) {
+    switch (name) {
         case 'User':
             baseJson.name = `User${Math.floor(Math.random() * 1000)}`;
             baseJson.age = Math.floor(Math.random() * (120 - 18 + 1)) + 18;
@@ -100,18 +98,18 @@ function generateRandomJson(forceValid = true) {
             break;
     }
 
-    if (!forceValid && Math.random() < 0.2) {
-        // 20% chance to generate an invalid object
+    if (!forceValid && Math.random() < 0.5) { // Increased chance of invalid object
+        // 50% chance to generate an invalid object when forceValid is false
         const invalidOptions = [
             () => { delete baseJson.uuid; },
             () => { baseJson.timestamp = "invalid-date"; },
             () => { baseJson.additionalProperty = "This should not be here"; },
             () => {
-                if (schema['x-schema-metadata'].name === 'User') {
+                if (name === 'User') {
                     baseJson.age = Math.random() > 0.5 ? 17 : 121;
-                } else if (schema['x-schema-metadata'].name === 'Product') {
+                } else if (name === 'Product') {
                     baseJson.price = -1;
-                } else if (schema['x-schema-metadata'].name === 'Order') {
+                } else if (name === 'Order') {
                     baseJson.totalAmount = -1;
                 }
             },
@@ -134,17 +132,33 @@ function generateRandomJson(forceValid = true) {
         }, {} as any);
 }
 
+
 export default createOperation.mutation({
     handler: async ({ context }) => {
         try {
-            const randomJson = generateRandomJson(Math.random() > 0.2); // 80% chance of valid object
+            const randomJson = generateRandomJson(Math.random() > 0.5);
 
             // Log the generated JSON object
             console.log('Generated JSON object:', JSON.stringify(randomJson, null, 2));
 
+            // Find the corresponding schema using the custom URI
+            const [author, version, name] = randomJson.$schema.split('/');
+            const schema = schemas.find(s =>
+                s['x-schema-metadata'].author === author &&
+                s['x-schema-metadata'].version === version &&
+                s['x-schema-metadata'].name === name
+            );
+
+            if (!schema) {
+                return {
+                    success: false,
+                    error: 'Schema not found',
+                    details: `No schema found for URI: ${randomJson.$schema}`,
+                    generatedJson: randomJson
+                };
+            }
+
             // Validate the generated JSON against the corresponding schema
-            const schemaName = randomJson.$schema.split('/').pop();
-            const schema = schemas.find(s => s['x-schema-metadata'].name === schemaName);
             const validate = ajv.compile(schema);
             const valid = validate(randomJson);
 
