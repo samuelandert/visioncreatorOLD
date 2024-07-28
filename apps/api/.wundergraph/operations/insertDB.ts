@@ -72,11 +72,15 @@ function generateRandomJson(schemas, forceValid = true) {
 export default createOperation.mutation({
     handler: async ({ context, operations }) => {
         try {
+            const randomSchemaType = ['User', 'Product', 'Order'][Math.floor(Math.random() * 3)];
+
             const { data: schemasData, error: schemasError } = await operations.query({
                 operationName: 'querySchemas',
+                input: { name: randomSchemaType },
             });
 
             if (schemasError) {
+                console.error('Error fetching schemas:', schemasError);
                 throw new Error(`Failed to fetch schemas: ${schemasError.message}`);
             }
 
@@ -134,6 +138,7 @@ export default createOperation.mutation({
                 insertedData: data[0]
             };
         } catch (error) {
+            console.error('Unexpected error in insertDB:', error);
             return {
                 success: false,
                 error: 'Unexpected error',

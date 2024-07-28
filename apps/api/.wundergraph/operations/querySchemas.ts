@@ -16,34 +16,33 @@ export default createOperation.query({
             .select('*')
             .order('created_at', { ascending: false });
 
-        if (input.name || input.author || input.version) {
-            query = query.filter('jsonschema', 'jsonb', obj => {
-                let filter = obj.cast('x-schema-metadata', 'jsonb');
-                if (input.name) {
-                    filter = filter.contains({ name: input.name });
-                }
-                if (input.author) {
-                    filter = filter.contains({ author: input.author });
-                }
-                if (input.version) {
-                    filter = filter.contains({ version: input.version });
-                }
-                return filter;
-            });
+        if (input.name) {
+            query = query.contains('jsonschema', { 'x-schema-metadata': { name: input.name } });
+        }
+        if (input.author) {
+            query = query.contains('jsonschema', { 'x-schema-metadata': { author: input.author } });
+        }
+        if (input.version) {
+            query = query.contains('jsonschema', { 'x-schema-metadata': { version: input.version } });
         }
 
-        const { data, error } = await query;
+        try {
+            const { data, error } = await query;
 
-        if (error) {
-            console.error('Error fetching data from schemas:', error);
-            throw new Error('Failed to fetch data from schemas');
+            if (error) {
+                console.error('Supabase error:', error);
+                throw new Error(`Failed to fetch data from schemas: ${error.message}`);
+            }
+
+            const parsedData = data.map(schema => ({
+                ...schema,
+                jsonschema: typeof schema.jsonschema === 'string' ? JSON.parse(schema.jsonschema) : schema.jsonschema
+            }));
+
+            return { schemas: parsedData };
+        } catch (error) {
+            console.error('Error in querySchemas:', error);
+            throw error;
         }
-
-        const parsedData = data.map(schema => ({
-            ...schema,
-            jsonschema: typeof schema.jsonschema === 'string' ? JSON.parse(schema.jsonschema) : schema.jsonschema
-        }));
-
-        return { schemas: parsedData };
     },
 });

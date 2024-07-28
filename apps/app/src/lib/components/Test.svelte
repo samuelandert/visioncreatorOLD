@@ -74,7 +74,7 @@
 			{/each}
 		</ul>
 	</aside>
-	<main class="grid grid-cols-[3fr_1fr] gap-4 p-4 overflow-hidden bg-surface-100-800-token">
+	<main class="grid grid-cols-[2fr_1fr] gap-4 p-4 overflow-hidden bg-surface-100-800-token">
 		<div class="pr-4 overflow-y-auto">
 			<h2 class="mb-4 text-2xl font-bold">Database Entries</h2>
 			<ul class="space-y-4">
