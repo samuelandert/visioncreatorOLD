@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createMutation } from '$lib/wundergraph';
+	import { onMount } from 'svelte';
 
 	export let me;
 	const query = $me.query;
@@ -42,6 +43,38 @@
 	function selectSchema(schema) {
 		selectedSchema = schema;
 	}
+
+	function parseSchemaInfo(schemaString) {
+		try {
+			const parts = schemaString.split('/');
+			if (parts.length === 3) {
+				return {
+					author: parts[0].slice(0, 8),
+					version: parts[1],
+					name: parts[2]
+				};
+			}
+			return { author: 'Unknown', version: 'N/A', name: 'Unknown' };
+		} catch (error) {
+			console.error('Error parsing schema:', error);
+			return { author: 'Unknown', version: 'N/A', name: 'Unknown' };
+		}
+	}
+	function isFieldRequired(schemaName, fieldName) {
+		const schema = $query.data.schemas.find((s) => getSchemaName(s) === schemaName);
+		if (!schema) return false;
+
+		const requiredFields = schema.jsonschema.required || [];
+		return requiredFields.includes(fieldName);
+	}
+
+	function getFieldType(schemaName, fieldName) {
+		const schema = $query.data.schemas.find((s) => getSchemaName(s) === schemaName);
+		if (!schema) return 'unknown';
+
+		const fieldType = schema.jsonschema.properties[fieldName]?.type || 'unknown';
+		return fieldType;
+	}
 </script>
 
 <div class="grid grid-cols-[300px_1fr] h-screen overflow-hidden">
@@ -79,8 +112,41 @@
 			<h2 class="mb-4 text-2xl font-bold">Database Entries</h2>
 			<ul class="space-y-4">
 				{#each [...$query.data.db].reverse() as item}
-					<li class="p-4 card variant-filled-surface">
-						<pre class="whitespace-pre-wrap">{JSON.stringify(item.json, null, 2)}</pre>
+					{@const schemaInfo = parseSchemaInfo(item.json.$schema)}
+					<li class="grid grid-cols-[200px_1fr] card variant-filled-surface">
+						<aside class="p-4 border-r border-surface-300-600-token">
+							<h3 class="text-lg font-semibold">{schemaInfo.name}</h3>
+							<p class="text-sm">Version: {schemaInfo.version}</p>
+							<p class="text-sm">Author: {schemaInfo.author}</p>
+						</aside>
+						<div class="p-4">
+							{#each Object.entries(item.json) as [key, value]}
+								{#if !['$schema', 'uuid', 'timestamp'].includes(key)}
+									<div class="flex items-center mb-2">
+										<span class="text-xs text-surface-300">{key}</span>
+										{#if typeof value === 'object' && value !== null}
+											<pre
+												class="flex-grow px-2 ml-2 text-sm rounded bg-surface-200-700-token">{JSON.stringify(
+													value,
+													null,
+													2
+												)}</pre>
+										{:else}
+											<span class="flex-grow ml-2">{value}</span>
+										{/if}
+
+										{#if isFieldRequired(schemaInfo.name, key)}
+											<span class="px-2 ml-2 text-white rounded-xl text-2xs bg-error-500"
+												>Required</span
+											>
+										{/if}
+										<span class="px-2 ml-2 text-white rounded-xl text-2xs bg-surface-700"
+											>{getFieldType(schemaInfo.name, key)}</span
+										>
+									</div>
+								{/if}
+							{/each}
+						</div>
 					</li>
 				{/each}
 			</ul>
