@@ -15,6 +15,7 @@ export type OperationErrors = {
 	queryDB: QueryDBErrors;
 	queryLeaderboard: QueryLeaderboardErrors;
 	queryMe: QueryMeErrors;
+	querySchemas: QuerySchemasErrors;
 	queryUserStats: QueryUserStatsErrors;
 	subLeaderboard: SubLeaderboardErrors;
 	subMe: SubMeErrors;
@@ -34,6 +35,7 @@ export type QueryComposerErrors = ClientOperationErrors;
 export type QueryDBErrors = ClientOperationErrors;
 export type QueryLeaderboardErrors = ClientOperationErrors;
 export type QueryMeErrors = ClientOperationErrors;
+export type QuerySchemasErrors = ClientOperationErrors;
 export type QueryUserStatsErrors = ClientOperationErrors;
 export type SubLeaderboardErrors = ClientOperationErrors;
 export type SubMeErrors = ClientOperationErrors;

@@ -20,6 +20,10 @@
 					db: {
 						query: 'queryDB',
 						prop: 'db'
+					},
+					schemas: {
+						query: 'querySchemas',
+						prop: 'schemas'
 					}
 				}
 			}
