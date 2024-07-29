@@ -34,24 +34,74 @@
 		modifiedSchema = JSON.parse(JSON.stringify(version.json));
 	}
 
-	function toggleRequired(propName) {
+	function updatePropName(oldPropName: string, newPropName: string) {
+		if (oldPropName !== newPropName) {
+			const properties = {};
+			const oldProperties = modifiedSchema.properties;
+
+			// Preserve the order of properties
+			for (const key of Object.keys(oldProperties)) {
+				if (key === oldPropName) {
+					properties[newPropName] = oldProperties[oldPropName];
+				} else {
+					properties[key] = oldProperties[key];
+				}
+			}
+
+			// Update required array if the old property name was in it
+			const required = modifiedSchema.required.map((name) =>
+				name === oldPropName ? newPropName : name
+			);
+
+			modifiedSchema = {
+				...modifiedSchema,
+				properties,
+				required
+			};
+		}
+	}
+
+	// Modify the existing toggleRequired function
+	function toggleRequired(propName: string) {
 		if (!modifiedSchema) return;
 
-		const index = modifiedSchema.required.indexOf(propName);
+		const required = [...modifiedSchema.required];
+		const index = required.indexOf(propName);
 		if (index > -1) {
-			modifiedSchema.required.splice(index, 1);
+			required.splice(index, 1);
 		} else {
-			modifiedSchema.required.push(propName);
+			required.push(propName);
 		}
-		modifiedSchema = { ...modifiedSchema };
+		modifiedSchema = { ...modifiedSchema, required };
 	}
 
 	$: isSchemaModified = JSON.stringify(selectedVersion?.json) !== JSON.stringify(modifiedSchema);
+
+	function toggleDeletion(propName: string) {
+		if (!modifiedSchema.deletedProperties) {
+			modifiedSchema.deletedProperties = [];
+		}
+		const index = modifiedSchema.deletedProperties.indexOf(propName);
+		if (index > -1) {
+			modifiedSchema.deletedProperties.splice(index, 1);
+		} else {
+			modifiedSchema.deletedProperties.push(propName);
+		}
+		modifiedSchema = { ...modifiedSchema };
+	}
 
 	async function handleUpdateSchema() {
 		if (!modifiedSchema || !isSchemaModified) return;
 
 		try {
+			// Remove deleted properties
+			if (modifiedSchema.deletedProperties) {
+				for (const propName of modifiedSchema.deletedProperties) {
+					delete modifiedSchema.properties[propName];
+				}
+				delete modifiedSchema.deletedProperties;
+			}
+
 			const result = await $createSchemaMutation.mutateAsync({
 				schema: modifiedSchema,
 				update: `${selectedVersion.json.oContext.author}/${selectedVersion.json.oContext.name}/${selectedVersion.json.oContext.version}/${selectedVersion.cid}`
@@ -62,6 +112,19 @@
 				alertType = 'success';
 				console.log('Updated schema:', result.insertedData);
 				await $query.refetch();
+
+				// Update local state
+				selectedVersion = { ...selectedVersion, json: modifiedSchema };
+				const groupIndex = schemaGroups.findIndex((g) => g.name === selectedSchemaGroup.name);
+				if (groupIndex !== -1) {
+					const versionIndex = schemaGroups[groupIndex].versions.findIndex(
+						(v) => v.cid === selectedVersion.cid
+					);
+					if (versionIndex !== -1) {
+						schemaGroups[groupIndex].versions[versionIndex] = selectedVersion;
+						schemaGroups = [...schemaGroups];
+					}
+				}
 			} else {
 				alertMessage = `Error: ${result.error}`;
 				alertType = 'error';
@@ -72,6 +135,11 @@
 			console.error('Error updating schema:', error);
 		}
 	}
+
+	$: getHoverColor = (baseColor) => {
+		const colorNumber = parseInt(baseColor.split('-')[1]);
+		return `bg-${baseColor.split('-')[0]}-${Math.min(colorNumber + 100, 900)}`;
+	};
 
 	async function handleInsert() {
 		try {
@@ -143,11 +211,29 @@
 		isContextExpanded = !isContextExpanded;
 	}
 
+	function markForDeletion(propName: string) {
+		if (!modifiedSchema.deletedProperties) {
+			modifiedSchema.deletedProperties = [];
+		}
+		modifiedSchema.deletedProperties.push(propName);
+		modifiedSchema = { ...modifiedSchema };
+	}
+
+	$: isPropertyModified = (propName) => {
+		const originalProp = selectedVersion?.json.properties[propName];
+		const modifiedProp = modifiedSchema?.properties[propName];
+		return JSON.stringify(originalProp) !== JSON.stringify(modifiedProp);
+	};
+
+	$: isPropertyDeleted = (propName) => {
+		return modifiedSchema?.deletedProperties?.includes(propName);
+	};
+
 	$: schemaGroups = groupSchemas($query.data.schemas);
 </script>
 
 <div class="flex h-full overflow-hidden bg-surface-100-800-token">
-	<aside class="w-1/3 p-4 overflow-y-auto bg-surface-200-700-token">
+	<aside class="w-[300px] p-4 overflow-y-auto bg-surface-200-700-token">
 		<ul class="space-y-2">
 			{#each schemaGroups as group}
 				<li>
@@ -215,14 +301,26 @@
 				{/if}
 
 				<div class="space-y-2">
-					{#each Object.entries(modifiedSchema.properties || {}) as [propName, propDetails]}
+					{#each Object.entries(modifiedSchema.properties || {}) as [propName, propDetails], index}
 						{#if propName !== 'oContext'}
+							{@const baseColor = isPropertyDeleted(propName)
+								? 'error-500'
+								: isPropertyModified(propName)
+								? 'warning-500'
+								: 'surface-300'}
 							<div
-								class="p-2 transition-colors duration-200 rounded-lg bg-surface-300-600-token hover:bg-surface-400-500-token"
+								class="p-2 transition-colors duration-200 rounded-lg
+							bg-{baseColor}
+							hover:{getHoverColor(baseColor)}"
 							>
 								<div class="flex items-center justify-between mb-1">
-									<span class="font-semibold">{propName}</span>
-									<div class="space-x-2">
+									<input
+										type="text"
+										value={propName}
+										on:input={(e) => updatePropName(propName, e.target.value)}
+										class="px-1 font-semibold bg-transparent border-none rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
+									/>
+									<div class="flex items-center space-x-2">
 										<span
 											class="px-2 py-0.5 text-xs font-semibold rounded-full bg-secondary-500 text-secondary-50"
 										>
@@ -237,6 +335,16 @@
 											on:click={() => toggleRequired(propName)}
 										>
 											{modifiedSchema.required.includes(propName) ? 'Required' : 'Optional'}
+										</button>
+										<button
+											class="px-2 py-0.5 text-xs font-semibold rounded-full {isPropertyDeleted(
+												propName
+											)
+												? 'bg-success-500'
+												: 'bg-error-500'} text-error-50"
+											on:click={() => toggleDeletion(propName)}
+										>
+											{isPropertyDeleted(propName) ? 'Restore' : 'Delete'}
 										</button>
 									</div>
 								</div>
