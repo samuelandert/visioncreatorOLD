@@ -8,17 +8,14 @@ addFormats(ajv);
 
 function generateRandomJson(schemas, forceValid = true) {
     const schema = schemas[Math.floor(Math.random() * schemas.length)].jsonschema;
-    const { author, version, name, cid } = schema.oContext;
+    const { author, version, name } = schema.oContext;
     const schemaUri = `${author}/${version}/${name}`;
 
     const baseJson: any = {
         $schema: schemaUri,
-        timestamp: new Date().toISOString(),
-        oContext: {
-            cid: `Qm${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`,
-            prev: null
-        }
+        timestamp: new Date().toISOString()
     };
+
     switch (name) {
         case 'User':
             baseJson.name = `User${Math.floor(Math.random() * 1000)}`;
@@ -38,7 +35,6 @@ function generateRandomJson(schemas, forceValid = true) {
             baseJson.items = Math.floor(Math.random() * 10) + 1;
             break;
     }
-
     if (!forceValid && Math.random() < 0.5) {
         const invalidOptions = [
             () => { baseJson.timestamp = "invalid-date"; },

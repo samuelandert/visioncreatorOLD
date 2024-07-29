@@ -49,7 +49,7 @@
 			const parts = schemaString.split('/');
 			if (parts.length === 3) {
 				return {
-					author: parts[0].slice(0, 8),
+					author: parts[0],
 					version: parts[1],
 					name: parts[2]
 				};
@@ -60,8 +60,13 @@
 			return { author: 'Unknown', version: 'N/A', name: 'Unknown' };
 		}
 	}
+
+	function getSchemaByName(schemaName) {
+		return $query.data.schemas.find((s) => getSchemaName(s) === schemaName);
+	}
+
 	function isFieldRequired(schemaName, fieldName) {
-		const schema = $query.data.schemas.find((s) => getSchemaName(s) === schemaName);
+		const schema = getSchemaByName(schemaName);
 		if (!schema) return false;
 
 		const requiredFields = schema.jsonschema.required || [];
@@ -69,7 +74,7 @@
 	}
 
 	function getFieldType(schemaName, fieldName) {
-		const schema = $query.data.schemas.find((s) => getSchemaName(s) === schemaName);
+		const schema = getSchemaByName(schemaName);
 		if (!schema) return 'unknown';
 
 		const fieldType = schema.jsonschema.properties[fieldName]?.type || 'unknown';
@@ -117,50 +122,58 @@
 			<ul class="space-y-4">
 				{#each $query.data.db.sort(sortByTimestamp) as item}
 					{@const schemaInfo = parseSchemaInfo(item.json.$schema)}
-					<li class="grid grid-cols-[200px_1fr] card variant-filled-surface" />
+					{@const schema = getSchemaByName(schemaInfo.name)}
 					<li class="grid grid-cols-[200px_1fr] card variant-filled-surface">
 						<aside class="p-4 border-r border-surface-300-600-token">
 							<span class="block text-2xs text-surface-300">Schema</span>
-							<h3 class="-mt-1 text-lg font-semibold m">{schemaInfo.name}</h3>
+							<h3 class="-mt-1 text-lg font-semibold">{schemaInfo.name}</h3>
 							<span class="block text-2xs text-surface-300">Version</span>
 							<span class="block -mt-1 text-sm">{schemaInfo.version}</span>
 							<span class="block text-2xs text-surface-300">Author</span>
 							<span class="block -mt-1 text-sm">{schemaInfo.author}</span>
-							<span class="block text-2xs text-surface-300">CID</span>
-							<span class="block -mt-1 text-sm">{item.json.oContext.cid.slice(0, 10)}...</span>
-							<span class="block text-2xs text-surface-300">Prev</span>
-							<span class="block -mt-1 text-sm">
-								{#if item.json.oContext.prev}
-									{item.json.oContext.prev.slice(0, 10)}...
-								{:else}
-									None
-								{/if}
-							</span>
+							{#if schema?.jsonschema?.oContext}
+								<span class="block text-2xs text-surface-300">CID</span>
+								<span class="block -mt-1 text-sm"
+									>{schema.jsonschema.oContext.cid?.slice(0, 10)}...</span
+								>
+								<span class="block text-2xs text-surface-300">Prev</span>
+								<span class="block -mt-1 text-sm">
+									{#if schema.jsonschema.oContext.prev}
+										{schema.jsonschema.oContext.prev.slice(0, 10)}...
+									{:else}
+										None
+									{/if}
+								</span>
+							{/if}
 						</aside>
+
 						<div class="p-4">
 							{#each Object.entries(item.json) as [key, value]}
-								{#if !['$schema', 'oContext'].includes(key)}
-									<div class="flex items-center mb-2">
-										<span class="text-xs text-surface-300">{key}</span>
+								{#if key !== '$schema'}
+									<div class="relative mb-2">
+										<span class="block text-2xs text-surface-300">{key}</span>
 										{#if typeof value === 'object' && value !== null}
-											<pre
-												class="flex-grow px-2 ml-2 text-sm rounded bg-surface-200-700-token">{JSON.stringify(
-													value,
-													null,
-													2
-												)}</pre>
+											<div class="block px-2 -mb-1 text-sm rounded bg-surface-200-700-token">
+												{#each Object.entries(value) as [subKey, subValue]}
+													<div class="-py-1">
+														<span class="text-2xs text-surface-300">{subKey}:</span>
+														<span class="ml-1">{subValue}</span>
+													</div>
+												{/each}
+											</div>
 										{:else}
-											<span class="flex-grow ml-2">{value}</span>
+											<span class="block -mt-0.5 text-sm">{value}</span>
 										{/if}
-
-										{#if isFieldRequired(schemaInfo.name, key)}
-											<span class="px-2 ml-2 text-white rounded-xl text-2xs bg-error-500"
-												>Required</span
-											>
-										{/if}
-										<span class="px-2 ml-2 text-white rounded-xl text-2xs bg-surface-700"
-											>{getFieldType(schemaInfo.name, key)}</span
-										>
+										<div class="absolute top-0 right-0 flex">
+											{#if isFieldRequired(schemaInfo.name, key)}
+												<span class="px-1 mr-1 text-white rounded-xl text-2xs bg-error-500"
+													>Required</span
+												>
+											{/if}
+											<span class="px-1 text-white rounded-xl text-2xs bg-surface-700">
+												{getFieldType(schemaInfo.name, key)}
+											</span>
+										</div>
 									</div>
 								{/if}
 							{/each}
