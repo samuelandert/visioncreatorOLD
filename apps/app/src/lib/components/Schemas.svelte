@@ -15,7 +15,8 @@
 
 	let alertMessage = '';
 	let alertType: 'error' | 'success' | '' = '';
-	let selectedSchema = null;
+	let selectedSchemaGroup = null;
+	let selectedVersion = null;
 
 	async function handleInsert() {
 		try {
@@ -36,8 +37,13 @@
 		}
 	}
 
-	function selectSchema(schema) {
-		selectedSchema = schema;
+	function selectSchemaGroup(group) {
+		selectedSchemaGroup = group;
+		selectedVersion = group.versions[group.versions.length - 1];
+	}
+
+	function selectVersion(version) {
+		selectedVersion = version;
 	}
 
 	function getSchemaName(schema) {
@@ -51,9 +57,47 @@
 	function getSchemaAuthor(schema) {
 		return schema.json?.oContext?.author ?? 'Unknown';
 	}
+
+	function groupSchemas(schemas) {
+		const groups = {};
+		schemas.forEach((schema) => {
+			const name = getSchemaName(schema);
+			if (!groups[name]) {
+				groups[name] = { name, versions: [] };
+			}
+			groups[name].versions.push(schema);
+		});
+		return Object.values(groups);
+	}
+
+	function truncateCID(cid, maxLength = 10) {
+		if (cid && cid.length > maxLength) {
+			return cid.substring(0, maxLength) + '...';
+		}
+		return cid;
+	}
+
+	function getSystemProps(schema) {
+		const props = schema.json?.oContext || {};
+		if (props.prev) {
+			const parts = props.prev.split('/');
+			if (parts.length === 4) {
+				props.prev = `${parts[0]}/${parts[1]}/${parts[2]}/${truncateCID(parts[3])}`;
+			}
+		}
+		return props;
+	}
+
+	let isContextExpanded = false;
+
+	function toggleContext() {
+		isContextExpanded = !isContextExpanded;
+	}
+
+	$: schemaGroups = groupSchemas($query.data.schemas);
 </script>
 
-<div class="flex h-screen overflow-hidden">
+<div class="flex h-full overflow-hidden bg-surface-100-800-token">
 	<aside class="w-1/3 p-4 overflow-y-auto bg-surface-200-700-token">
 		<button class="w-full mb-4 btn variant-filled-primary" on:click={handleInsert}>
 			Insert Random JSON
@@ -72,31 +116,107 @@
 		{/if}
 
 		<ul class="space-y-2">
-			{#each $query.data.schemas as item}
+			{#each schemaGroups as group}
 				<li>
 					<button
-						class="w-full p-2 text-left card variant-filled-surface hover:variant-filled-primary"
-						on:click={() => selectSchema(item)}
+						class="w-full p-2 text-left transition-colors duration-200 rounded-lg hover:bg-primary-500 hover:text-white"
+						on:click={() => selectSchemaGroup(group)}
 					>
-						<h3 class="font-medium">{getSchemaName(item)}</h3>
-						<div class="text-xs text-surface-300">
-							<span>v{getSchemaVersion(item)}</span>
-							<span class="ml-2">by {getSchemaAuthor(item)}</span>
+						<h3 class="font-medium truncate">{group.name}</h3>
+						<div class="text-xs opacity-75">
+							<span>v{getSchemaVersion(group.versions[group.versions.length - 1])}</span>
+							<span class="ml-2"
+								>by {getSchemaAuthor(group.versions[group.versions.length - 1])}</span
+							>
 						</div>
 					</button>
 				</li>
 			{/each}
 		</ul>
 	</aside>
-	<main class="w-2/3 p-4 overflow-y-auto">
-		<h2 class="mb-4 text-2xl font-bold">Selected Schema</h2>
-		{#if selectedSchema}
-			<div class="p-4 card variant-filled-surface">
-				<h3 class="mb-2 text-xl font-semibold">{getSchemaName(selectedSchema)}</h3>
-				<pre class="whitespace-pre-wrap">{JSON.stringify(selectedSchema.json, null, 2)}</pre>
+	<main class="w-2/3 p-4 overflow-x-hidden overflow-y-auto bg-surface-100-800-token">
+		{#if selectedSchemaGroup}
+			<div class=" tabs">
+				{#each selectedSchemaGroup.versions as version}
+					<button
+						class="tab {selectedVersion === version
+							? 'variant-filled-secondary'
+							: 'variant-ghost-secondary'}"
+						on:click={() => selectVersion(version)}
+					>
+						v{getSchemaVersion(version)}
+					</button>
+				{/each}
+			</div>
+			<div class="p-4 rounded-lg bg-surface-200-700-token">
+				<h3 class="mb-2 text-xl font-semibold truncate">{getSchemaName(selectedVersion)}</h3>
+				<p class="mb-4 text-sm opacity-75">Author: {getSchemaAuthor(selectedVersion)}</p>
+				<div class="space-y-2">
+					{#each Object.entries(selectedVersion.json.properties || {}) as [propName, propDetails]}
+						{#if propName !== 'oContext'}
+							<div
+								class="p-2 transition-colors duration-200 rounded-lg bg-surface-300-600-token hover:bg-surface-400-500-token"
+							>
+								<div class="flex items-center justify-between mb-1">
+									<span class="font-semibold">{propName}</span>
+									<div class="space-x-2">
+										<span
+											class="px-2 py-0.5 text-xs font-semibold rounded-full bg-secondary-500 text-secondary-50"
+											>{propDetails.type}</span
+										>
+										{#if selectedVersion.json.required?.includes(propName)}
+											<span
+												class="px-2 py-0.5 text-xs font-semibold rounded-full bg-error-500 text-error-50"
+												>Required</span
+											>
+										{/if}
+									</div>
+								</div>
+								{#if propDetails.description}
+									<p class="text-xs opacity-75">{propDetails.description}</p>
+								{/if}
+							</div>
+						{/if}
+					{/each}
+				</div>
+
+				<div class="mt-6">
+					<button
+						class="flex items-center justify-between w-full p-2 text-lg font-semibold rounded-lg bg-surface-300-600-token hover:bg-surface-400-500-token"
+						on:click={toggleContext}
+					>
+						<span>oContext</span>
+						<span class="text-2xl">{isContextExpanded ? '−' : '+'}</span>
+					</button>
+					{#if isContextExpanded}
+						<div class="mt-2 space-y-2">
+							{#each Object.entries(getSystemProps(selectedVersion)) as [propName, propValue]}
+								<div
+									class="p-2 transition-colors duration-200 rounded-lg bg-surface-300-600-token hover:bg-surface-400-500-token"
+								>
+									<div class="flex items-center justify-between">
+										<span class="font-semibold">{propName}</span>
+										<span class="text-sm break-all opacity-75">
+											{propName === 'prev' ? propValue : truncateCID(propValue)}
+										</span>
+									</div>
+								</div>
+							{/each}
+						</div>
+					{/if}
+				</div>
 			</div>
 		{:else}
-			<p class="p-4 card variant-filled-surface">No schema selected</p>
+			<p class="p-4 text-center rounded-lg bg-surface-200-700-token">No schema selected</p>
 		{/if}
 	</main>
 </div>
+
+<style>
+	.tabs {
+		@apply flex space-x-2;
+	}
+	.tab {
+		@apply px-4 py-2 text-sm font-medium rounded-t-lg transition-colors duration-200;
+	}
+</style>

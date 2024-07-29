@@ -6,7 +6,7 @@
                 "left right"
             `,
 			rows: '1fr',
-			columns: '1fr 1fr',
+			columns: '40% 60%',
 			overflow: 'hidden'
 		},
 		children: [
