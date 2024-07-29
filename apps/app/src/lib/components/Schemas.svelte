@@ -43,7 +43,7 @@
 		} else {
 			modifiedSchema.required.push(propName);
 		}
-		modifiedSchema = { ...modifiedSchema }; // Trigger reactivity
+		modifiedSchema = { ...modifiedSchema };
 	}
 
 	$: isSchemaModified = JSON.stringify(selectedVersion?.json) !== JSON.stringify(modifiedSchema);
@@ -83,7 +83,7 @@
 				alertMessage = 'Object added successfully!';
 				alertType = 'success';
 				console.log('Inserted data:', result.insertedData);
-				await $query.refetch();
+				await $query.refetch(); // Refetch the query after successful insert
 			} else {
 				alertMessage = `Error: ${result.error}. Details: ${result.details}`;
 				alertType = 'error';
@@ -182,20 +182,25 @@
 				{/each}
 			</div>
 			<div class="p-4 rounded-lg bg-surface-200-700-token">
-				<div class="flex items-center justify-between mb-4">
-					<h3 class="text-xl font-semibold truncate">{getSchemaName(selectedVersion)}</h3>
-					<div class="space-x-2">
-						<button class="btn variant-filled-primary" on:click={handleInsert}>Add Object</button>
-						<button
-							class="btn variant-filled-secondary"
-							on:click={handleUpdateSchema}
-							disabled={!isSchemaModified}
-						>
-							Update Schema
-						</button>
-					</div>
+				<!-- Dedicated button area -->
+				<div class="flex justify-end mb-4 space-x-2">
+					<button class="btn btn-sm variant-ghost-warning" on:click={handleInsert}>
+						Add Object
+					</button>
+					<button
+						class="btn btn-sm variant-ghost-secondary"
+						on:click={handleUpdateSchema}
+						disabled={!isSchemaModified}
+					>
+						Update Schema
+					</button>
 				</div>
-				<p class="mb-4 text-sm opacity-75">Author: {getSchemaAuthor(selectedVersion)}</p>
+
+				<!-- Schema info area -->
+				<div class="mb-4">
+					<h3 class="text-xl font-semibold truncate">{getSchemaName(selectedVersion)}</h3>
+					<p class="text-sm opacity-75">Author: {getSchemaAuthor(selectedVersion)}</p>
+				</div>
 
 				{#if alertMessage}
 					<div
