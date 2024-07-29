@@ -14,16 +14,15 @@ export default createOperation.query({
         let query = context.supabase
             .from('schemas')
             .select('*')
-            .order('created_at', { ascending: false });
 
         if (input.name) {
-            query = query.contains('jsonschema', { oContext: { name: input.name } });
+            query = query.contains('json', { oContext: { name: input.name } });
         }
         if (input.author) {
-            query = query.contains('jsonschema', { oContext: { author: input.author } });
+            query = query.contains('json', { oContext: { author: input.author } });
         }
         if (input.version) {
-            query = query.contains('jsonschema', { oContext: { version: input.version } });
+            query = query.contains('json', { oContext: { version: input.version } });
         }
 
         try {
@@ -36,7 +35,7 @@ export default createOperation.query({
 
             const parsedData = data.map(schema => ({
                 ...schema,
-                jsonschema: typeof schema.jsonschema === 'string' ? JSON.parse(schema.jsonschema) : schema.jsonschema
+                json: typeof schema.json === 'string' ? JSON.parse(schema.json) : schema.json
             }));
 
             return { schemas: parsedData };

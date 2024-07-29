@@ -37,7 +37,7 @@
 	}
 
 	function getSchemaName(schema) {
-		return schema.jsonschema?.oContext?.name ?? 'Unnamed Schema';
+		return schema.json?.oContext?.name ?? 'Unnamed Schema';
 	}
 
 	function selectSchema(schema) {
@@ -69,7 +69,7 @@
 		const schema = getSchemaByName(schemaName);
 		if (!schema) return false;
 
-		const requiredFields = schema.jsonschema.required || [];
+		const requiredFields = schema.json.required || [];
 		return requiredFields.includes(fieldName);
 	}
 
@@ -77,7 +77,7 @@
 		const schema = getSchemaByName(schemaName);
 		if (!schema) return 'unknown';
 
-		const fieldType = schema.jsonschema.properties[fieldName]?.type || 'unknown';
+		const fieldType = schema.json.properties[fieldName]?.type || 'unknown';
 		return fieldType;
 	}
 
@@ -131,15 +131,13 @@
 							<span class="block -mt-1 text-sm">{schemaInfo.version}</span>
 							<span class="block text-2xs text-surface-300">Author</span>
 							<span class="block -mt-1 text-sm">{schemaInfo.author}</span>
-							{#if schema?.jsonschema?.oContext}
+							{#if schema?.json?.oContext}
 								<span class="block text-2xs text-surface-300">CID</span>
-								<span class="block -mt-1 text-sm"
-									>{schema.jsonschema.oContext.cid?.slice(0, 10)}...</span
-								>
+								<span class="block -mt-1 text-sm">{schema.json.oContext.cid?.slice(0, 10)}...</span>
 								<span class="block text-2xs text-surface-300">Prev</span>
 								<span class="block -mt-1 text-sm">
-									{#if schema.jsonschema.oContext.prev}
-										{schema.jsonschema.oContext.prev.slice(0, 10)}...
+									{#if schema.json.oContext.prev}
+										{schema.json.oContext.prev.slice(0, 10)}...
 									{:else}
 										None
 									{/if}
@@ -187,11 +185,7 @@
 			{#if selectedSchema}
 				<div class="p-4 card variant-filled-surface">
 					<h3 class="mb-2 text-xl font-semibold">{getSchemaName(selectedSchema)}</h3>
-					<pre class="whitespace-pre-wrap">{JSON.stringify(
-							selectedSchema.jsonschema,
-							null,
-							2
-						)}</pre>
+					<pre class="whitespace-pre-wrap">{JSON.stringify(selectedSchema.json, null, 2)}</pre>
 				</div>
 			{:else}
 				<p class="p-4 card variant-filled-surface">No schema selected</p>

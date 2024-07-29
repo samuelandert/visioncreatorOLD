@@ -7,7 +7,7 @@ ajv.addKeyword('oContext');
 addFormats(ajv);
 
 function generateRandomJson(schemas, forceValid = true) {
-    const schema = schemas[Math.floor(Math.random() * schemas.length)].jsonschema;
+    const schema = schemas[Math.floor(Math.random() * schemas.length)].json;
     const { author, version, name } = schema.oContext;
     const schemaUri = `${author}/${version}/${name}`;
 
@@ -89,9 +89,9 @@ export default createOperation.mutation({
 
             const [author, version, name] = randomJson.$schema.split('/');
             const schema = fetchedSchemas.find(s =>
-                s.jsonschema.oContext.author === author &&
-                s.jsonschema.oContext.version === version &&
-                s.jsonschema.oContext.name === name
+                s.json.oContext.author === author &&
+                s.json.oContext.version === version &&
+                s.json.oContext.name === name
             );
 
 
@@ -104,7 +104,7 @@ export default createOperation.mutation({
                 };
             }
 
-            const validate = ajv.compile(schema.jsonschema);
+            const validate = ajv.compile(schema.json);
             const valid = validate(randomJson);
 
             if (!valid) {
