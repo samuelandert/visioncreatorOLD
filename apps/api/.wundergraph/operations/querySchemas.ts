@@ -7,10 +7,6 @@ export default createOperation.query({
         version: z.string().optional(),
         cid: z.string().optional(),
     }),
-    requireAuthentication: true,
-    rbac: {
-        requireMatchAll: ['authenticated'],
-    },
     handler: async ({ input, context }) => {
         let query = context.supabase
             .from('schemas')
@@ -35,6 +31,11 @@ export default createOperation.query({
             if (error) {
                 console.error('Supabase error:', error);
                 throw new Error(`Failed to fetch data from schemas: ${error.message}`);
+            }
+
+            if (!data || data.length === 0) {
+                console.warn('No schemas found with the given criteria');
+                return { schemas: [] };
             }
 
             const parsedData = data.map(schema => ({

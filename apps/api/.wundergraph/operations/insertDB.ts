@@ -7,10 +7,13 @@ ajv.addKeyword('oContext');
 addFormats(ajv);
 
 function generateRandomJson(schemas, forceValid = true) {
-    const schema = schemas[Math.floor(Math.random() * schemas.length)]
+    const schema = schemas[Math.floor(Math.random() * schemas.length)];
+    console.log('Selected schema:', schema);
     const { author, version, name } = schema.json.oContext;
-    const cid = schema.cid
-    const schemaUri = `${author}/${version}/${name}/${cid}`;
+    const cid = schema.cid;
+    console.log('Schema CID:', cid);
+    const schemaUri = `${author}/${name}/${version}/${cid}`;
+    console.log('Generated schema URI:', schemaUri);
 
     const baseJson: any = {
         $schema: schemaUri,
@@ -53,22 +56,15 @@ function generateRandomJson(schemas, forceValid = true) {
         invalidOptions[Math.floor(Math.random() * invalidOptions.length)]();
     }
 
-    return Object.keys(baseJson)
-        .sort((a, b) => {
-            if (a === '$schema') return -1;
-            if (b === '$schema') return 1;
-            return 0;
-        })
-        .reduce((obj, key) => {
-            obj[key] = baseJson[key];
-            return obj;
-        }, {} as any);
+    console.log('Generated JSON:', baseJson);
+    return baseJson;
 }
 
 export default createOperation.mutation({
     handler: async ({ context, operations }) => {
         try {
             const randomSchemaType = ['User', 'Product', 'Order'][Math.floor(Math.random() * 3)];
+            console.log('Random schema type:', randomSchemaType);
 
             const { data: schemasData, error: schemasError } = await operations.query({
                 operationName: 'querySchemas',
@@ -81,6 +77,7 @@ export default createOperation.mutation({
             }
 
             const fetchedSchemas = schemasData.schemas;
+            console.log('Fetched schemas:', fetchedSchemas);
 
             if (!fetchedSchemas || fetchedSchemas.length === 0) {
                 throw new Error('No schemas available');
@@ -89,7 +86,10 @@ export default createOperation.mutation({
             const randomJson = generateRandomJson(fetchedSchemas, Math.random() > 0.5);
 
             const [author, name, version, cid] = randomJson.$schema.split('/');
+            console.log('Extracted CID:', cid);
+
             const schema = fetchedSchemas.find(s => s.cid === cid);
+            console.log('Found schema:', schema);
 
             if (!schema) {
                 return {
