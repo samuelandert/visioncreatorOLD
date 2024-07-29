@@ -63,6 +63,13 @@ export default createOperation.mutation({
 
         newSchema.oContext = oContext;
 
+        // Ensure all required fields are present in the properties
+        newSchema.required.forEach(field => {
+            if (!newSchema.properties[field]) {
+                newSchema.properties[field] = { type: 'string' }; // Default to string type
+            }
+        });
+
         const { data, error } = await context.supabase
             .from('schemas')
             .insert({ json: newSchema })

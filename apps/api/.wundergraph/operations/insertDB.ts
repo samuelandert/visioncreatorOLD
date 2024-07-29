@@ -5,6 +5,7 @@ import addFormats from 'ajv-formats';
 const ajv = new Ajv();
 ajv.addKeyword('oContext');
 addFormats(ajv);
+
 function generateRandomJson(schema, cid) {
     const { author, version, name } = schema.oContext;
     const schemaUri = `${author}/${name}/${version}/${cid}`;
@@ -14,7 +15,7 @@ function generateRandomJson(schema, cid) {
         timestamp: new Date().toISOString(),
         oContext: {
             author: schema.oContext.author,
-            version: parseInt(schema.oContext.version, 10),
+            version: 1, // Always set to 1 for new objects
             prev: null
         }
     };
@@ -71,9 +72,25 @@ export default createOperation.mutation({
         try {
             const { schema, cid } = input;
 
-            const randomJson = generateRandomJson(schema, cid);
+            // Fetch the schema based on the CID
+            const { data: schemaData, error: schemaError } = await context.supabase
+                .from('schemas')
+                .select('json')
+                .eq('cid', cid)
+                .single();
 
-            const validate = ajv.compile(schema);
+            if (schemaError) {
+                return {
+                    success: false,
+                    error: `Failed to fetch schema: ${schemaError.message}`,
+                };
+            }
+
+            const fetchedSchema = schemaData.json;
+
+            const randomJson = generateRandomJson(fetchedSchema, cid);
+
+            const validate = ajv.compile(fetchedSchema);
             const valid = validate(randomJson);
 
             if (!valid) {
