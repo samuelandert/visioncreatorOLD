@@ -5,6 +5,7 @@ export default createOperation.query({
         name: z.string().optional(),
         author: z.string().optional(),
         version: z.string().optional(),
+        cid: z.string().optional(),
     }),
     requireAuthentication: true,
     rbac: {
@@ -23,6 +24,9 @@ export default createOperation.query({
         }
         if (input.version) {
             query = query.contains('json', { oContext: { version: input.version } });
+        }
+        if (input.cid) {
+            query = query.eq('cid', input.cid);
         }
 
         try {

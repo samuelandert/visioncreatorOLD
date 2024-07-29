@@ -7,9 +7,10 @@ ajv.addKeyword('oContext');
 addFormats(ajv);
 
 function generateRandomJson(schemas, forceValid = true) {
-    const schema = schemas[Math.floor(Math.random() * schemas.length)].json;
-    const { author, version, name } = schema.oContext;
-    const schemaUri = `${author}/${version}/${name}`;
+    const schema = schemas[Math.floor(Math.random() * schemas.length)]
+    const { author, version, name } = schema.json.oContext;
+    const cid = schema.cid
+    const schemaUri = `${author}/${version}/${name}/${cid}`;
 
     const baseJson: any = {
         $schema: schemaUri,
@@ -87,19 +88,14 @@ export default createOperation.mutation({
 
             const randomJson = generateRandomJson(fetchedSchemas, Math.random() > 0.5);
 
-            const [author, version, name] = randomJson.$schema.split('/');
-            const schema = fetchedSchemas.find(s =>
-                s.json.oContext.author === author &&
-                s.json.oContext.version === version &&
-                s.json.oContext.name === name
-            );
-
+            const [author, name, version, cid] = randomJson.$schema.split('/');
+            const schema = fetchedSchemas.find(s => s.cid === cid);
 
             if (!schema) {
                 return {
                     success: false,
                     error: 'Schema not found',
-                    details: `No schema found for URI: ${randomJson.$schema}`,
+                    details: `No schema found for CID: ${cid}`,
                     generatedJson: randomJson
                 };
             }

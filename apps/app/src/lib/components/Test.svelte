@@ -36,33 +36,38 @@
 		}
 	}
 
-	function getSchemaName(schema) {
-		return schema.json?.oContext?.name ?? 'Unnamed Schema';
-	}
-
 	function selectSchema(schema) {
 		selectedSchema = schema;
 	}
-
 	function parseSchemaInfo(schemaString) {
 		try {
 			const parts = schemaString.split('/');
-			if (parts.length === 3) {
+			if (parts.length === 4) {
 				return {
 					author: parts[0],
-					version: parts[1],
-					name: parts[2]
+					name: parts[1],
+					version: parts[2],
+					cid: parts[3]
 				};
 			}
-			return { author: 'Unknown', version: 'N/A', name: 'Unknown' };
+			return { author: 'Unknown', name: 'Unknown', version: 'N/A', cid: 'Unknown' };
 		} catch (error) {
 			console.error('Error parsing schema:', error);
-			return { author: 'Unknown', version: 'N/A', name: 'Unknown' };
+			return { author: 'Unknown', name: 'Unknown', version: 'N/A', cid: 'Unknown' };
 		}
 	}
 
 	function getSchemaByName(schemaName) {
 		return $query.data.schemas.find((s) => getSchemaName(s) === schemaName);
+	}
+
+	function getSchemaName(schema) {
+		return schema.json?.oContext?.name ?? 'Unnamed Schema';
+	}
+
+	function getSchemaByUri(schemaUri) {
+		const { cid } = parseSchemaInfo(schemaUri);
+		return $query.data.schemas.find((s) => s.cid === cid);
 	}
 
 	function isFieldRequired(schemaName, fieldName) {
@@ -122,7 +127,7 @@
 			<ul class="space-y-4">
 				{#each $query.data.db.sort(sortByTimestamp) as item}
 					{@const schemaInfo = parseSchemaInfo(item.json.$schema)}
-					{@const schema = getSchemaByName(schemaInfo.name)}
+					{@const schema = getSchemaByUri(item.json.$schema)}
 					<li class="grid grid-cols-[200px_1fr] card variant-filled-surface">
 						<aside class="p-4 border-r border-surface-300-600-token">
 							<span class="block text-2xs text-surface-300">Schema</span>
@@ -131,17 +136,11 @@
 							<span class="block -mt-1 text-sm">{schemaInfo.version}</span>
 							<span class="block text-2xs text-surface-300">Author</span>
 							<span class="block -mt-1 text-sm">{schemaInfo.author}</span>
-							{#if schema?.json?.oContext}
-								<span class="block text-2xs text-surface-300">CID</span>
-								<span class="block -mt-1 text-sm">{schema.json.oContext.cid?.slice(0, 10)}...</span>
+							<span class="block text-2xs text-surface-300">CID</span>
+							<span class="block -mt-1 text-sm">{schemaInfo.cid.slice(0, 10)}...</span>
+							{#if schema?.json?.oContext?.prev}
 								<span class="block text-2xs text-surface-300">Prev</span>
-								<span class="block -mt-1 text-sm">
-									{#if schema.json.oContext.prev}
-										{schema.json.oContext.prev.slice(0, 10)}...
-									{:else}
-										None
-									{/if}
-								</span>
+								<span class="block -mt-1 text-sm">{schema.json.oContext.prev.slice(0, 10)}...</span>
 							{/if}
 						</aside>
 
