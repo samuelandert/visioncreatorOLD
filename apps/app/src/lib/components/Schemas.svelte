@@ -20,9 +20,12 @@
 
 	async function handleInsert() {
 		try {
-			const result = await $insertDBMutation.mutateAsync({});
+			const result = await $insertDBMutation.mutateAsync({
+				schema: selectedVersion.json,
+				cid: selectedVersion.cid
+			});
 			if (result.success) {
-				alertMessage = 'Data inserted successfully!';
+				alertMessage = 'Object added successfully!';
 				alertType = 'success';
 				console.log('Inserted data:', result.insertedData);
 				await $query.refetch();
@@ -99,22 +102,6 @@
 
 <div class="flex h-full overflow-hidden bg-surface-100-800-token">
 	<aside class="w-1/3 p-4 overflow-y-auto bg-surface-200-700-token">
-		<button class="w-full mb-4 btn variant-filled-primary" on:click={handleInsert}>
-			Insert Random JSON
-		</button>
-
-		{#if alertMessage}
-			<div
-				class="mb-4 alert {alertType === 'error'
-					? 'variant-filled-error'
-					: 'variant-filled-success'}"
-			>
-				<div class="alert-message">
-					<p>{alertMessage}</p>
-				</div>
-			</div>
-		{/if}
-
 		<ul class="space-y-2">
 			{#each schemaGroups as group}
 				<li>
@@ -136,7 +123,7 @@
 	</aside>
 	<main class="w-2/3 p-4 overflow-x-hidden overflow-y-auto bg-surface-100-800-token">
 		{#if selectedSchemaGroup}
-			<div class=" tabs">
+			<div class="tabs">
 				{#each selectedSchemaGroup.versions as version}
 					<button
 						class="tab {selectedVersion === version
@@ -149,6 +136,23 @@
 				{/each}
 			</div>
 			<div class="p-4 rounded-lg bg-surface-200-700-token">
+				<div class="flex items-center justify-between mb-4">
+					<h3 class="text-xl font-semibold truncate">{getSchemaName(selectedVersion)}</h3>
+					<button class="btn variant-filled-primary" on:click={handleInsert}> Add Object </button>
+				</div>
+				<p class="mb-4 text-sm opacity-75">Author: {getSchemaAuthor(selectedVersion)}</p>
+
+				{#if alertMessage}
+					<div
+						class="mb-4 alert {alertType === 'error'
+							? 'variant-filled-error'
+							: 'variant-filled-success'}"
+					>
+						<div class="alert-message">
+							<p>{alertMessage}</p>
+						</div>
+					</div>
+				{/if}
 				<h3 class="mb-2 text-xl font-semibold truncate">{getSchemaName(selectedVersion)}</h3>
 				<p class="mb-4 text-sm opacity-75">Author: {getSchemaAuthor(selectedVersion)}</p>
 				<div class="space-y-2">
