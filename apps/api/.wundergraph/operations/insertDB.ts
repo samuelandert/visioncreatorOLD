@@ -17,7 +17,12 @@ function generateRandomJson(schemas, forceValid = true) {
 
     const baseJson: any = {
         $schema: schemaUri,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        oContext: {
+            author: "homin.io",
+            version: 1,
+            prev: null
+        }
     };
 
     switch (name) {

@@ -149,7 +149,16 @@
 								{#if key !== '$schema'}
 									<div class="relative mb-2">
 										<span class="block text-2xs text-surface-300">{key}</span>
-										{#if typeof value === 'object' && value !== null}
+										{#if key === 'oContext'}
+											<div class="block px-2 -mb-1 text-sm rounded bg-surface-200-700-token">
+												{#each Object.entries(value) as [subKey, subValue]}
+													<div class="-py-1">
+														<span class="text-2xs text-surface-300">{subKey}:</span>
+														<span class="ml-1">{subValue}</span>
+													</div>
+												{/each}
+											</div>
+										{:else if typeof value === 'object' && value !== null}
 											<div class="block px-2 -mb-1 text-sm rounded bg-surface-200-700-token">
 												{#each Object.entries(value) as [subKey, subValue]}
 													<div class="-py-1">
