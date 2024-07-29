@@ -39,6 +39,7 @@
 	function selectSchema(schema) {
 		selectedSchema = schema;
 	}
+
 	function parseSchemaInfo(schemaString) {
 		try {
 			const parts = schemaString.split('/');
@@ -63,6 +64,14 @@
 
 	function getSchemaName(schema) {
 		return schema.json?.oContext?.name ?? 'Unnamed Schema';
+	}
+
+	function getSchemaVersion(schema) {
+		return schema.json?.oContext?.version ?? 'Unknown';
+	}
+
+	function getSchemaAuthor(schema) {
+		return schema.json?.oContext?.author ?? 'Unknown';
 	}
 
 	function getSchemaByUri(schemaUri) {
@@ -116,6 +125,10 @@
 						on:click={() => selectSchema(item)}
 					>
 						<h3 class="font-medium">{getSchemaName(item)}</h3>
+						<div class="text-xs text-surface-300">
+							<span>v{getSchemaVersion(item)}</span>
+							<span class="ml-2">by {getSchemaAuthor(item)}</span>
+						</div>
 					</button>
 				</li>
 			{/each}
@@ -145,20 +158,34 @@
 						</aside>
 
 						<div class="p-4">
+							{#if item.json.oContext}
+								<div class="relative mb-2">
+									<span class="block text-2xs text-surface-300">oContext</span>
+									<div class="block px-2 -mb-1 text-sm rounded bg-surface-200-700-token">
+										{#each Object.entries(item.json.oContext) as [subKey, subValue]}
+											<div class="-py-1">
+												<span class="text-2xs text-surface-300">{subKey}:</span>
+												<span class="ml-1">{subValue}</span>
+											</div>
+										{/each}
+									</div>
+									<div class="absolute top-0 right-0 flex">
+										{#if isFieldRequired(schemaInfo.name, 'oContext')}
+											<span class="px-1 mr-1 text-white rounded-xl text-2xs bg-error-500"
+												>Required</span
+											>
+										{/if}
+										<span class="px-1 text-white rounded-xl text-2xs bg-surface-700">
+											{getFieldType(schemaInfo.name, 'oContext')}
+										</span>
+									</div>
+								</div>
+							{/if}
 							{#each Object.entries(item.json) as [key, value]}
-								{#if key !== '$schema'}
+								{#if key !== '$schema' && key !== 'oContext'}
 									<div class="relative mb-2">
 										<span class="block text-2xs text-surface-300">{key}</span>
-										{#if key === 'oContext'}
-											<div class="block px-2 -mb-1 text-sm rounded bg-surface-200-700-token">
-												{#each Object.entries(value) as [subKey, subValue]}
-													<div class="-py-1">
-														<span class="text-2xs text-surface-300">{subKey}:</span>
-														<span class="ml-1">{subValue}</span>
-													</div>
-												{/each}
-											</div>
-										{:else if typeof value === 'object' && value !== null}
+										{#if typeof value === 'object' && value !== null}
 											<div class="block px-2 -mb-1 text-sm rounded bg-surface-200-700-token">
 												{#each Object.entries(value) as [subKey, subValue]}
 													<div class="-py-1">

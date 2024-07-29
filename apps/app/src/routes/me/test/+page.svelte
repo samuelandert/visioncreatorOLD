@@ -1,6 +1,4 @@
 <script lang="ts">
-	import ComposeView from '$lib/components/ComposeView.svelte';
-
 	let view = {
 		id: 'TestLayout',
 		layout: {
