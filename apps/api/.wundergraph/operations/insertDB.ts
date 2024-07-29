@@ -8,15 +8,17 @@ addFormats(ajv);
 
 function generateRandomJson(schemas, forceValid = true) {
     const schema = schemas[Math.floor(Math.random() * schemas.length)].jsonschema;
-    const { author, version, name } = schema.oContext;
+    const { author, version, name, cid } = schema.oContext;
     const schemaUri = `${author}/${version}/${name}`;
 
     const baseJson: any = {
         $schema: schemaUri,
-        uuid: crypto.randomUUID(),
         timestamp: new Date().toISOString(),
+        oContext: {
+            cid: `Qm${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`,
+            prev: null
+        }
     };
-
     switch (name) {
         case 'User':
             baseJson.name = `User${Math.floor(Math.random() * 1000)}`;
@@ -39,7 +41,6 @@ function generateRandomJson(schemas, forceValid = true) {
 
     if (!forceValid && Math.random() < 0.5) {
         const invalidOptions = [
-            () => { delete baseJson.uuid; },
             () => { baseJson.timestamp = "invalid-date"; },
             () => { baseJson.additionalProperty = "This should not be here"; },
             () => {
@@ -59,8 +60,6 @@ function generateRandomJson(schemas, forceValid = true) {
         .sort((a, b) => {
             if (a === '$schema') return -1;
             if (b === '$schema') return 1;
-            if (a === 'uuid') return -1;
-            if (b === 'uuid') return 1;
             return 0;
         })
         .reduce((obj, key) => {

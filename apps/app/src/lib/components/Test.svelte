@@ -75,6 +75,10 @@
 		const fieldType = schema.jsonschema.properties[fieldName]?.type || 'unknown';
 		return fieldType;
 	}
+
+	function sortByTimestamp(a, b) {
+		return new Date(b.json.timestamp).getTime() - new Date(a.json.timestamp).getTime();
+	}
 </script>
 
 <div class="grid grid-cols-[300px_1fr] h-screen overflow-hidden">
@@ -111,17 +115,31 @@
 		<div class="pr-4 overflow-y-auto">
 			<h2 class="mb-4 text-2xl font-bold">Database Entries</h2>
 			<ul class="space-y-4">
-				{#each [...$query.data.db].reverse() as item}
+				{#each $query.data.db.sort(sortByTimestamp) as item}
 					{@const schemaInfo = parseSchemaInfo(item.json.$schema)}
+					<li class="grid grid-cols-[200px_1fr] card variant-filled-surface" />
 					<li class="grid grid-cols-[200px_1fr] card variant-filled-surface">
 						<aside class="p-4 border-r border-surface-300-600-token">
-							<h3 class="text-lg font-semibold">{schemaInfo.name}</h3>
-							<p class="text-sm">Version: {schemaInfo.version}</p>
-							<p class="text-sm">Author: {schemaInfo.author}</p>
+							<span class="block text-2xs text-surface-300">Schema</span>
+							<h3 class="-mt-1 text-lg font-semibold m">{schemaInfo.name}</h3>
+							<span class="block text-2xs text-surface-300">Version</span>
+							<span class="block -mt-1 text-sm">{schemaInfo.version}</span>
+							<span class="block text-2xs text-surface-300">Author</span>
+							<span class="block -mt-1 text-sm">{schemaInfo.author}</span>
+							<span class="block text-2xs text-surface-300">CID</span>
+							<span class="block -mt-1 text-sm">{item.json.oContext.cid.slice(0, 10)}...</span>
+							<span class="block text-2xs text-surface-300">Prev</span>
+							<span class="block -mt-1 text-sm">
+								{#if item.json.oContext.prev}
+									{item.json.oContext.prev.slice(0, 10)}...
+								{:else}
+									None
+								{/if}
+							</span>
 						</aside>
 						<div class="p-4">
 							{#each Object.entries(item.json) as [key, value]}
-								{#if !['$schema', 'uuid', 'timestamp'].includes(key)}
+								{#if !['$schema', 'oContext'].includes(key)}
 									<div class="flex items-center mb-2">
 										<span class="text-xs text-surface-300">{key}</span>
 										{#if typeof value === 'object' && value !== null}
