@@ -3,12 +3,12 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 
 const ajv = new Ajv();
-ajv.addKeyword('x-schema-metadata');
+ajv.addKeyword('oContext');
 addFormats(ajv);
 
 function generateRandomJson(schemas, forceValid = true) {
     const schema = schemas[Math.floor(Math.random() * schemas.length)].jsonschema;
-    const { author, version, name } = schema['x-schema-metadata'];
+    const { author, version, name } = schema.oContext;
     const schemaUri = `${author}/${version}/${name}`;
 
     const baseJson: any = {
@@ -94,10 +94,11 @@ export default createOperation.mutation({
 
             const [author, version, name] = randomJson.$schema.split('/');
             const schema = fetchedSchemas.find(s =>
-                s.jsonschema['x-schema-metadata'].author === author &&
-                s.jsonschema['x-schema-metadata'].version === version &&
-                s.jsonschema['x-schema-metadata'].name === name
+                s.jsonschema.oContext.author === author &&
+                s.jsonschema.oContext.version === version &&
+                s.jsonschema.oContext.name === name
             );
+
 
             if (!schema) {
                 return {

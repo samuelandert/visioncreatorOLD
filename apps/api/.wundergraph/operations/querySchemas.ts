@@ -17,13 +17,13 @@ export default createOperation.query({
             .order('created_at', { ascending: false });
 
         if (input.name) {
-            query = query.contains('jsonschema', { 'x-schema-metadata': { name: input.name } });
+            query = query.contains('jsonschema', { oContext: { name: input.name } });
         }
         if (input.author) {
-            query = query.contains('jsonschema', { 'x-schema-metadata': { author: input.author } });
+            query = query.contains('jsonschema', { oContext: { author: input.author } });
         }
         if (input.version) {
-            query = query.contains('jsonschema', { 'x-schema-metadata': { version: input.version } });
+            query = query.contains('jsonschema', { oContext: { version: input.version } });
         }
 
         try {

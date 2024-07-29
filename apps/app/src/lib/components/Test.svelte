@@ -37,7 +37,7 @@
 	}
 
 	function getSchemaName(schema) {
-		return schema.jsonschema?.['x-schema-metadata']?.name ?? 'Unnamed Schema';
+		return schema.jsonschema?.oContext?.name ?? 'Unnamed Schema';
 	}
 
 	function selectSchema(schema) {
