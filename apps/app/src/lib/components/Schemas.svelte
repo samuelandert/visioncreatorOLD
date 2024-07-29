@@ -21,6 +21,57 @@
 	let alertType: 'error' | 'success' | '' = '';
 	let selectedSchemaGroup = null;
 	let selectedVersion = null;
+	let modifiedSchema = null;
+
+	function selectSchemaGroup(group) {
+		selectedSchemaGroup = group;
+		selectedVersion = group.versions[group.versions.length - 1];
+		modifiedSchema = JSON.parse(JSON.stringify(selectedVersion.json));
+	}
+
+	function selectVersion(version) {
+		selectedVersion = version;
+		modifiedSchema = JSON.parse(JSON.stringify(version.json));
+	}
+
+	function toggleRequired(propName) {
+		if (!modifiedSchema) return;
+
+		const index = modifiedSchema.required.indexOf(propName);
+		if (index > -1) {
+			modifiedSchema.required.splice(index, 1);
+		} else {
+			modifiedSchema.required.push(propName);
+		}
+		modifiedSchema = { ...modifiedSchema }; // Trigger reactivity
+	}
+
+	$: isSchemaModified = JSON.stringify(selectedVersion?.json) !== JSON.stringify(modifiedSchema);
+
+	async function handleUpdateSchema() {
+		if (!modifiedSchema || !isSchemaModified) return;
+
+		try {
+			const result = await $createSchemaMutation.mutateAsync({
+				schema: modifiedSchema,
+				update: `${selectedVersion.json.oContext.author}/${selectedVersion.json.oContext.name}/${selectedVersion.json.oContext.version}/${selectedVersion.cid}`
+			});
+
+			if (result.success) {
+				alertMessage = 'Schema updated successfully!';
+				alertType = 'success';
+				console.log('Updated schema:', result.insertedData);
+				await $query.refetch();
+			} else {
+				alertMessage = `Error: ${result.error}`;
+				alertType = 'error';
+			}
+		} catch (error) {
+			alertMessage = `Unexpected error: ${error.message}`;
+			alertType = 'error';
+			console.error('Error updating schema:', error);
+		}
+	}
 
 	async function handleInsert() {
 		try {
@@ -42,15 +93,6 @@
 			alertType = 'error';
 			console.error('Error inserting data:', error);
 		}
-	}
-
-	function selectSchemaGroup(group) {
-		selectedSchemaGroup = group;
-		selectedVersion = group.versions[group.versions.length - 1];
-	}
-
-	function selectVersion(version) {
-		selectedVersion = version;
 	}
 
 	function getSchemaName(schema) {
@@ -101,49 +143,6 @@
 		isContextExpanded = !isContextExpanded;
 	}
 
-	async function handleUpdateSchema() {
-		if (!selectedVersion) return;
-
-		const clonedSchema = JSON.parse(JSON.stringify(selectedVersion.json));
-		const properties = Object.keys(clonedSchema.properties).filter((prop) => prop !== 'oContext');
-
-		if (properties.length > 0) {
-			const randomProp = properties[Math.floor(Math.random() * properties.length)];
-			delete clonedSchema.properties[randomProp];
-
-			// Update oContext
-			const newVersion = parseInt(clonedSchema.oContext.version) + 1;
-			clonedSchema.oContext = {
-				...clonedSchema.oContext,
-				version: newVersion.toString(),
-				prev: `${clonedSchema.oContext.name}/${clonedSchema.oContext.version}/${selectedVersion.cid}`
-			};
-
-			try {
-				const result = await $createSchemaMutation.mutateAsync({
-					schema: clonedSchema
-				});
-
-				if (result.success) {
-					alertMessage = 'Schema updated successfully!';
-					alertType = 'success';
-					console.log('Updated schema:', result.insertedData);
-					await $query.refetch();
-				} else {
-					alertMessage = `Error: ${result.error}`;
-					alertType = 'error';
-				}
-			} catch (error) {
-				alertMessage = `Unexpected error: ${error.message}`;
-				alertType = 'error';
-				console.error('Error updating schema:', error);
-			}
-		} else {
-			alertMessage = 'No properties to remove from the schema.';
-			alertType = 'error';
-		}
-	}
-
 	$: schemaGroups = groupSchemas($query.data.schemas);
 </script>
 
@@ -187,9 +186,13 @@
 					<h3 class="text-xl font-semibold truncate">{getSchemaName(selectedVersion)}</h3>
 					<div class="space-x-2">
 						<button class="btn variant-filled-primary" on:click={handleInsert}>Add Object</button>
-						<button class="btn variant-filled-secondary" on:click={handleUpdateSchema}
-							>Update Schema</button
+						<button
+							class="btn variant-filled-secondary"
+							on:click={handleUpdateSchema}
+							disabled={!isSchemaModified}
 						>
+							Update Schema
+						</button>
 					</div>
 				</div>
 				<p class="mb-4 text-sm opacity-75">Author: {getSchemaAuthor(selectedVersion)}</p>
@@ -205,10 +208,9 @@
 						</div>
 					</div>
 				{/if}
-				<h3 class="mb-2 text-xl font-semibold truncate">{getSchemaName(selectedVersion)}</h3>
-				<p class="mb-4 text-sm opacity-75">Author: {getSchemaAuthor(selectedVersion)}</p>
+
 				<div class="space-y-2">
-					{#each Object.entries(selectedVersion.json.properties || {}) as [propName, propDetails]}
+					{#each Object.entries(modifiedSchema.properties || {}) as [propName, propDetails]}
 						{#if propName !== 'oContext'}
 							<div
 								class="p-2 transition-colors duration-200 rounded-lg bg-surface-300-600-token hover:bg-surface-400-500-token"
@@ -218,14 +220,19 @@
 									<div class="space-x-2">
 										<span
 											class="px-2 py-0.5 text-xs font-semibold rounded-full bg-secondary-500 text-secondary-50"
-											>{propDetails.type}</span
 										>
-										{#if selectedVersion.json.required?.includes(propName)}
-											<span
-												class="px-2 py-0.5 text-xs font-semibold rounded-full bg-error-500 text-error-50"
-												>Required</span
-											>
-										{/if}
+											{propDetails.type}
+										</span>
+										<button
+											class="px-2 py-0.5 text-xs font-semibold rounded-full {modifiedSchema.required.includes(
+												propName
+											)
+												? 'bg-error-500 text-error-50'
+												: 'bg-surface-500 text-surface-50'}"
+											on:click={() => toggleRequired(propName)}
+										>
+											{modifiedSchema.required.includes(propName) ? 'Required' : 'Optional'}
+										</button>
 									</div>
 								</div>
 								{#if propDetails.description}
