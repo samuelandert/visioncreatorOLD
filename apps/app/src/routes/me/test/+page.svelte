@@ -3,17 +3,31 @@
 		id: 'TestLayout',
 		layout: {
 			areas: `
-                "area"
+                "left right"
             `,
 			rows: '1fr',
-			columns: '1fr',
-			oveflow: 'hidden'
+			columns: '1fr 1fr',
+			overflow: 'hidden'
 		},
 		children: [
 			{
-				id: 'Test',
-				component: 'Test',
-				slot: 'area',
+				id: 'Schemas',
+				component: 'Schemas',
+				slot: 'left',
+				map: {
+					schemas: {
+						query: 'querySchemas',
+						prop: 'schemas'
+					}
+				}
+			},
+			{
+				id: 'HominiDB',
+				component: 'HominiDB',
+				slot: 'right',
+				layout: {
+					overflow: 'scroll'
+				},
 				map: {
 					db: {
 						query: 'queryDB',
