@@ -9,6 +9,7 @@ export type OperationErrors = {
 	LoadCustomers: LoadCustomersErrors;
 	MyNewsletterStatus: MyNewsletterStatusErrors;
 	createInvite: CreateInviteErrors;
+	createSchema: CreateSchemaErrors;
 	insertDB: InsertDBErrors;
 	listTodos: ListTodosErrors;
 	queryComposer: QueryComposerErrors;
@@ -29,6 +30,7 @@ export type ListSubscriptionsErrors = ClientOperationErrors;
 export type LoadCustomersErrors = ClientOperationErrors;
 export type MyNewsletterStatusErrors = ClientOperationErrors;
 export type CreateInviteErrors = ClientOperationErrors;
+export type CreateSchemaErrors = ClientOperationErrors;
 export type InsertDBErrors = ClientOperationErrors;
 export type ListTodosErrors = ClientOperationErrors;
 export type QueryComposerErrors = ClientOperationErrors;

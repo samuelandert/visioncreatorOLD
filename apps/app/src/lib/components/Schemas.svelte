@@ -9,6 +9,10 @@
 		operationName: 'insertDB'
 	});
 
+	const createSchemaMutation = createMutation({
+		operationName: 'createSchema'
+	});
+
 	onMount(async () => {
 		await $query.refetch();
 	});
@@ -97,6 +101,49 @@
 		isContextExpanded = !isContextExpanded;
 	}
 
+	async function handleUpdateSchema() {
+		if (!selectedVersion) return;
+
+		const clonedSchema = JSON.parse(JSON.stringify(selectedVersion.json));
+		const properties = Object.keys(clonedSchema.properties).filter((prop) => prop !== 'oContext');
+
+		if (properties.length > 0) {
+			const randomProp = properties[Math.floor(Math.random() * properties.length)];
+			delete clonedSchema.properties[randomProp];
+
+			// Update oContext
+			const newVersion = parseInt(clonedSchema.oContext.version) + 1;
+			clonedSchema.oContext = {
+				...clonedSchema.oContext,
+				version: newVersion.toString(),
+				prev: `${clonedSchema.oContext.name}/${clonedSchema.oContext.version}/${selectedVersion.cid}`
+			};
+
+			try {
+				const result = await $createSchemaMutation.mutateAsync({
+					schema: clonedSchema
+				});
+
+				if (result.success) {
+					alertMessage = 'Schema updated successfully!';
+					alertType = 'success';
+					console.log('Updated schema:', result.insertedData);
+					await $query.refetch();
+				} else {
+					alertMessage = `Error: ${result.error}`;
+					alertType = 'error';
+				}
+			} catch (error) {
+				alertMessage = `Unexpected error: ${error.message}`;
+				alertType = 'error';
+				console.error('Error updating schema:', error);
+			}
+		} else {
+			alertMessage = 'No properties to remove from the schema.';
+			alertType = 'error';
+		}
+	}
+
 	$: schemaGroups = groupSchemas($query.data.schemas);
 </script>
 
@@ -138,7 +185,12 @@
 			<div class="p-4 rounded-lg bg-surface-200-700-token">
 				<div class="flex items-center justify-between mb-4">
 					<h3 class="text-xl font-semibold truncate">{getSchemaName(selectedVersion)}</h3>
-					<button class="btn variant-filled-primary" on:click={handleInsert}> Add Object </button>
+					<div class="space-x-2">
+						<button class="btn variant-filled-primary" on:click={handleInsert}>Add Object</button>
+						<button class="btn variant-filled-secondary" on:click={handleUpdateSchema}
+							>Update Schema</button
+						>
+					</div>
 				</div>
 				<p class="mb-4 text-sm opacity-75">Author: {getSchemaAuthor(selectedVersion)}</p>
 
