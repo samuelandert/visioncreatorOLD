@@ -23,6 +23,58 @@
 	let selectedVersion = null;
 	let modifiedSchema = null;
 
+	let isAddingNewSchema = false;
+	let newSchemaJson = '';
+
+	function showNewSchemaForm() {
+		isAddingNewSchema = true;
+		selectedSchemaGroup = null;
+		selectedVersion = null;
+	}
+
+	async function saveNewSchema() {
+		try {
+			const parsedSchema = JSON.parse(newSchemaJson);
+
+			// Add required fields if they're missing
+			if (!parsedSchema.oPrev) {
+				parsedSchema.oPrev = null; // or some default value
+			}
+			if (!parsedSchema.oAuthor) {
+				parsedSchema.oAuthor = 'Unknown'; // or the current user's name if available
+			}
+			if (!parsedSchema.oVersion) {
+				parsedSchema.oVersion = '1.0.0'; // or some default version
+			}
+
+			// Ensure $schema and $id are present
+			if (!parsedSchema.$schema) {
+				parsedSchema.$schema = 'https://json-schema.org/draft/2020-12/schema';
+			}
+			if (!parsedSchema.$id) {
+				parsedSchema.$id = `https://homin.io/schemas/${Date.now()}`;
+			}
+
+			const result = await $createSchemaMutation.mutateAsync({
+				schema: parsedSchema
+			});
+
+			if (result.success) {
+				alertMessage = 'New schema added successfully!';
+				alertType = 'success';
+				await $query.refetch();
+				isAddingNewSchema = false;
+				newSchemaJson = '';
+			} else {
+				throw new Error(result.error || 'Unknown error occurred');
+			}
+		} catch (error) {
+			alertMessage = `Error: ${error.message}`;
+			alertType = 'error';
+			console.error('Error adding new schema:', error);
+		}
+	}
+
 	function selectSchemaGroup(group) {
 		selectedSchemaGroup = group;
 		selectedVersion = group.versions[group.versions.length - 1];
@@ -235,6 +287,12 @@
 <div class="flex h-full overflow-hidden bg-surface-100-800-token">
 	<aside class="w-[300px] p-4 overflow-y-auto bg-surface-200-700-token">
 		<ul class="space-y-2">
+			<button
+				class="w-full p-2 mb-4 text-center text-white transition-colors duration-200 rounded-lg bg-primary-500 hover:bg-primary-600"
+				on:click={showNewSchemaForm}
+			>
+				New Schema
+			</button>
 			{#each schemaGroups as group}
 				<li>
 					<button
@@ -254,7 +312,22 @@
 		</ul>
 	</aside>
 	<main class="w-2/3 p-4 overflow-x-hidden overflow-y-auto bg-surface-100-800-token">
-		{#if selectedSchemaGroup}
+		{#if isAddingNewSchema}
+			<div class="p-4 rounded-lg bg-surface-200-700-token">
+				<h2 class="mb-4 text-2xl font-semibold">Add New Schema</h2>
+				<textarea
+					bind:value={newSchemaJson}
+					class="w-full h-64 p-2 mb-4 font-mono text-sm rounded-lg bg-surface-300-600-token"
+					placeholder="Paste your JSON schema here..."
+				/>
+				<button
+					class="px-4 py-2 text-white transition-colors duration-200 rounded-lg bg-primary-500 hover:bg-primary-600"
+					on:click={saveNewSchema}
+				>
+					Save Schema
+				</button>
+			</div>
+		{:else if selectedSchemaGroup}
 			<div class="tabs">
 				{#each selectedSchemaGroup.versions as version}
 					<button
