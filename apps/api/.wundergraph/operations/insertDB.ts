@@ -25,6 +25,10 @@ const metaSchema = {
             "format": "uri",
             "description": "The JSON Schema version being used"
         },
+        "type": {
+            "type": "string",
+            "description": "The type of the schema"
+        },
         "author": {
             "type": "string",
             "description": "The author of the schema"
@@ -88,53 +92,136 @@ const metaSchema = {
         "title",
         "description",
         "properties",
+        "required"
     ],
     "additionalProperties": false
 };
-
 function generateRandomObject() {
     return {
         $schema: metaSchema.$id,
-        $id: `https://alpha.ipfs.homin.io/Schema${Math.floor(Math.random() * 10000)}`,
+        $id: `https://alpha.ipfs.homin.io/UserSchema${Math.floor(Math.random() * 10000)}`,
+        type: "object",
         author: "HominioAlpha",
         prev: null,
         version: 1,
-        title: `Schema${Math.floor(Math.random() * 10000)}`,
-        description: `Random schema ${Math.random()}`,
+        title: `User Schema ${Math.floor(Math.random() * 10000)}`,
+        description: `Schema for user profile data ${Math.random()}`,
         properties: {
-            randomInteger: {
-                type: "integer",
-                title: "Random Integer",
-                description: "A randomly generated integer",
-                minimum: 0,
-                maximum: 99
-            },
-            randomBoolean: {
-                type: "boolean",
-                title: "Random Boolean",
-                description: "A randomly generated boolean value"
-            },
-            randomString: {
+            id: {
                 type: "string",
-                title: "Random String",
-                description: "A randomly generated string",
-                pattern: "^RandomString[0-9]{1,3}$"
+                title: "User ID",
+                description: "Unique identifier for the user"
             },
-            nestedObject: {
+            username: {
+                type: "string",
+                title: "Username",
+                description: "The user's chosen username",
+                minLength: 3,
+                maxLength: 20,
+                pattern: "^[a-zA-Z0-9_-]+$"
+            },
+            email: {
+                type: "string",
+                title: "Email",
+                description: "The user's email address",
+                format: "email"
+            },
+            password: {
+                type: "string",
+                title: "Password",
+                description: "The user's password (hashed)",
+                minLength: 8
+            },
+            profile: {
                 type: "object",
-                title: "Nested Object",
-                description: "A nested object example",
+                title: "User Profile",
+                description: "Additional profile information",
                 properties: {
-                    nestedProperty: {
+                    fullName: {
                         type: "string",
-                        title: "Nested Property",
-                        description: "A property inside the nested object"
+                        title: "Full Name",
+                        description: "The user's full name"
+                    },
+                    birthDate: {
+                        type: "string",
+                        title: "Birth Date",
+                        description: "The user's birth date",
+                        format: "date"
+                    },
+                    bio: {
+                        type: "string",
+                        title: "Biography",
+                        description: "A short biography of the user",
+                        maxLength: 500
+                    },
+                    location: {
+                        type: "object",
+                        title: "Location",
+                        description: "The user's location",
+                        properties: {
+                            country: {
+                                type: "string",
+                                title: "Country",
+                                description: "The user's country of residence"
+                            },
+                            city: {
+                                type: "string",
+                                title: "City",
+                                description: "The user's city of residence"
+                            }
+                        }
                     }
                 },
-                required: ["nestedProperty"]
+                required: ["fullName"]
+            },
+            settings: {
+                type: "object",
+                title: "User Settings",
+                description: "User preferences and settings",
+                properties: {
+                    theme: {
+                        type: "string",
+                        title: "Theme",
+                        description: "The user's preferred theme",
+                        enum: ["light", "dark", "system"]
+                    },
+                    notifications: {
+                        type: "boolean",
+                        title: "Notifications",
+                        description: "Whether the user wants to receive notifications"
+                    },
+                    language: {
+                        type: "string",
+                        title: "Language",
+                        description: "The user's preferred language",
+                        default: "en"
+                    }
+                }
+            },
+            friends: {
+                type: "array",
+                title: "Friends",
+                description: "List of user's friends",
+                items: {
+                    type: "string",
+                    description: "Friend's user ID"
+                }
+            },
+            createdAt: {
+                type: "string",
+                title: "Created At",
+                description: "Timestamp of when the user account was created",
+                format: "date-time"
+            },
+            lastLogin: {
+                type: "string",
+                title: "Last Login",
+                description: "Timestamp of the user's last login",
+                format: "date-time"
             }
         },
-        required: ["randomInteger", "randomBoolean"],
+        required: ["id", "username", "email", "password", "profile", "createdAt"],
+        additionalProperties: false
     };
 }
 

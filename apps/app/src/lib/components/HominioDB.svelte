@@ -4,6 +4,7 @@
 
 	let query = $me.query;
 	let selectedItem = null;
+	let message = { text: '', type: '' };
 
 	const insertDBMutation = createMutation({
 		operationName: 'insertDB'
@@ -17,11 +18,14 @@
 	}
 
 	async function generateRandomObject() {
+		message = { text: '', type: '' };
 		const result = await $insertDBMutation.mutateAsync({});
 		if (result.success) {
+			message = { text: 'Random object generated successfully!', type: 'success' };
 			await $query.refetch();
 		} else {
-			console.error('Failed to generate random object:', result.error);
+			message = { text: `Failed: ${result.error}`, type: 'error' };
+			console.error('Failed:', result.error);
 		}
 	}
 
@@ -63,6 +67,18 @@
 		>
 			Generate Random Object
 		</button>
+
+		{#if message.text}
+			<div
+				class={`p-2 mb-4 rounded ${
+					message.type === 'success'
+						? 'bg-success-100 text-success-800 dark:bg-success-700 dark:text-success-300'
+						: 'bg-error-100 text-error-800 dark:bg-error-600 dark:text-error-300'
+				}`}
+			>
+				{message.text}
+			</div>
+		{/if}
 
 		{#if query}
 			<ul class="space-y-4">
