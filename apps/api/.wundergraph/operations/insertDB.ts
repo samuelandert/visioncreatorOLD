@@ -12,11 +12,11 @@ function generateRandomJson(schema, cid) {
 
     const baseJson: any = {
         $schema: schemaUri,
-        timestamp: new Date().toISOString(),
         oContext: {
             author: schema.oContext.author,
-            version: 1, // Always set to 1 for new objects
-            prev: null
+            version: 1,
+            prev: null,
+            timestamp: new Date().toISOString(),
         }
     };
 

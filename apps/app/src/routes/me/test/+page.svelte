@@ -3,10 +3,10 @@
 		id: 'TestLayout',
 		layout: {
 			areas: `
-                "left"
+                "left right"
             `,
 			rows: '1fr',
-			columns: '1fr',
+			columns: '60% 1fr',
 			overflow: 'hidden'
 		},
 		children: [
@@ -20,25 +20,25 @@
 						prop: 'schemas'
 					}
 				}
+			},
+			{
+				id: 'HominiDB',
+				component: 'HominiDB',
+				slot: 'right',
+				layout: {
+					overflow: 'scroll'
+				},
+				map: {
+					db: {
+						query: 'queryDB',
+						prop: 'db'
+					},
+					schemas: {
+						query: 'querySchemas',
+						prop: 'schemas'
+					}
+				}
 			}
-			// {
-			// 	id: 'HominiDB',
-			// 	component: 'HominiDB',
-			// 	slot: 'right',
-			// 	layout: {
-			// 		overflow: 'scroll'
-			// 	},
-			// 	map: {
-			// 		db: {
-			// 			query: 'queryDB',
-			// 			prop: 'db'
-			// 		},
-			// 		schemas: {
-			// 			query: 'querySchemas',
-			// 			prop: 'schemas'
-			// 		}
-			// 	}
-			// }
 		]
 	};
 </script>

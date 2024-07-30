@@ -81,10 +81,15 @@
 									<span class="text-xs text-surface-300">version</span>
 									{item.json.oContext.version}
 								</p>
+
 								{#if item.json.oContext.prev !== null && item.json.oContext.prev !== 'null'}
 									<span class="text-xs text-surface-300">prev</span>
 									<span>{item.json.oContext.prev}</span>
 								{/if}
+								<p>
+									<span class="text-xs text-surface-300">timestamp</span>
+									{item.json.oContext.timestamp}
+								</p>
 							</div>
 						</div>
 					{/if}
