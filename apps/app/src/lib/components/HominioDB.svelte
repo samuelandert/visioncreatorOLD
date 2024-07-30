@@ -24,8 +24,8 @@
 			message = { text: 'Random object generated successfully!', type: 'success' };
 			await $query.refetch();
 		} else {
-			message = { text: `Failed: ${result.error}`, type: 'error' };
-			console.error('Failed:', result.error);
+			message = { text: `Failed: ${result.details}`, type: 'error' };
+			console.error('Failed:', result.details);
 		}
 	}
 

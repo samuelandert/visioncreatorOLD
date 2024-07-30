@@ -8,6 +8,7 @@ addFormats(ajv);
 // IMPORTANT !!! IMPORTANT !!! IMPORTANT
 // Please always exchange the $cid of our schema $id with the generated one from our db, when udpating the metaschema.
 // IMPORTANT !!! IMPORTANT !!! IMPORTANT
+
 const metaSchema = {
     "$id": "https://alpha.ipfs.homin.io/QmYfJXqYrwz5nHoAjBcxEbHAr7Q7zQxEUFLeZE5pARUx7R",
     "$schema": "http://json-schema.org/draft-07/schema#",
@@ -27,6 +28,7 @@ const metaSchema = {
         },
         "type": {
             "type": "string",
+            "enum": ["object", "array", "string", "number", "integer", "boolean", "null"],
             "description": "The type of the schema"
         },
         "author": {
@@ -56,7 +58,15 @@ const metaSchema = {
             "additionalProperties": {
                 "type": "object",
                 "properties": {
-                    "type": { "type": "string" },
+                    "type": {
+                        "type": ["string", "array"],
+                        "items": {
+                            "type": "string",
+                            "enum": ["object", "array", "string", "number", "integer", "boolean", "null"]
+                        },
+                        "minItems": 1,
+                        "uniqueItems": true
+                    },
                     "title": { "type": "string" },
                     "description": { "type": "string" },
                     "minimum": { "type": "number" },
@@ -96,6 +106,7 @@ const metaSchema = {
     ],
     "additionalProperties": false
 };
+
 function generateRandomObject() {
     return {
         $schema: metaSchema.$id,
@@ -107,120 +118,147 @@ function generateRandomObject() {
         title: `User Schema ${Math.floor(Math.random() * 10000)}`,
         description: `Schema for user profile data ${Math.random()}`,
         properties: {
-            id: {
+            $schema: {
                 type: "string",
-                title: "User ID",
-                description: "Unique identifier for the user"
+                title: "Schema",
+                description: "The JSON Schema version being used",
+                format: "uri"
             },
-            username: {
+            $id: {
                 type: "string",
-                title: "Username",
-                description: "The user's chosen username",
-                minLength: 3,
-                maxLength: 20,
-                pattern: "^[a-zA-Z0-9_-]+$"
+                title: "ID",
+                description: "Unique identifier for this object",
+                format: "uri"
             },
-            email: {
+            prev: {
+                type: ["string", "null"],
+                format: "uri",
+                title: "Previous Version",
+                description: "The previous version of this object, if any"
+            },
+            type: {
                 type: "string",
-                title: "Email",
-                description: "The user's email address",
-                format: "email"
+                enum: ["object", "array", "string", "number", "integer", "boolean", "null"],
+                title: "Type",
+                description: "The type of this object"
             },
-            password: {
+            author: {
                 type: "string",
-                title: "Password",
-                description: "The user's password (hashed)",
-                minLength: 8
+                title: "Author",
+                description: "The author of this object"
             },
-            profile: {
+            version: {
+                type: "integer",
+                title: "Version",
+                description: "The version number of this object",
+                minimum: 0
+            },
+            title: {
+                type: "string",
+                title: "Title",
+                description: "The title of this object"
+            },
+            description: {
+                type: "string",
+                title: "Description",
+                description: "A description of this object"
+            },
+            properties: {
                 type: "object",
-                title: "User Profile",
-                description: "Additional profile information",
+                title: "User Properties",
+                description: "Properties specific to a user object",
                 properties: {
-                    fullName: {
+                    username: {
                         type: "string",
-                        title: "Full Name",
-                        description: "The user's full name"
+                        title: "Username",
+                        description: "The user's chosen username",
+                        minLength: 3,
+                        maxLength: 20,
+                        pattern: "^[a-zA-Z0-9_-]+$"
                     },
-                    birthDate: {
+                    email: {
                         type: "string",
-                        title: "Birth Date",
-                        description: "The user's birth date",
-                        format: "date"
+                        title: "Email",
+                        description: "The user's email address",
+                        format: "email"
                     },
-                    bio: {
+                    password: {
                         type: "string",
-                        title: "Biography",
-                        description: "A short biography of the user",
-                        maxLength: 500
+                        title: "Password",
+                        description: "The user's password (hashed)",
+                        minLength: 8
                     },
-                    location: {
+                    profile: {
                         type: "object",
-                        title: "Location",
-                        description: "The user's location",
+                        title: "User Profile",
+                        description: "Additional profile information",
                         properties: {
-                            country: {
+                            fullName: {
                                 type: "string",
-                                title: "Country",
-                                description: "The user's country of residence"
+                                title: "Full Name",
+                                description: "The user's full name"
                             },
-                            city: {
+                            birthDate: {
                                 type: "string",
-                                title: "City",
-                                description: "The user's city of residence"
+                                title: "Birth Date",
+                                description: "The user's birth date",
+                                format: "date"
+                            },
+                            bio: {
+                                type: "string",
+                                title: "Biography",
+                                description: "A short biography of the user",
+                                maxLength: 500
+                            },
+                            location: {
+                                type: "object",
+                                title: "Location",
+                                description: "The user's location",
+                                properties: {
+                                    country: {
+                                        type: "string",
+                                        title: "Country",
+                                        description: "The user's country of residence"
+                                    },
+                                    city: {
+                                        type: "string",
+                                        title: "City",
+                                        description: "The user's city of residence"
+                                    }
+                                }
+                            }
+                        },
+                        required: ["fullName"]
+                    },
+                    settings: {
+                        type: "object",
+                        title: "User Settings",
+                        description: "User preferences and settings",
+                        properties: {
+                            theme: {
+                                type: "string",
+                                title: "Theme",
+                                description: "The user's preferred theme",
+                                enum: ["light", "dark", "system"]
+                            },
+                            notifications: {
+                                type: "boolean",
+                                title: "Notifications",
+                                description: "Whether the user wants to receive notifications"
+                            },
+                            language: {
+                                type: "string",
+                                title: "Language",
+                                description: "The user's preferred language",
+                                default: "en"
                             }
                         }
                     }
                 },
-                required: ["fullName"]
-            },
-            settings: {
-                type: "object",
-                title: "User Settings",
-                description: "User preferences and settings",
-                properties: {
-                    theme: {
-                        type: "string",
-                        title: "Theme",
-                        description: "The user's preferred theme",
-                        enum: ["light", "dark", "system"]
-                    },
-                    notifications: {
-                        type: "boolean",
-                        title: "Notifications",
-                        description: "Whether the user wants to receive notifications"
-                    },
-                    language: {
-                        type: "string",
-                        title: "Language",
-                        description: "The user's preferred language",
-                        default: "en"
-                    }
-                }
-            },
-            friends: {
-                type: "array",
-                title: "Friends",
-                description: "List of user's friends",
-                items: {
-                    type: "string",
-                    description: "Friend's user ID"
-                }
-            },
-            createdAt: {
-                type: "string",
-                title: "Created At",
-                description: "Timestamp of when the user account was created",
-                format: "date-time"
-            },
-            lastLogin: {
-                type: "string",
-                title: "Last Login",
-                description: "Timestamp of the user's last login",
-                format: "date-time"
+                required: ["username", "email", "password", "profile"]
             }
         },
-        required: ["id", "username", "email", "password", "profile", "createdAt"],
+        required: ["$schema", "$id", "prev", "author", "version", "properties"],
         additionalProperties: false
     };
 }
