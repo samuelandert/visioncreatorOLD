@@ -5,20 +5,69 @@ import addFormats from 'ajv-formats';
 const ajv = new Ajv();
 addFormats(ajv);
 
+const propertySchema = {
+    type: "object",
+    properties: {
+        type: { type: "string" },
+        title: { type: "string" },
+        description: { type: "string" },
+        minimum: { type: "number" },
+        maximum: { type: "number" },
+        pattern: { type: "string" },
+        properties: { $ref: "#/definitions/properties" }
+    },
+    required: ["type", "title", "description"],
+    additionalProperties: false
+};
+
 const metaSchema = {
     "$id": "https://alpha.ipfs.homin.io/QmXyYRsduQgtVyDdU1pBv7YPw1uphRACMp6YdEueaTaPLs",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
-    "properties": {
-        "$id": { "type": "string", "format": "uri" },
-        "$schema": { "type": "string", "format": "uri" },
-        "author": { "type": "string" },
-        "prev": { "type": ["string", "null"], "format": "uri" },
-        "version": { "type": "integer" },
-        "title": { "type": "string" },
-        "description": { "type": "string" }
+    "title": "Meta Schema",
+    "description": "A schema for defining other schemas",
+    "definitions": {
+        "properties": {
+            "type": "object",
+            "additionalProperties": propertySchema
+        }
     },
-    "required": ["$schema", "$id", "prev", "author", "version", "title", "description"],
+    "properties": {
+        "$id": {
+            "type": "string",
+            "format": "uri",
+            "description": "The unique identifier for this schema"
+        },
+        "$schema": {
+            "type": "string",
+            "format": "uri",
+            "description": "The JSON Schema version being used"
+        },
+        "author": {
+            "type": "string",
+            "description": "The author of the schema"
+        },
+        "prev": {
+            "type": ["string", "null"],
+            "format": "uri",
+            "description": "The previous version of this schema, if any"
+        },
+        "version": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "The version number of this schema"
+        },
+        "title": {
+            "type": "string",
+            "description": "The title of the schema"
+        },
+        "description": {
+            "type": "string",
+            "description": "A description of the schema"
+        },
+        "properties": { "$ref": "#/definitions/properties" }
+    },
+    "required": ["$schema", "$id", "prev", "author", "version", "title", "description", "properties"],
     "additionalProperties": false
 };
 
@@ -29,7 +78,39 @@ function generateRandomObject() {
         prev: null,
         version: 0,
         title: `Schema${Math.floor(Math.random() * 10000)}`,
-        description: `Random schema ${Math.random()}`
+        description: `Random schema ${Math.random()}`,
+        properties: {
+            randomInteger: {
+                type: "integer",
+                title: "Random Integer",
+                description: "A randomly generated integer",
+                minimum: 0,
+                maximum: 99
+            },
+            randomBoolean: {
+                type: "boolean",
+                title: "Random Boolean",
+                description: "A randomly generated boolean value"
+            },
+            randomString: {
+                type: "string",
+                title: "Random String",
+                description: "A randomly generated string",
+                pattern: "^RandomString[0-9]{1,3}$"
+            },
+            nestedObject: {
+                type: "object",
+                title: "Nested Object",
+                description: "A nested object example",
+                properties: {
+                    nestedProperty: {
+                        type: "string",
+                        title: "Nested Property",
+                        description: "A property inside the nested object"
+                    }
+                }
+            }
+        }
     };
 }
 
