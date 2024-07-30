@@ -43,11 +43,10 @@
 		}));
 	}
 
-	let expandedProperties: Record<string, boolean> = {};
+	let expandedProperty: string | null = null;
 
 	function toggleProperty(key: string) {
-		expandedProperties[key] = !expandedProperties[key];
-		expandedProperties = { ...expandedProperties };
+		expandedProperty = expandedProperty === key ? null : key;
 	}
 
 	function getPropertyDescription(key: string, schema: any) {
@@ -84,13 +83,17 @@
 			<ul class="space-y-4">
 				{#each $query.data.db.sort(sortByTimestamp) as item}
 					<li
-						class="p-4 cursor-pointer card variant-filled-tertiary-200 dark:variant-filled-surface-900 hover:bg-tertiary-300 dark:hover:bg-surface-800"
+						class="p-2 cursor-pointer card variant-filled-tertiary-200 dark:variant-filled-surface-900 hover:bg-tertiary-300 dark:hover:bg-surface-800"
 						on:click={() => (selectedItem = item)}
 					>
-						<h3 class="mb-2 text-lg font-semibold truncate">{item.json.title}</h3>
-						<p class="mb-1 text-sm truncate">{item.json.description}</p>
-						<p class="text-xs truncate">Author: {item.json.author}</p>
-						<p class="text-xs">Version: {item.json.version}</p>
+						<h3 class="font-semibold truncate text-md">{item.json.title}</h3>
+						{#if item.json.author || item.json.version}
+							<p class="text-xs truncat text-tertiary-400">
+								{#if item.json.author}{item.json.author}{/if}
+								{#if item.json.author && item.json.version} • {/if}
+								{#if item.json.version}V{item.json.version}{/if}
+							</p>
+						{/if}
 					</li>
 				{/each}
 			</ul>
@@ -100,7 +103,9 @@
 	<!-- Right side: Detail view -->
 	<div class="flex-1 p-4 overflow-y-auto">
 		{#if selectedItem}
-			<h2 class="mb-4 text-2xl font-bold">{selectedItem.json.title}</h2>
+			<h2 class="text-2xl font-bold">{selectedItem.json.title}</h2>
+			<p class="mb-3 text-sm truncate">{selectedItem.json.description}</p>
+
 			<div class="flex">
 				<!-- First column: normal props -->
 				<div class="flex flex-col max-w-xs p-4 border-r border-surface-300-600-token">
@@ -168,7 +173,7 @@
 										class="ml-1 text-xs text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
 										on:click={() => toggleProperty(prop.key)}
 									>
-										{expandedProperties[prop.key] ? '▼' : '▶'}
+										{expandedProperty === prop.key ? '▼' : '▶'}
 									</button>
 								{/if}
 							</div>
@@ -178,38 +183,32 @@
 						</div>
 					{/each}
 				</div>
-
 				<!-- Third column: sub-properties -->
-				{#if Object.values(expandedProperties).some(Boolean)}
+				{#if expandedProperty}
 					<div class="flex flex-col max-w-xs p-4 border-l border-surface-300-600-token">
-						{#each renderProperties(selectedItem.json.properties, selectedItem.json.required || []) as prop}
-							{#if prop.isObj && expandedProperties[prop.key]}
-								<h4 class="mb-2 font-semibold truncate text-md">{prop.key} Properties</h4>
-								{#each renderProperties(prop.value.properties, prop.value.required || []) as subProp}
-									<div class="flex flex-col mb-2">
-										<div class="flex items-center">
-											<span
-												class="px-1 text-white rounded-sm text-2xs bg-surface-700 dark:bg-surface-600"
-											>
-												{subProp.isObj ? 'object' : subProp.value.type}
-											</span>
-											<span
-												class="ml-1 text-sm font-semibold truncate text-surface-700 dark:text-surface-300"
-											>
-												{subProp.key}
-											</span>
-											{#if subProp.isRequired}
-												<span class="px-1 ml-1 text-red-500 border border-red-500 rounded text-2xs"
-													>*</span
-												>
-											{/if}
-										</div>
-										<span class="text-xs truncate text-surface-600 dark:text-surface-400">
-											{subProp.value.description}
-										</span>
-									</div>
-								{/each}
-							{/if}
+						{#each renderProperties(selectedItem.json.properties[expandedProperty].properties, selectedItem.json.properties[expandedProperty].required || []) as subProp}
+							<div class="flex flex-col mb-2">
+								<div class="flex items-center">
+									<span
+										class="px-1 text-white rounded-sm text-2xs bg-surface-700 dark:bg-surface-600"
+									>
+										{subProp.isObj ? 'object' : subProp.value.type}
+									</span>
+									<span
+										class="ml-1 text-sm font-semibold truncate text-surface-700 dark:text-surface-300"
+									>
+										{subProp.key}
+									</span>
+									{#if subProp.isRequired}
+										<span class="px-1 ml-1 text-red-500 border border-red-500 rounded text-2xs"
+											>*</span
+										>
+									{/if}
+								</div>
+								<span class="text-xs truncate text-surface-600 dark:text-surface-400">
+									{subProp.value.description}
+								</span>
+							</div>
 						{/each}
 					</div>
 				{/if}
