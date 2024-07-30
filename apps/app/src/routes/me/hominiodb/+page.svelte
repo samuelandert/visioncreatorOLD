@@ -3,27 +3,27 @@
 		id: 'TestLayout',
 		layout: {
 			areas: `
-                "left right"
+                "right"
             `,
 			rows: '1fr',
-			columns: '60% 1fr',
+			columns: '1fr',
 			overflow: 'hidden'
 		},
 		children: [
+			// {
+			// 	id: 'Schemas',
+			// 	component: 'Schemas',
+			// 	slot: 'left',
+			// 	map: {
+			// 		schemas: {
+			// 			query: 'querySchemas',
+			// 			prop: 'schemas'
+			// 		}
+			// 	}
+			// },
 			{
-				id: 'Schemas',
-				component: 'Schemas',
-				slot: 'left',
-				map: {
-					schemas: {
-						query: 'querySchemas',
-						prop: 'schemas'
-					}
-				}
-			},
-			{
-				id: 'HominiDB',
-				component: 'HominiDB',
+				id: 'HominioDB',
+				component: 'HominioDB',
 				slot: 'right',
 				layout: {
 					overflow: 'scroll'
@@ -32,10 +32,6 @@
 					db: {
 						query: 'queryDB',
 						prop: 'db'
-					},
-					schemas: {
-						query: 'querySchemas',
-						prop: 'schemas'
 					}
 				}
 			}
