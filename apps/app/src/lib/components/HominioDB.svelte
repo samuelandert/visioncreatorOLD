@@ -9,6 +9,9 @@
 		operationName: 'insertDB'
 	});
 
+	function isFieldRequired(key: string, schema: any) {
+		return schema.required && schema.required.includes(key);
+	}
 	function sortByTimestamp(a, b) {
 		return new Date(b.json.timestamp).getTime() - new Date(a.json.timestamp).getTime();
 	}
@@ -43,19 +46,11 @@
 		expandedProperties = { ...expandedProperties };
 	}
 
-	function getPropertyDescription(key: string) {
-		const descriptions = {
-			$id: 'The unique identifier for this schema',
-			prev: 'The previous version of this schema, if any',
-			title: 'The title of the schema',
-			author: 'The author of the schema',
-			$schema: 'The JSON Schema version being used',
-			properties: 'The properties defined by this schema',
-			description: 'A description of the schema',
-			version: 'The version number of this schema',
-			required: 'The required properties for this schema'
-		};
-		return descriptions[key] || '';
+	function getPropertyDescription(key: string, schema: any) {
+		if (schema.properties && schema.properties[key] && schema.properties[key].description) {
+			return schema.properties[key].description;
+		}
+		return '';
 	}
 </script>
 
@@ -110,15 +105,17 @@
 									<span class="ml-1 text-sm font-semibold text-surface-700 dark:text-surface-300">
 										{key}
 									</span>
-									{#if ['$id', '$schema', 'title', 'author'].includes(key)}
+									{#if isFieldRequired(key, selectedItem.json)}
 										<span class="px-1 ml-1 text-red-500 border border-red-500 rounded text-2xs"
 											>*</span
 										>
 									{/if}
 								</div>
-								<span class="text-xs text-surface-600 dark:text-surface-400">
-									{getPropertyDescription(key)}
-								</span>
+								{#if getPropertyDescription(key, selectedItem.json)}
+									<span class="text-xs text-surface-600 dark:text-surface-400">
+										{getPropertyDescription(key, selectedItem.json)}
+									</span>
+								{/if}
 								{#if typeof value !== 'object' || value === null}
 									<span class="text-xs truncate text-surface-900 dark:text-white">
 										{['$id', '$schema'].includes(key) ? truncateCID(value) : value}

@@ -8,32 +8,12 @@ addFormats(ajv);
 // IMPORTANT !!! IMPORTANT !!! IMPORTANT
 // Please always exchange the $cid of our schema $id with the generated one from our db, when udpating the metaschema.
 // IMPORTANT !!! IMPORTANT !!! IMPORTANT
-
 const metaSchema = {
     "$id": "https://alpha.ipfs.homin.io/QmYfJXqYrwz5nHoAjBcxEbHAr7Q7zQxEUFLeZE5pARUx7R",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "title": "Meta Schema",
     "description": "A schema for defining other schemas",
-    "definitions": {
-        "properties": {
-            "type": "object",
-            "additionalProperties": {
-                type: "object",
-                properties: {
-                    type: { type: "string" },
-                    title: { type: "string" },
-                    description: { type: "string" },
-                    minimum: { type: "number" },
-                    maximum: { type: "number" },
-                    pattern: { type: "string" },
-                    properties: { $ref: "#/definitions/properties" }
-                },
-                required: ["type", "title", "description"],
-                additionalProperties: false
-            }
-        }
-    },
     "properties": {
         "$id": {
             "type": "string",
@@ -67,15 +47,55 @@ const metaSchema = {
             "type": "string",
             "description": "A description of the schema"
         },
-        "properties": { "$ref": "#/definitions/properties" }
+        "properties": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "properties": {
+                    "type": { "type": "string" },
+                    "title": { "type": "string" },
+                    "description": { "type": "string" },
+                    "minimum": { "type": "number" },
+                    "maximum": { "type": "number" },
+                    "pattern": { "type": "string" },
+                    "properties": { "$ref": "#/properties/properties" },
+                    "required": {
+                        "type": "array",
+                        "items": { "type": "string" },
+                        "uniqueItems": true
+                    }
+                },
+                "required": ["type", "title", "description"]
+            }
+        },
+        "required": {
+            "type": "array",
+            "items": { "type": "string" },
+            "uniqueItems": true,
+            "description": "The required properties for this schema"
+        },
+        "additionalProperties": {
+            "type": "boolean",
+            "description": "Whether additional properties are allowed"
+        }
     },
-    "required": ["$schema", "$id", "prev", "author", "version", "title", "description", "properties"],
+    "required": [
+        "$schema",
+        "$id",
+        "prev",
+        "author",
+        "version",
+        "title",
+        "description",
+        "properties",
+    ],
     "additionalProperties": false
 };
 
 function generateRandomObject() {
     return {
         $schema: metaSchema.$id,
+        $id: `https://alpha.ipfs.homin.io/Schema${Math.floor(Math.random() * 10000)}`,
         author: "HominioAlpha",
         prev: null,
         version: 1,
@@ -110,9 +130,11 @@ function generateRandomObject() {
                         title: "Nested Property",
                         description: "A property inside the nested object"
                     }
-                }
+                },
+                required: ["nestedProperty"]
             }
-        }
+        },
+        required: ["randomInteger", "randomBoolean"],
     };
 }
 
