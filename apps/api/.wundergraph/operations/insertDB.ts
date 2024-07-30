@@ -5,8 +5,12 @@ import addFormats from 'ajv-formats';
 const ajv = new Ajv();
 addFormats(ajv);
 
+// IMPORTANT !!! IMPORTANT !!! IMPORTANT
+// Please always exchange the $cid of our schema $id with the generated one from our db, when udpating the metaschema.
+// IMPORTANT !!! IMPORTANT !!! IMPORTANT
+
 const metaSchema = {
-    "$id": "https://alpha.ipfs.homin.io/QmXyYRsduQgtVyDdU1pBv7YPw1uphRACMp6YdEueaTaPLs",
+    "$id": "https://alpha.ipfs.homin.io/QmYfJXqYrwz5nHoAjBcxEbHAr7Q7zQxEUFLeZE5pARUx7R",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "title": "Meta Schema",
@@ -71,10 +75,10 @@ const metaSchema = {
 
 function generateRandomObject() {
     return {
-        $schema: "http://json-schema.org/draft-07/schema#",
+        $schema: metaSchema.$id,
         author: "HominioAlpha",
         prev: null,
-        version: 0,
+        version: 1,
         title: `Schema${Math.floor(Math.random() * 10000)}`,
         description: `Random schema ${Math.random()}`,
         properties: {
