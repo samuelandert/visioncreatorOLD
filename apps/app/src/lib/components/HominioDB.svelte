@@ -3,7 +3,7 @@
 	import { slide } from 'svelte/transition';
 	export let me;
 
-	$: query = $me?.query;
+	let query = $me.query;
 
 	const insertDBMutation = createMutation({
 		operationName: 'insertDB'

@@ -5,21 +5,6 @@ import addFormats from 'ajv-formats';
 const ajv = new Ajv();
 addFormats(ajv);
 
-const propertySchema = {
-    type: "object",
-    properties: {
-        type: { type: "string" },
-        title: { type: "string" },
-        description: { type: "string" },
-        minimum: { type: "number" },
-        maximum: { type: "number" },
-        pattern: { type: "string" },
-        properties: { $ref: "#/definitions/properties" }
-    },
-    required: ["type", "title", "description"],
-    additionalProperties: false
-};
-
 const metaSchema = {
     "$id": "https://alpha.ipfs.homin.io/QmXyYRsduQgtVyDdU1pBv7YPw1uphRACMp6YdEueaTaPLs",
     "$schema": "http://json-schema.org/draft-07/schema#",
@@ -29,7 +14,20 @@ const metaSchema = {
     "definitions": {
         "properties": {
             "type": "object",
-            "additionalProperties": propertySchema
+            "additionalProperties": {
+                type: "object",
+                properties: {
+                    type: { type: "string" },
+                    title: { type: "string" },
+                    description: { type: "string" },
+                    minimum: { type: "number" },
+                    maximum: { type: "number" },
+                    pattern: { type: "string" },
+                    properties: { $ref: "#/definitions/properties" }
+                },
+                required: ["type", "title", "description"],
+                additionalProperties: false
+            }
         }
     },
     "properties": {
@@ -114,55 +112,73 @@ function generateRandomObject() {
     };
 }
 
+async function insertSchema(context, operations, schema, isMetaSchema = false) {
+    const calcCIDResult = await operations.mutate({
+        operationName: 'calculateCID',
+        input: { json: schema },
+    });
+
+    if (!calcCIDResult.data?.success) {
+        throw new Error('Failed to calculate CID: ' + (calcCIDResult.data?.error || 'Unknown error'));
+    }
+
+    const schemaWithId = calcCIDResult.data.json;
+
+    if (!isMetaSchema) {
+        const validate = ajv.compile(metaSchema);
+        const valid = validate(schemaWithId);
+
+        if (!valid) {
+            throw new Error('Validation error: ' + ajv.errorsText(validate.errors));
+        }
+    } else {
+        // For metaSchema, we'll just validate it as a valid JSON Schema
+        try {
+            ajv.compile(schemaWithId);
+        } catch (error) {
+            throw new Error('Invalid JSON Schema: ' + error.message);
+        }
+    }
+
+    const { data, error } = await context.supabase
+        .from('db')
+        .insert({ json: schemaWithId })
+        .select();
+
+    if (error) {
+        throw new Error('Database insert error: ' + error.message);
+    }
+
+    return data[0];
+}
+
 export default createOperation.mutation({
     input: z.object({}),
     handler: async ({ input, context, operations }) => {
         try {
-            const randomObject = generateRandomObject();
-
-            const calcCIDResult = await operations.mutate({
-                operationName: 'calculateCID',
-                input: { json: randomObject },
-            });
-
-            if (!calcCIDResult.data?.success) {
-                return {
-                    success: false,
-                    error: 'Failed to calculate CID',
-                    details: calcCIDResult.data?.error || 'Unknown error'
-                };
-            }
-
-            const objectWithId = calcCIDResult.data.json;
-
-            const validate = ajv.compile(metaSchema);
-            const valid = validate(objectWithId);
-
-            if (!valid) {
-                return {
-                    success: false,
-                    error: 'Validation error',
-                    details: ajv.errorsText(validate.errors),
-                    generatedObject: objectWithId
-                };
-            }
-
-            const { data, error } = await context.supabase
+            // Check if the database is empty
+            const { count, error: countError } = await context.supabase
                 .from('db')
-                .insert({ json: objectWithId })
-                .select();
+                .select('*', { count: 'exact', head: true });
 
-            if (error) {
-                return {
-                    success: false,
-                    error: 'Database insert error',
-                    details: error.message
-                };
+            if (countError) {
+                throw new Error('Failed to check database: ' + countError.message);
+            }
+
+            let insertedData;
+
+            if (count === 0) {
+                // If the database is empty, insert the metaSchema
+                insertedData = await insertSchema(context, operations, metaSchema, true);
+            } else {
+                // Otherwise, insert a random schema
+                const randomObject = generateRandomObject();
+                insertedData = await insertSchema(context, operations, randomObject);
             }
 
             return {
                 success: true,
-                insertedData: data[0]
+                insertedData
             };
         } catch (error) {
             console.error('Unexpected error in insertDB:', error);
