@@ -61,14 +61,12 @@ function generatePatternString(pattern) {
     }
     // Add more pattern handling as needed
     return `pattern-${Math.random()}`;
-}
-
-export default createOperation.mutation({
+} export default createOperation.mutation({
     input: z.object({
         schema: z.any(),
         cid: z.string()
     }),
-    handler: async ({ input, context }) => {
+    handler: async ({ input, context, operations }) => {
         try {
             const { schema, cid } = input;
 
@@ -90,21 +88,39 @@ export default createOperation.mutation({
 
             const randomJson = generateRandomJson(fetchedSchema, cid);
 
+
+            const calcCIDResult = await operations.mutate({
+                operationName: 'calculateCID',
+                input: {
+                    json: randomJson
+                },
+            });
+
+            if (!calcCIDResult.data?.success) {
+                return {
+                    success: false,
+                    error: 'Failed to calculate CID',
+                    details: calcCIDResult.data?.error || 'Unknown error'
+                };
+            }
+
+            const jsonWithId = calcCIDResult.data.json;
+
             const validate = ajv.compile(fetchedSchema);
-            const valid = validate(randomJson);
+            const valid = validate(jsonWithId);
 
             if (!valid) {
                 return {
                     success: false,
                     error: 'Validation error',
                     details: ajv.errorsText(validate.errors),
-                    generatedJson: randomJson
+                    generatedJson: jsonWithId
                 };
             }
 
             const { data, error } = await context.supabase
                 .from('db')
-                .insert({ json: randomJson })
+                .insert({ json: jsonWithId })
                 .select();
 
             if (error) {

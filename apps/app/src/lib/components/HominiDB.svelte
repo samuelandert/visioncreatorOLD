@@ -95,7 +95,7 @@
 					{/if}
 					<div class="p-2 grid grid-cols-[auto_auto_1fr] gap-x-2 gap-y-1 text-sm -mt-2">
 						{#each Object.entries(item.json) as [key, value]}
-							{#if key !== '$schema' && key !== 'oContext'}
+							{#if key !== 'oContext'}
 								<span class="px-1 text-white rounded-sm text-2xs bg-surface-700">
 									{getFieldType(schema, key)}
 								</span>
