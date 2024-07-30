@@ -41,6 +41,21 @@
 		expandedProperties[key] = !expandedProperties[key];
 		expandedProperties = { ...expandedProperties };
 	}
+
+	function getPropertyDescription(key: string) {
+		const descriptions = {
+			$id: 'The unique identifier for this schema',
+			prev: 'The previous version of this schema, if any',
+			title: 'The title of the schema',
+			author: 'The author of the schema',
+			$schema: 'The JSON Schema version being used',
+			properties: 'The properties defined by this schema',
+			description: 'A description of the schema',
+			version: 'The version number of this schema',
+			required: 'The required properties for this schema'
+		};
+		return descriptions[key] || '';
+	}
 </script>
 
 <div class="p-4 overflow-scroll text-gray-900 bg-tertiary-100 dark:bg-surface-900 dark:text-white">
@@ -55,70 +70,101 @@
 		<ul class="space-y-4">
 			{#each $query.data.db.sort(sortByTimestamp) as item}
 				<li class="card variant-filled-tertiary-200 dark:variant-filled-surface-900">
-					<div class="flex flex-col p-4 space-y-4">
-						{#each Object.entries(item.json) as [key, value]}
-							<div class="flex flex-col">
-								<div class="flex items-center">
-									<span
-										class="px-1 text-white rounded-sm text-2xs bg-surface-700 dark:bg-surface-600"
-									>
-										{typeof value === 'object' && value !== null ? 'object' : typeof value}
-									</span>
-									<span class="ml-1 text-sm font-semibold text-surface-700 dark:text-surface-300">
-										{key}
-									</span>
-									{#if ['$id', '$schema', 'title', 'author', 'properties'].includes(key)}
-										<span class="px-1 ml-1 text-red-500 border border-red-500 rounded text-2xs"
-											>*</span
-										>
-									{/if}
-									{#if typeof value === 'object' && value !== null}
-										<button
-											class="ml-1 text-xs text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
-											on:click={() => toggleProperty(key)}
-										>
-											{expandedProperties[key] ? '▼' : '▶'}
-										</button>
-									{/if}
-								</div>
-								<span class="text-xs text-surface-600 dark:text-surface-400">
-									{key === '$id'
-										? 'The unique identifier for this schema'
-										: key === 'prev'
-										? 'The previous version of this schema, if any'
-										: key === 'title'
-										? 'The title of the schema'
-										: key === 'author'
-										? 'The author of the schema'
-										: key === '$schema'
-										? 'The JSON Schema version being used'
-										: key === 'properties'
-										? 'The properties defined by this schema'
-										: key === 'description'
-										? 'A description of the schema'
-										: key === 'version'
-										? 'The version number of this schema'
-										: ''}
-								</span>
-								{#if typeof value !== 'object' || value === null}
-									<span class="text-xs text-surface-900 dark:text-white">
-										{key === '$id' ? truncateCID(value) : value}
-									</span>
+					<div class="flex">
+						<!-- First column: normal props -->
+						<div class="flex flex-col p-4 border-r border-surface-300-600-token">
+							{#each Object.entries(item.json) as [key, value]}
+								{#if key !== 'properties'}
+									<div class="flex flex-col mb-2">
+										<div class="flex items-center">
+											<span
+												class="px-1 text-white rounded-sm text-2xs bg-surface-700 dark:bg-surface-600"
+											>
+												{Array.isArray(value)
+													? 'array'
+													: typeof value === 'object' && value !== null
+													? 'object'
+													: typeof value}
+											</span>
+											<span
+												class="ml-1 text-sm font-semibold text-surface-700 dark:text-surface-300"
+											>
+												{key}
+											</span>
+											{#if ['$id', '$schema', 'title', 'author'].includes(key)}
+												<span class="px-1 ml-1 text-red-500 border border-red-500 rounded text-2xs"
+													>*</span
+												>
+											{/if}
+										</div>
+										<span class="text-xs text-surface-600 dark:text-surface-400">
+											{getPropertyDescription(key)}
+										</span>
+										{#if typeof value !== 'object' || value === null}
+											<span class="text-xs text-surface-900 dark:text-white">
+												{key === '$id' ? truncateCID(value) : value}
+											</span>
+										{/if}
+									</div>
 								{/if}
-								{#if typeof value === 'object' && value !== null && expandedProperties[key]}
-									<div class="mt-2 ml-4">
-										{#each renderProperties(value, item.json.required || []) as prop}
-											<div class="mt-2">
+							{/each}
+						</div>
+
+						<!-- Second column: properties -->
+						<div class="flex flex-col p-4 border-r border-surface-300-600-token">
+							<h3 class="mb-2 text-lg font-semibold">Properties</h3>
+							{#each renderProperties(item.json.properties, item.json.required || []) as prop}
+								<div class="flex flex-col mb-2">
+									<div class="flex items-center">
+										<span
+											class="px-1 text-white rounded-sm text-2xs bg-surface-700 dark:bg-surface-600"
+										>
+											{prop.isObj ? 'object' : prop.value.type}
+										</span>
+										<span class="ml-1 text-sm font-semibold text-surface-700 dark:text-surface-300">
+											{prop.key}
+										</span>
+										{#if prop.isRequired}
+											<span class="px-1 ml-1 text-red-500 border border-red-500 rounded text-2xs"
+												>*</span
+											>
+										{/if}
+										{#if prop.isObj}
+											<button
+												class="ml-1 text-xs text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+												on:click={() => toggleProperty(prop.key)}
+											>
+												{expandedProperties[prop.key] ? '▼' : '▶'}
+											</button>
+										{/if}
+									</div>
+									<span class="text-xs text-surface-600 dark:text-surface-400">
+										{prop.value.description}
+									</span>
+								</div>
+							{/each}
+						</div>
+
+						<!-- Third column: sub-properties -->
+						{#if Object.values(expandedProperties).some(Boolean)}
+							<div class="flex flex-col p-4 border-l border-surface-300-600-token">
+								{#each renderProperties(item.json.properties, item.json.required || []) as prop}
+									{#if prop.isObj && expandedProperties[prop.key]}
+										<h4 class="mb-2 font-semibold text-md">{prop.key} Properties</h4>
+										{#each renderProperties(prop.value.properties, prop.value.required || []) as subProp}
+											<div class="flex flex-col mb-2">
 												<div class="flex items-center">
 													<span
 														class="px-1 text-white rounded-sm text-2xs bg-surface-700 dark:bg-surface-600"
 													>
-														{prop.isObj ? 'object' : prop.value.type}
+														{subProp.isObj ? 'object' : subProp.value.type}
 													</span>
-													<span class="ml-1 text-xs text-surface-700 dark:text-surface-300">
-														{prop.key}
+													<span
+														class="ml-1 text-sm font-semibold text-surface-700 dark:text-surface-300"
+													>
+														{subProp.key}
 													</span>
-													{#if prop.isRequired}
+													{#if subProp.isRequired}
 														<span
 															class="px-1 ml-1 text-red-500 border border-red-500 rounded text-2xs"
 															>*</span
@@ -126,14 +172,14 @@
 													{/if}
 												</div>
 												<span class="text-xs text-surface-600 dark:text-surface-400">
-													{prop.value.description}
+													{subProp.value.description}
 												</span>
 											</div>
 										{/each}
-									</div>
-								{/if}
+									{/if}
+								{/each}
 							</div>
-						{/each}
+						{/if}
 					</div>
 				</li>
 			{/each}
