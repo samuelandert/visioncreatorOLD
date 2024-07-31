@@ -65,17 +65,28 @@
 			console.log('Updated expandedProperties:', expandedProperties);
 		}
 	}
-
 	function handleToggleProperty(event: CustomEvent<{ path: string; expanded: boolean }>) {
 		console.log('HominioDB: Received toggle event', event.detail);
 		const { path, expanded } = event.detail;
+
 		if (expanded) {
+			// Close all siblings at the same level
+			const pathParts = path.split('.');
+			const parentPath = pathParts.slice(0, -1).join('.');
+			expandedProperties = expandedProperties.filter((p) => {
+				const pParts = p.split('.');
+				return p === path || pParts.length !== pathParts.length || !p.startsWith(parentPath);
+			});
+
+			// Add the new expanded path
 			expandedProperties = [...expandedProperties, path];
 		} else {
+			// Remove the path and all its children
 			expandedProperties = expandedProperties.filter(
 				(p) => p !== path && !p.startsWith(path + '.')
 			);
 		}
+
 		console.log('HominioDB: Updated expandedProperties', expandedProperties);
 	}
 
