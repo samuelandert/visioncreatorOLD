@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { createMutation } from '$lib/wundergraph';
+	import Properties from './Properties.svelte';
 	export let me;
 
 	let query = $me.query;
 	let selectedItem = null;
 	let message = { text: '', type: '' };
 	let schemaInfo = null;
+	let expandedProperties = new Map();
 
 	const insertDBMutation = createMutation({
 		operationName: 'insertDB'
@@ -32,20 +34,6 @@
 		return cid.length > 16 ? `${cid.slice(0, 20)}...` : cid;
 	}
 
-	function renderProperties(properties: any, required: string[] = []) {
-		return Object.entries(properties).map(([key, value]) => ({
-			key,
-			value,
-			isObj: typeof value === 'object' && value !== null && value.type === 'object',
-			isRequired: required.includes(key)
-		}));
-	}
-
-	let expandedProperty: string | null = null;
-
-	function toggleProperty(key: string) {
-		expandedProperty = expandedProperty === key ? null : key;
-	}
 	function findSchemaInfo(schemaId: string) {
 		if (!$query || !$query.data || !$query.data.db) return null;
 		const schema = $query.data.db.find((item) => item.json.$id === schemaId);
@@ -68,10 +56,32 @@
 	}
 
 	function loadSchema(schemaId: string) {
+		console.log('Loading schema:', schemaId);
 		const schema = $query.data.db.find((item) => item.json.$id === schemaId);
 		if (schema) {
 			selectedItem = schema;
+			expandedProperties.set(schemaId, null);
+			expandedProperties = new Map(expandedProperties);
+			console.log('Updated expandedProperties:', expandedProperties);
 		}
+	}
+
+	function handleToggleProperty(event: CustomEvent<{ path: string; expanded: boolean }>) {
+		console.log('HominioDB: Received toggle event', event.detail);
+		const { path, expanded } = event.detail;
+		if (expanded) {
+			expandedProperties = [...expandedProperties, path];
+		} else {
+			expandedProperties = expandedProperties.filter(
+				(p) => p !== path && !p.startsWith(path + '.')
+			);
+		}
+		console.log('HominioDB: Updated expandedProperties', expandedProperties);
+	}
+
+	$: if (selectedItem) {
+		console.log('HominioDB: Selected item changed, resetting expandedProperties');
+		expandedProperties = [];
 	}
 </script>
 
@@ -116,7 +126,7 @@
 	</div>
 
 	<!-- Right side: Detail view -->
-	<div class="flex-1 p-4 overflow-y-auto">
+	<div class="flex-1 p-4 overflow-x-auto">
 		{#if selectedItem}
 			<h2 class="text-2xl font-bold">{selectedItem.json.title}</h2>
 			<p class="mb-3 text-md text-tertiary-400">
@@ -154,72 +164,12 @@
 						{/if}
 					{/each}
 				</div>
-
-				<!-- Second column: properties -->
-				<div class="flex flex-col max-w-xs p-4 border-r border-surface-300-600-token">
-					<h3 class="mb-2 text-lg font-semibold">Properties</h3>
-					{#each renderProperties(selectedItem.json.properties, selectedItem.json.required || []) as prop}
-						<div class="flex flex-col mb-2">
-							<div class="flex items-center">
-								<span
-									class="px-1 text-white rounded-sm text-2xs bg-surface-700 dark:bg-surface-600"
-								>
-									{prop.isObj ? 'object' : prop.value.type}
-								</span>
-								<span
-									class="ml-1 text-sm font-semibold truncate text-surface-700 dark:text-surface-300"
-								>
-									{prop.key}
-								</span>
-								{#if prop.isRequired}
-									<span class="px-1 ml-1 text-red-500 border border-red-500 rounded text-2xs"
-										>*</span
-									>
-								{/if}
-								{#if prop.isObj}
-									<button
-										class="ml-1 text-xs text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
-										on:click={() => toggleProperty(prop.key)}
-									>
-										{expandedProperty === prop.key ? '▼' : '▶'}
-									</button>
-								{/if}
-							</div>
-							<span class="text-xs truncate text-surface-600 dark:text-surface-400">
-								{prop.value.description}
-							</span>
-						</div>
-					{/each}
-				</div>
-				<!-- Third column: sub-properties -->
-				{#if expandedProperty}
-					<div class="flex flex-col max-w-xs p-4 border-l border-surface-300-600-token">
-						{#each renderProperties(selectedItem.json.properties[expandedProperty].properties, selectedItem.json.properties[expandedProperty].required || []) as subProp}
-							<div class="flex flex-col mb-2">
-								<div class="flex items-center">
-									<span
-										class="px-1 text-white rounded-sm text-2xs bg-surface-700 dark:bg-surface-600"
-									>
-										{subProp.isObj ? 'object' : subProp.value.type}
-									</span>
-									<span
-										class="ml-1 text-sm font-semibold truncate text-surface-700 dark:text-surface-300"
-									>
-										{subProp.key}
-									</span>
-									{#if subProp.isRequired}
-										<span class="px-1 ml-1 text-red-500 border border-red-500 rounded text-2xs"
-											>*</span
-										>
-									{/if}
-								</div>
-								<span class="text-xs truncate text-surface-600 dark:text-surface-400">
-									{subProp.value.description}
-								</span>
-							</div>
-						{/each}
-					</div>
-				{/if}
+				<Properties
+					properties={selectedItem.json.properties}
+					required={selectedItem.json.required || []}
+					{expandedProperties}
+					on:toggleProperty={handleToggleProperty}
+				/>
 			</div>
 		{:else}
 			<p class="text-xl text-center">Select an item from the list to view details</p>
