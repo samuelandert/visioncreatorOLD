@@ -139,25 +139,24 @@
 	<!-- Right side: Detail view -->
 	<div class="flex-1 p-4 overflow-x-auto">
 		{#if selectedItem}
-			<h2 class="text-2xl font-bold">{selectedItem.json.title}</h2>
-			<p class="mb-3 text-md text-tertiary-400">
-				{selectedItem.json.description}
-			</p>
-
 			<div class="flex">
 				<!-- First column: normal props -->
 				<div class="flex flex-col max-w-xs p-4 border-r border-surface-300-600-token">
-					<h3 class="mb-2 text-lg font-semibold">Metainfo</h3>
+					<h3 class="text-xl font-semibold">{selectedItem.json.title}</h3>
+
+					<span class="mb-4 text-sm text-surface-800 dark:text-tertiary-500">
+						{selectedItem.json.description}
+					</span>
 					{#if schemaInfo}
 						<div
-							class="flex flex-col p-2 mb-4 rounded cursor-pointer hover:bg-tertiary-200 dark:hover:bg-surface-700"
+							class="flex flex-col mb-2 rounded cursor-pointer hover:bg-tertiary-200 dark:hover:bg-surface-700"
 							on:click={() => loadSchema(schemaInfo.id)}
 						>
 							<span class="text-xs text-surface-500 dark:text-surface-400">Schema</span>
 							<span class="text-sm font-semibold text-tertiary-100 dark:text-tertiary-200">
 								{schemaInfo.title} v{schemaInfo.version ?? 0}
 							</span>
-							<span class="text-xs text-tertiary-400 dark:text-tertiary-400">
+							<span class="text-xs text-surface-700 dark:text-tertiary-400">
 								{schemaInfo.description}
 							</span>
 						</div>
@@ -168,7 +167,7 @@
 								<span class="text-xs text-surface-500 dark:text-surface-400">
 									{key}
 								</span>
-								<span class="text-sm text-tertiary-100 dark:text-tertiary-200">
+								<span class="text-xs text-surface-700 dark:text-tertiary-400">
 									{key === '$id' ? truncateCID(selectedItem.json[key]) : selectedItem.json[key]}
 								</span>
 							</div>
