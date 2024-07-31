@@ -57,13 +57,10 @@
 	}
 </script>
 
-<div class="flex h-full text-gray-900 bg-tertiary-100 dark:bg-surface-900 dark:text-white">
+<div class="flex h-full text-gray-900 bg-tertiary-100 dark:bg-surface-800 dark:text-white">
 	<!-- Left side: List view -->
 	<div class="w-[300px] p-4 overflow-y-auto border-r border-surface-300-600-token">
-		<button
-			on:click={generateRandomObject}
-			class="w-full px-4 py-2 mb-4 text-white bg-blue-500 rounded hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
-		>
+		<button on:click={generateRandomObject} class="mb-4 btn variant-filled-primary">
 			Generate Random Object
 		</button>
 
@@ -83,7 +80,7 @@
 			<ul class="space-y-4">
 				{#each $query.data.db.sort(sortByTimestamp) as item}
 					<li
-						class="p-2 cursor-pointer card variant-filled-tertiary-200 dark:variant-filled-surface-900 hover:bg-tertiary-300 dark:hover:bg-surface-800"
+						class="p-2 cursor-pointer card variant-filled-tertiary-200 dark:variant-filled-surface-700 hover:bg-tertiary-300 dark:hover:bg-surface-600"
 						on:click={() => (selectedItem = item)}
 					>
 						<h3 class="font-semibold truncate text-md">{item.json.title}</h3>
@@ -104,44 +101,25 @@
 	<div class="flex-1 p-4 overflow-y-auto">
 		{#if selectedItem}
 			<h2 class="text-2xl font-bold">{selectedItem.json.title}</h2>
-			<p class="mb-3 text-sm truncate">{selectedItem.json.description}</p>
+			<p class="mb-3 text-md text-tertiary-400">
+				{selectedItem.json.description}
+			</p>
 
 			<div class="flex">
 				<!-- First column: normal props -->
 				<div class="flex flex-col max-w-xs p-4 border-r border-surface-300-600-token">
 					<h3 class="mb-2 text-lg font-semibold">Metainfo</h3>
-					{#each Object.entries(selectedItem.json) as [key, value]}
-						{#if key !== 'properties'}
+					{#each ['$id', '$schema', 'author', 'version', 'prev'] as key}
+						{#if selectedItem.json[key] !== undefined}
 							<div class="flex flex-col mb-2">
-								<div class="flex items-center">
-									<span
-										class="px-1 text-white rounded-sm text-2xs bg-surface-700 dark:bg-surface-600"
-									>
-										{Array.isArray(value)
-											? 'array'
-											: typeof value === 'object' && value !== null
-											? 'object'
-											: typeof value}
-									</span>
-									<span class="ml-1 text-sm font-semibold text-surface-700 dark:text-surface-300">
-										{key}
-									</span>
-									{#if isFieldRequired(key, selectedItem.json)}
-										<span class="px-1 ml-1 text-red-500 border border-red-500 rounded text-2xs"
-											>*</span
-										>
-									{/if}
-								</div>
-								{#if getPropertyDescription(key, selectedItem.json)}
-									<span class="text-xs text-surface-600 dark:text-surface-400">
-										{getPropertyDescription(key, selectedItem.json)}
-									</span>
-								{/if}
-								{#if typeof value !== 'object' || value === null}
-									<span class="text-xs truncate text-surface-900 dark:text-white">
-										{['$id', '$schema'].includes(key) ? truncateCID(value) : value}
-									</span>
-								{/if}
+								<span class="text-xs text-surface-500 dark:text-surface-400">
+									{key}
+								</span>
+								<span class="text-sm text-tertiary-100 dark:text-tertiary-200">
+									{['$id', '$schema'].includes(key)
+										? truncateCID(selectedItem.json[key])
+										: selectedItem.json[key]}
+								</span>
 							</div>
 						{/if}
 					{/each}

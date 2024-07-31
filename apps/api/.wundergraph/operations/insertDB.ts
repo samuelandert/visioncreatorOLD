@@ -10,7 +10,7 @@ addFormats(ajv);
 // IMPORTANT !!! IMPORTANT !!! IMPORTANT
 
 const metaSchema = {
-    "$id": "https://alpha.ipfs.homin.io/QmYfJXqYrwz5nHoAjBcxEbHAr7Q7zQxEUFLeZE5pARUx7R",
+    "$id": "https://alpha.ipfs.homin.io/QmPSYA3hz2HEpWgai9DkcM2YG5Yf17WBgbYeYYtF8duqF8",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "title": "Meta Schema",
