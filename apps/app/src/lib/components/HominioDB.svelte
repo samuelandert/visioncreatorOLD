@@ -5,14 +5,12 @@
 	let query = $me.query;
 	let selectedItem = null;
 	let message = { text: '', type: '' };
+	let schemaInfo = null;
 
 	const insertDBMutation = createMutation({
 		operationName: 'insertDB'
 	});
 
-	function isFieldRequired(key: string, schema: any) {
-		return schema.required && schema.required.includes(key);
-	}
 	function sortByTimestamp(a, b) {
 		return new Date(b.json.timestamp).getTime() - new Date(a.json.timestamp).getTime();
 	}
@@ -48,12 +46,32 @@
 	function toggleProperty(key: string) {
 		expandedProperty = expandedProperty === key ? null : key;
 	}
-
-	function getPropertyDescription(key: string, schema: any) {
-		if (schema.properties && schema.properties[key] && schema.properties[key].description) {
-			return schema.properties[key].description;
+	function findSchemaInfo(schemaId: string) {
+		if (!$query || !$query.data || !$query.data.db) return null;
+		const schema = $query.data.db.find((item) => item.json.$id === schemaId);
+		if (schema) {
+			return {
+				title: schema.json.title || 'Unknown Schema',
+				description: schema.json.description || 'No description available',
+				author: schema.json.author || 'Unknown',
+				id: schema.json.$id,
+				version: schema.json.version
+			};
 		}
-		return '';
+		return null;
+	}
+
+	$: if (selectedItem && selectedItem.json.$schema) {
+		schemaInfo = findSchemaInfo(selectedItem.json.$schema);
+	} else {
+		schemaInfo = null;
+	}
+
+	function loadSchema(schemaId: string) {
+		const schema = $query.data.db.find((item) => item.json.$id === schemaId);
+		if (schema) {
+			selectedItem = schema;
+		}
 	}
 </script>
 
@@ -109,16 +127,28 @@
 				<!-- First column: normal props -->
 				<div class="flex flex-col max-w-xs p-4 border-r border-surface-300-600-token">
 					<h3 class="mb-2 text-lg font-semibold">Metainfo</h3>
-					{#each ['$id', '$schema', 'author', 'version', 'prev'] as key}
+					{#if schemaInfo}
+						<div
+							class="flex flex-col p-2 mb-4 rounded cursor-pointer hover:bg-tertiary-200 dark:hover:bg-surface-700"
+							on:click={() => loadSchema(schemaInfo.id)}
+						>
+							<span class="text-xs text-surface-500 dark:text-surface-400">Schema</span>
+							<span class="text-sm font-semibold text-tertiary-100 dark:text-tertiary-200">
+								{schemaInfo.title} v{schemaInfo.version ?? 0}
+							</span>
+							<span class="text-xs text-tertiary-400 dark:text-tertiary-400">
+								{schemaInfo.description}
+							</span>
+						</div>
+					{/if}
+					{#each ['$id', 'author', 'version', 'prev'] as key}
 						{#if selectedItem.json[key] !== undefined}
 							<div class="flex flex-col mb-2">
 								<span class="text-xs text-surface-500 dark:text-surface-400">
 									{key}
 								</span>
 								<span class="text-sm text-tertiary-100 dark:text-tertiary-200">
-									{['$id', '$schema'].includes(key)
-										? truncateCID(selectedItem.json[key])
-										: selectedItem.json[key]}
+									{key === '$id' ? truncateCID(selectedItem.json[key]) : selectedItem.json[key]}
 								</span>
 							</div>
 						{/if}
