@@ -228,7 +228,6 @@
 				</div>
 				<Properties
 					properties={selectedItem.json.properties}
-					required={selectedItem.json.required || []}
 					{expandedProperties}
 					on:toggleProperty={handleToggleProperty}
 				/>

@@ -3,7 +3,6 @@
 	const dispatch = createEventDispatcher();
 
 	export let properties: any;
-	export let required: string[] = [];
 	export let path: string[] = [];
 	export let expandedProperties: string[] = [];
 
@@ -18,12 +17,11 @@
 		return expandedProperties.includes(propertyPath);
 	}
 
-	function renderProperties(properties: any, required: string[] = [], path: string[] = []) {
+	function renderProperties(properties: any, path: string[] = []) {
 		return Object.entries(properties).map(([key, value]) => ({
 			key,
 			value,
-			isObj: typeof value === 'object' && value !== null && value.type === 'object',
-			isRequired: required.includes(key),
+			isObj: typeof value === 'object' && value !== null,
 			path: [...path, key].join('.')
 		}));
 	}
@@ -33,7 +31,7 @@
 	$: {
 		console.log('Properties: Rendered properties changed', properties);
 		console.log('Properties: Current expandedProperties', expandedProperties);
-		renderedProperties = renderProperties(properties, required, path);
+		renderedProperties = renderProperties(properties, path);
 	}
 </script>
 
@@ -43,14 +41,11 @@
 			<div class="flex flex-col mb-2">
 				<div class="flex items-center">
 					<span class="px-1 text-white rounded-sm text-2xs bg-surface-700 dark:bg-surface-600">
-						{prop.isObj ? 'object' : prop.value.type}
+						{typeof prop.value}
 					</span>
 					<span class="ml-1 text-sm font-semibold truncate text-surface-700 dark:text-surface-300">
 						{prop.key}
 					</span>
-					{#if prop.isRequired}
-						<span class="px-1 ml-1 text-red-500 border border-red-500 rounded text-2xs">*</span>
-					{/if}
 					{#if prop.isObj}
 						<button
 							class="ml-1 text-xs text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
@@ -61,7 +56,7 @@
 					{/if}
 				</div>
 				<span class="text-xs truncate text-surface-600 dark:text-surface-400">
-					{prop.value.description}
+					{prop.isObj ? '' : JSON.stringify(prop.value)}
 				</span>
 			</div>
 		{/each}
@@ -69,8 +64,7 @@
 	{#each renderedProperties as prop (prop.path)}
 		{#if prop.isObj && isExpanded(prop.path)}
 			<svelte:self
-				properties={prop.value.properties}
-				required={prop.value.required || []}
+				properties={prop.value}
 				path={prop.path.split('.')}
 				{expandedProperties}
 				on:toggleProperty
