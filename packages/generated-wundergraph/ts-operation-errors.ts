@@ -12,6 +12,7 @@ export type OperationErrors = {
 	createInvite: CreateInviteErrors;
 	createSchema: CreateSchemaErrors;
 	insertDB: InsertDBErrors;
+	insertObject: InsertObjectErrors;
 	listTodos: ListTodosErrors;
 	queryComposer: QueryComposerErrors;
 	queryDB: QueryDBErrors;
@@ -34,6 +35,7 @@ export type CalculateCIDErrors = ClientOperationErrors;
 export type CreateInviteErrors = ClientOperationErrors;
 export type CreateSchemaErrors = ClientOperationErrors;
 export type InsertDBErrors = ClientOperationErrors;
+export type InsertObjectErrors = ClientOperationErrors;
 export type ListTodosErrors = ClientOperationErrors;
 export type QueryComposerErrors = ClientOperationErrors;
 export type QueryDBErrors = ClientOperationErrors;

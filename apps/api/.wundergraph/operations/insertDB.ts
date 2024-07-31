@@ -110,7 +110,6 @@ const metaSchema = {
 function generateRandomObject() {
     return {
         $schema: metaSchema.$id,
-        $id: `https://alpha.ipfs.homin.io/UserSchema${Math.floor(Math.random() * 10000)}`,
         type: "object",
         author: "HominioAlpha",
         prev: null,

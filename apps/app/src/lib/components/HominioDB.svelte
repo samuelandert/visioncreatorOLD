@@ -13,6 +13,10 @@
 		operationName: 'insertDB'
 	});
 
+	const insertObjectMutation = createMutation({
+		operationName: 'insertObject'
+	});
+
 	function sortByTimestamp(a, b) {
 		return new Date(b.json.timestamp).getTime() - new Date(a.json.timestamp).getTime();
 	}
@@ -94,13 +98,61 @@
 		console.log('HominioDB: Selected item changed, resetting expandedProperties');
 		expandedProperties = [];
 	}
+
+	async function insertHardcodedObject() {
+		message = { text: '', type: '' };
+		const hardcodedObject = {
+			$schema: 'https://alpha.ipfs.homin.io/QmWqLHcJsrMpmZrbxfMA3oM2YVbHjJfGw94UbZgBwm1mYR',
+			$id: '', // This will be filled by the server
+			prev: null,
+			type: 'object',
+			title: 'John Doe User Object',
+			author: 'HominioDB Client',
+			version: 1,
+			description: 'A sample user object for John Doe',
+			properties: {
+				username: 'john_doe',
+				email: 'john.doe@example.com',
+				password: 'hashedpassword123',
+				profile: {
+					fullName: 'John Doe',
+					birthDate: '1990-01-01',
+					bio: "I'm a software developer who loves coding and outdoor activities.",
+					location: {
+						country: 'United States',
+						city: 'San Francisco'
+					}
+				},
+				settings: {
+					theme: 'dark',
+					notifications: true,
+					language: 'en'
+				}
+			}
+		};
+
+		const result = await $insertObjectMutation.mutateAsync({
+			object: hardcodedObject
+		});
+
+		if (result.success) {
+			message = { text: 'Hardcoded object inserted successfully!', type: 'success' };
+			await $query.refetch();
+		} else {
+			message = { text: `Failed: ${result.details}`, type: 'error' };
+			console.error('Failed:', result.details);
+		}
+	}
 </script>
 
 <div class="flex h-full text-gray-900 bg-tertiary-100 dark:bg-surface-800 dark:text-white">
 	<!-- Left side: List view -->
 	<div class="w-[300px] p-4 overflow-y-auto border-r border-surface-300-600-token">
 		<button on:click={generateRandomObject} class="mb-4 btn variant-filled-primary">
-			Generate Random Object
+			Generate Schema
+		</button>
+		<button on:click={insertHardcodedObject} class="mb-4 ml-2 btn variant-filled-secondary">
+			Insert Object
 		</button>
 
 		{#if message.text}
