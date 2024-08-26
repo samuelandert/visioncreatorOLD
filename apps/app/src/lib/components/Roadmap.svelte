@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
-
 	let gridColumns = 6;
 	let visioncreators = writable(1);
 
@@ -9,6 +8,8 @@
 		date: Date;
 		poolAmount: number;
 		daysSincePrevious: number;
+		provisionPercentage: number;
+		showDetails?: boolean;
 	};
 
 	const fibonacciSequence = [
@@ -19,6 +20,9 @@
 	];
 
 	const fibonacciMilestones: Milestone[] = [];
+
+	const startProvision = 70;
+	const endProvision = 5;
 
 	fibonacciSequence.forEach((value, index) => {
 		const startDate = new Date('2024-09-21');
@@ -57,7 +61,12 @@
 			);
 		}
 
-		fibonacciMilestones.push({ value, date, poolAmount, daysSincePrevious });
+		const provisionPercentage =
+			startProvision -
+			(startProvision - endProvision) *
+				(1 - Math.exp((-3 * index) / (fibonacciSequence.length - 1)));
+
+		fibonacciMilestones.push({ value, date, poolAmount, daysSincePrevious, provisionPercentage });
 	});
 
 	$: states = fibonacciMilestones.map((milestone, index) => {
@@ -117,15 +126,18 @@
 			class="grid gap-4 w-full box-border"
 			style="grid-template-columns: repeat({gridColumns}, 1fr);"
 		>
-			{#each fibonacciMilestones as milestone, index}
+			{#each fibonacciMilestones as milestone, index (milestone.value)}
 				{#if states[index] === 'completed'}
 					<div
-						class=" bg-success-500/30 flex flex-col justify-center items-center p-4 transition-all duration-200 hover:scale-105 relative overflow-hidden min-h-[140px] rounded-lg shadow-lg"
+						class="bg-success-500/30 flex flex-col justify-center items-center p-4 transition-all duration-200 hover:scale-105 relative overflow-hidden min-h-[140px] rounded-lg shadow-lg"
 					>
 						<span class="text-3xl font-bold text-surface-50"
 							>{milestone.value.toLocaleString()}</span
 						>
 						<span class="text-sm mt-2 text-surface-100">{formatDate(milestone.date)}</span>
+						<span class="text-xs mt-1 text-surface-200"
+							>{milestone.provisionPercentage.toFixed(2)}%</span
+						>
 					</div>
 				{:else if states[index] === 'in-progress'}
 					<div
@@ -148,44 +160,67 @@
 								>{milestone.value.toLocaleString()}</span
 							>
 							<span class="text-sm mt-2 text-surface-100">{formatDate(milestone.date)}</span>
+							<span class="text-xs mt-1 text-surface-200"
+								>{milestone.provisionPercentage.toFixed(2)}%</span
+							>
 						</div>
 					</div>
 				{:else}
 					<div
-						class="card bg-surface-700/30 flex flex-col justify-between items-center p-4 transition-all duration-200 hover:scale-105 relative overflow-hidden min-h-[140px] rounded-lg shadow-lg"
+						class="card bg-surface-700/30 flex flex-col justify-center items-center p-4 transition-all duration-200 hover:scale-105 relative overflow-hidden min-h-[140px] rounded-lg shadow-lg cursor-pointer"
+						on:click={() => (milestone.showDetails = !milestone.showDetails)}
 					>
-						<div class="w-full h-6 absolute top-0 left-0 bg-surface-700/50 rounded-t-lg">
-							<span
-								class="absolute top-1 left-2 text-xs font-medium uppercase text-surface-300 opacity-80"
-								>Coming</span
-							>
-						</div>
-						<div class="flex justify-between items-center w-full z-10 mt-6">
-							<div class="flex flex-col items-start">
+						{#if !milestone.showDetails}
+							<div class="flex flex-col items-center">
+								<Icon icon="mdi:lock" class="text-4xl mb-2 text-surface-400" />
 								<span class="text-2xl font-bold text-surface-400"
 									>{milestone.value.toLocaleString()}</span
 								>
-								<span class="text-xs mt-1 text-surface-300">+{milestone.daysSincePrevious}d</span>
-							</div>
-							<div class="flex flex-col items-end">
-								<span class="text-sm text-surface-400"
+								<span class="text-sm mt-2 text-surface-400"
 									>{formatCurrency(milestone.poolAmount).split('.')[0]}</span
 								>
-								<span class="text-xs mt-1 text-surface-300">{formatDate(milestone.date)}</span>
+								<span class="text-xs mt-1 text-surface-400"
+									>{milestone.provisionPercentage.toFixed(2)}%</span
+								>
 							</div>
-						</div>
+						{:else}
+							<div class="flex flex-col items-center w-full">
+								<span class="text-xs uppercase text-surface-400 mb-2">Details</span>
+								<span class="text-sm text-surface-400">+{milestone.daysSincePrevious}d</span>
+								<span class="text-sm text-surface-400">{formatDate(milestone.date)}</span>
+								<span class="text-xs mt-1 text-surface-400"
+									>{milestone.provisionPercentage.toFixed(2)}%</span
+								>
+							</div>
+						{/if}
 					</div>
 				{/if}
 			{/each}
 		</div>
 	</div>
-	<aside class="w-48 bg-surface-800 flex flex-col items-center justify-center p-2">
-		<label for="visioncreators" class="text-surface-200 text-xs mb-2">VisionCreators</label>
+	<aside class="w-64 bg-surface-800 flex flex-col items-center justify-center p-4">
+		<label for="visioncreators" class="text-surface-200 text-sm mb-2">VisionCreators</label>
 		<input
 			id="visioncreators"
 			type="number"
 			bind:value={$visioncreators}
-			class="w-full p-1 bg-surface-700 text-surface-50 rounded text-center"
+			class="w-full p-2 bg-surface-700 text-surface-50 rounded text-center mb-4"
 		/>
+		<div class="grid grid-cols-2 gap-2 w-full">
+			{#each [10, 100, 1000, 10000] as value}
+				<button
+					on:click={() => ($visioncreators += value)}
+					class="btn variant-filled-primary text-sm py-1"
+				>
+					+{value}
+				</button>
+				<button
+					on:click={() => ($visioncreators = Math.max(0, $visioncreators - value))}
+					class="btn variant-filled-secondary text-sm py-1"
+				>
+					-{value}
+				</button>
+			{/each}
+		</div>
 	</aside>
 </main>
