@@ -20,6 +20,7 @@
 	fibonacciSequence.forEach((value, index) => {
 		const startDate = new Date('2024-09-21');
 		const midDate = new Date('2025-03-21');
+		const endDate = new Date('2040-03-21');
 
 		let date: Date;
 
@@ -32,20 +33,14 @@
 			const daysToAdd = (progress * (midDate.getTime() - startDate.getTime())) / (1000 * 3600 * 24);
 			date = new Date(startDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
 		} else {
-			const minDays = 25;
-			const growthFactor = 1.1; // Adjust this value to control the growth rate
-
-			if (index === fibonacciSequence.indexOf(1597)) {
-				// Ensure at least 25 days after the 987 milestone
-				date = new Date(midDate.getTime() + minDays * 24 * 60 * 60 * 1000);
-			} else {
-				const daysToAdd =
-					minDays * Math.pow(growthFactor, index - fibonacciSequence.indexOf(987) - 1);
-				date = new Date(
-					fibonacciMilestones[fibonacciMilestones.length - 1].date.getTime() +
-						daysToAdd * 24 * 60 * 60 * 1000
-				);
-			}
+			const totalDays = (endDate.getTime() - midDate.getTime()) / (1000 * 3600 * 24);
+			const progress = Math.pow(
+				(index - fibonacciSequence.indexOf(987)) /
+					(fibonacciSequence.length - fibonacciSequence.indexOf(987)),
+				1.5
+			); // Adjusted non-linear growth
+			const daysToAdd = progress * totalDays;
+			date = new Date(midDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
 		}
 
 		const poolAmount = value * 30;
@@ -62,7 +57,7 @@
 		fibonacciMilestones.push({ value, date, poolAmount, daysSincePrevious });
 	});
 
-	let gridColumns = 5;
+	let gridColumns = 6;
 	let states = fibonacciMilestones.map((milestone, index) => {
 		if (index < 15) return 'completed';
 		if (index === 15) return 'in-progress';
@@ -108,31 +103,68 @@
 	}
 </script>
 
-<main class="w-screen h-screen bg-surface-900 text-surface-50 overflow-auto p-5">
+<main class="w-screen h-screen bg-surface-900 text-surface-50 overflow-auto p-4">
 	<div
 		class="grid gap-4 w-full box-border"
 		style="grid-template-columns: repeat({gridColumns}, 1fr);"
 	>
 		{#each fibonacciMilestones as milestone, index}
-			<div
-				class="card {getCardClass(
-					states[index]
-				)} flex flex-col justify-between items-center p-4 transition-all duration-200 hover:scale-105 relative overflow-hidden min-h-[200px]"
-			>
-				<span class="h3 z-10">{milestone.value.toLocaleString()}</span>
-				<span class="text-sm z-10">{formatCurrency(milestone.poolAmount)}</span>
-				<ProgressBar
-					value={getProgressPercentage(milestone.value)}
-					meter="bg-surface-900/30"
-					track="bg-surface-900/10"
-					class="w-full h-full absolute top-0 left-0"
-				/>
-				<span class="text-sm mt-2 font-bold uppercase {getStateColor(states[index])} z-10"
-					>{states[index]}</span
+			{#if states[index] === 'completed' || states[index] === 'in-progress'}
+				<div
+					class="card {getCardClass(
+						states[index]
+					)} flex flex-col justify-between items-center p-4 transition-all duration-200 hover:scale-105 relative overflow-hidden min-h-[140px] rounded-lg shadow-lg"
 				>
-				<span class="text-xs mt-1 z-10">{formatDate(milestone.date)}</span>
-				<span class="text-xs mt-1 z-10">Days since previous: {milestone.daysSincePrevious}</span>
-			</div>
+					<div class="w-full h-6 absolute top-0 left-0 bg-surface-700/50 rounded-t-lg">
+						<div
+							class="h-full bg-success-500/30 rounded-t-lg transition-all duration-300 ease-in-out flex items-center justify-start pl-2"
+							style="width: {getProgressPercentage(milestone.value)}%"
+						>
+							<span class="text-xs font-medium uppercase {getStateColor(states[index])} opacity-80"
+								>{states[index]}</span
+							>
+						</div>
+					</div>
+					<div class="flex justify-between items-center w-full z-10 mt-6">
+						<div class="flex flex-col items-start">
+							<span class="text-2xl font-bold text-primary-300"
+								>{milestone.value.toLocaleString()}</span
+							>
+							<span class="text-xs mt-1 text-surface-400">+{milestone.daysSincePrevious}d</span>
+						</div>
+						<div class="flex flex-col items-end">
+							<span class="text-sm text-secondary-300"
+								>{formatCurrency(milestone.poolAmount).split('.')[0]}</span
+							>
+							<span class="text-xs mt-1 text-surface-400">{formatDate(milestone.date)}</span>
+						</div>
+					</div>
+				</div>
+			{:else}
+				<div
+					class="card bg-surface-700/30 flex flex-col justify-between items-center p-4 transition-all duration-200 hover:scale-105 relative overflow-hidden min-h-[140px] rounded-lg shadow-lg"
+				>
+					<div class="w-full h-6 absolute top-0 left-0 bg-surface-700/50 rounded-t-lg">
+						<div class="h-full flex items-center justify-start pl-2">
+							<span class="text-xs font-medium uppercase text-surface-300 opacity-80">Coming</span>
+						</div>
+					</div>
+					<div class="flex justify-between items-center w-full z-10 mt-6">
+						<div class="flex flex-col items-start">
+							<span class="text-2xl font-bold text-surface-400"
+								>{milestone.value.toLocaleString()}</span
+							>
+							<span class="text-xs mt-1 text-surface-300">+{milestone.daysSincePrevious}d</span>
+						</div>
+						<div class="flex flex-col items-end">
+							<span class="text-sm text-surface-400"
+								>{formatCurrency(milestone.poolAmount).split('.')[0]}</span
+							>
+							<span class="text-xs mt-1 text-surface-300">{formatDate(milestone.date)}</span>
+						</div>
+					</div>
+				</div>
+			{/if}
 		{/each}
 	</div>
 </main>
