@@ -3,8 +3,9 @@
 
 	let gridColumns = 6;
 	let visioncreators = writable(1);
-	const startProvision = 70;
-	const endProvision = 7;
+	const startProvision = 80;
+	const endProvision = 20;
+	const platformFee = 20;
 
 	type Milestone = {
 		value: number;
@@ -13,6 +14,9 @@
 		daysSincePrevious: number;
 		provisionPercentage: number;
 		showDetails?: boolean;
+		startupFund?: number;
+		platformFeeAmount?: number;
+		provisionPool?: number;
 	};
 
 	const fibonacciSequence = [
@@ -66,7 +70,21 @@
 			(startProvision - endProvision) *
 				(1 - Math.exp((-3 * index) / (fibonacciSequence.length - 1)));
 
-		fibonacciMilestones.push({ value, date, poolAmount, daysSincePrevious, provisionPercentage });
+		const platformFeeAmount = (poolAmount * platformFee) / 100;
+		const remainingPool = poolAmount - platformFeeAmount;
+		const provisionPool = (remainingPool * provisionPercentage) / 100;
+		const startupFund = remainingPool - provisionPool;
+
+		fibonacciMilestones.push({
+			value,
+			date,
+			poolAmount,
+			daysSincePrevious,
+			provisionPercentage,
+			startupFund,
+			platformFeeAmount,
+			provisionPool
+		});
 	});
 
 	$: states = fibonacciMilestones.map((milestone, index) => {
@@ -79,8 +97,6 @@
 		return 'open';
 	});
 
-	$: currentProgress = $visioncreators;
-
 	$: getProgressPercentage = (milestone: number, previousMilestone: number): number => {
 		if ($visioncreators >= milestone) return 100;
 		if ($visioncreators <= previousMilestone) return 0;
@@ -88,28 +104,6 @@
 			(($visioncreators - previousMilestone) / (milestone - previousMilestone)) * 100
 		);
 	};
-
-	function getCardClass(state: string): string {
-		switch (state) {
-			case 'completed':
-				return 'bg-success-500';
-			case 'in-progress':
-				return 'bg-warning-500';
-			default:
-				return 'bg-surface-800';
-		}
-	}
-
-	function getStateColor(state: string): string {
-		switch (state) {
-			case 'completed':
-				return 'text-success-500';
-			case 'in-progress':
-				return 'text-info-200';
-			default:
-				return 'text-surface-400';
-		}
-	}
 
 	function formatDate(date: Date): string {
 		return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
@@ -138,13 +132,6 @@
 						<span class="text-xs mt-1 text-surface-200"
 							>{milestone.provisionPercentage.toFixed(2)}%</span
 						>
-						{#if milestone.value >= 987}
-							<span class="text-xs mt-1 text-surface-200">
-								Startup Fund: {formatCurrency(
-									((milestone.poolAmount * (100 - milestone.provisionPercentage)) / 100) * 0.5
-								).split('.')[0]}
-							</span>
-						{/if}
 					</div>
 				{:else if states[index] === 'in-progress'}
 					<div
@@ -170,13 +157,6 @@
 							<span class="text-xs mt-1 text-surface-200"
 								>{milestone.provisionPercentage.toFixed(2)}%</span
 							>
-							{#if milestone.value >= 987}
-								<span class="text-xs mt-1 text-surface-200">
-									Startup Fund: {formatCurrency(
-										((milestone.poolAmount * (100 - milestone.provisionPercentage)) / 100) * 0.5
-									).split('.')[0]}
-								</span>
-							{/if}
 						</div>
 					</div>
 				{:else}
@@ -193,39 +173,27 @@
 								<span class="text-xs mt-1 text-surface-400"
 									>{milestone.provisionPercentage.toFixed(2)}%</span
 								>
-								{#if milestone.value >= 987}
-									<span class="text-xs mt-1 text-surface-400">
-										Startup Fund: {formatCurrency(
-											((milestone.poolAmount * (100 - milestone.provisionPercentage)) / 100) * 0.5
-										).split('.')[0]}
-									</span>
-								{/if}
 							</div>
 						{:else}
 							<div class="flex flex-col items-center w-full">
-								<span class="text-xs uppercase text-surface-400 mb-2">Details</span>
-								<span class="text-sm text-surface-400">+{milestone.daysSincePrevious}d</span>
 								<span class="text-sm text-surface-400">{formatDate(milestone.date)}</span>
+								<span class="text-sm text-surface-400">+{milestone.daysSincePrevious}d</span>
 								<span class="text-xs mt-1 text-surface-400"
-									>Total netto: {formatCurrency(milestone.poolAmount).split('.')[0]}</span
+									>Total pool: {formatCurrency(milestone.poolAmount).split('.')[0]}</span
 								>
-								<span class="text-xs mt-1 text-surface-400">
-									Provisions: {formatCurrency(
-										(milestone.poolAmount * milestone.provisionPercentage) / 100
-									).split('.')[0]}
-								</span>
-								<span class="text-xs mt-1 text-surface-400">
-									Platform Budget: {formatCurrency(
-										(milestone.poolAmount * (100 - milestone.provisionPercentage)) / 100
-									).split('.')[0]}
-								</span>
-								{#if milestone.value >= 987}
-									<span class="text-xs mt-1 text-surface-400">
-										Startup Fund: {formatCurrency(
-											((milestone.poolAmount * (100 - milestone.provisionPercentage)) / 100) * 0.5
-										).split('.')[0]}
-									</span>
-								{/if}
+								<span class="text-xs mt-1 text-surface-400"
+									>Platform fee: {formatCurrency(milestone.platformFeeAmount || 0).split(
+										'.'
+									)[0]}</span
+								>
+								<span class="text-xs mt-1 text-surface-400"
+									>Startup fund: {formatCurrency(milestone.startupFund || 0).split('.')[0]}</span
+								>
+								<span class="text-xs mt-1 text-surface-400"
+									>Provision pool: {formatCurrency(milestone.provisionPool || 0).split(
+										'.'
+									)[0]}</span
+								>
 							</div>
 						{/if}
 					</div>
