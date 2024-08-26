@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
+	import { fade } from 'svelte/transition';
+
 	let gridColumns = 6;
-	let visioncreators = writable(1);
+	let visioncreators = writable(0);
 	const startProvision = 80;
 	const endProvision = 20;
 	const platformFee = 11;
@@ -16,6 +18,13 @@
 		startupFund?: number;
 		platformFeeAmount?: number;
 		vcPool?: number;
+	};
+
+	type User = {
+		name: string;
+		identifier: string;
+		timestamp: Date;
+		earnings: number;
 	};
 
 	const fibonacciSequence = [
@@ -48,7 +57,7 @@
 				(index - fibonacciSequence.indexOf(987)) /
 					(fibonacciSequence.length - fibonacciSequence.indexOf(987)),
 				1.5
-			); // Adjusted non-linear growth
+			);
 			const daysToAdd = progress * totalDays;
 			date = new Date(midDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
 		}
@@ -120,6 +129,75 @@
 		const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
 		return `${days}d ${hours}h ${minutes}m`;
+	}
+
+	function formatTimestamp(date: Date): string {
+		const now = new Date();
+		const diff = now.getTime() - date.getTime();
+		const minutes = Math.floor(diff / 60000);
+		const hours = Math.floor(minutes / 60);
+		const days = Math.floor(hours / 24);
+
+		if (days > 0) return `${days}d ago`;
+		if (hours > 0) return `${hours}h ago`;
+		return `${minutes}m ago`;
+	}
+
+	const randomUsers: User[] = [
+		{ name: 'Alice Johnson', identifier: 'alice_j', timestamp: new Date(), earnings: 5 },
+		{ name: 'Bob Smith', identifier: 'bob_s', timestamp: new Date(), earnings: 10 },
+		{ name: 'Charlie Brown', identifier: 'charlie_b', timestamp: new Date(), earnings: 15 },
+		{ name: 'Diana Prince', identifier: 'diana_p', timestamp: new Date(), earnings: 20 },
+		{ name: 'Ethan Hunt', identifier: 'ethan_h', timestamp: new Date(), earnings: 25 },
+		{ name: 'Fiona Apple', identifier: 'fiona_a', timestamp: new Date(), earnings: 30 },
+		{ name: 'George Lucas', identifier: 'george_l', timestamp: new Date(), earnings: 35 },
+		{ name: 'Hannah Montana', identifier: 'hannah_m', timestamp: new Date(), earnings: 40 },
+		{ name: 'Ian McKellen', identifier: 'ian_m', timestamp: new Date(), earnings: 45 },
+		{ name: 'Julia Roberts', identifier: 'julia_r', timestamp: new Date(), earnings: 50 },
+		{ name: 'Kevin Bacon', identifier: 'kevin_b', timestamp: new Date(), earnings: 55 },
+		{ name: 'Lara Croft', identifier: 'lara_c', timestamp: new Date(), earnings: 60 },
+		{ name: 'Michael Jordan', identifier: 'michael_j', timestamp: new Date(), earnings: 65 },
+		{ name: 'Natalie Portman', identifier: 'natalie_p', timestamp: new Date(), earnings: 70 },
+		{ name: 'Olivia Wilde', identifier: 'olivia_w', timestamp: new Date(), earnings: 75 },
+		{ name: 'Peter Parker', identifier: 'peter_p', timestamp: new Date(), earnings: 80 },
+		{ name: 'Quentin Tarantino', identifier: 'quentin_t', timestamp: new Date(), earnings: 85 },
+		{ name: 'Robert Downey Jr.', identifier: 'robert_d', timestamp: new Date(), earnings: 90 },
+		{ name: 'Sarah Connor', identifier: 'sarah_c', timestamp: new Date(), earnings: 95 },
+		{ name: 'Tom Hanks', identifier: 'tom_h', timestamp: new Date(), earnings: 100 },
+		{ name: 'Uma Thurman', identifier: 'uma_t', timestamp: new Date(), earnings: 105 },
+		{ name: 'Vincent Vega', identifier: 'vincent_v', timestamp: new Date(), earnings: 110 },
+		{ name: 'Walter White', identifier: 'walter_w', timestamp: new Date(), earnings: 115 },
+		{ name: 'Xavier Charles', identifier: 'xavier_c', timestamp: new Date(), earnings: 120 },
+		{ name: 'Yoda', identifier: 'yoda', timestamp: new Date(), earnings: 125 }
+	];
+
+	let recentUsers: User[] = [];
+
+	function addRandomUser() {
+		const randomIndex = Math.floor(Math.random() * randomUsers.length);
+		const newUser = {
+			...randomUsers[randomIndex],
+			timestamp: new Date(),
+			id: Date.now(),
+			earnings: Math.floor(Math.random() * 100) + 1
+		};
+		recentUsers = [newUser, ...recentUsers].slice(0, 20);
+	}
+
+	function removeRandomUser() {
+		if (recentUsers.length > 0) {
+			const randomIndex = Math.floor(Math.random() * recentUsers.length);
+			recentUsers = recentUsers.filter((_, index) => index !== randomIndex);
+		}
+	}
+
+	function handleVCChange(change: number) {
+		visioncreators.update((value) => Math.max(0, value + change));
+		if (change > 0) {
+			addRandomUser();
+		} else if (change < 0 && recentUsers.length > 0) {
+			removeRandomUser();
+		}
 	}
 </script>
 
@@ -212,29 +290,49 @@
 			{/each}
 		</div>
 	</div>
-	<aside class="w-64 bg-surface-800 flex flex-col items-center justify-center p-4">
-		<label for="visioncreators" class="text-surface-200 text-sm mb-2">VisionCreators</label>
-		<input
-			id="visioncreators"
-			type="number"
-			bind:value={$visioncreators}
-			class="w-full p-2 bg-surface-700 text-surface-50 rounded text-center mb-4"
-		/>
-		<div class="grid grid-cols-2 gap-2 w-full">
-			{#each [1, 10, 100, 1000, 10000] as value}
-				<button
-					on:click={() => ($visioncreators = Math.max(0, $visioncreators - value))}
-					class="btn variant-filled-surface text-sm py-1"
-				>
-					-{value}
-				</button>
-				<button
-					on:click={() => ($visioncreators += value)}
-					class="btn variant-filled-surface text-sm py-1"
-				>
-					+{value}
-				</button>
-			{/each}
+	<aside class="w-64 bg-surface-800 flex flex-col p-4">
+		<div class="flex-grow overflow-auto">
+			<h3 class="text-lg font-semibold mb-4">Recent VisionCreators</h3>
+			<ul class="space-y-2">
+				{#each recentUsers as user (user.id)}
+					<li
+						class="flex items-center justify-between rounded-xl bg-surface-700 p-2"
+						transition:fade
+					>
+						<Avatar
+							me={{
+								data: { seed: user.identifier },
+								design: { highlight: false },
+								size: 'sm'
+							}}
+						/>
+						<div class="flex-1 px-2 flex flex-col">
+							<span class="text-sm text-tertiary-400">{user.name}</span>
+							<span class="text-xs text-tertiary-600"
+								>now earns {formatCurrency(user.earnings)}/m</span
+							>
+						</div>
+					</li>
+				{/each}
+			</ul>
+		</div>
+		<div class="mt-4">
+			<div class="grid grid-cols-2 gap-2 w-full">
+				{#each [1] as value}
+					<button
+						on:click={() => handleVCChange(-value)}
+						class="btn variant-filled-surface text-sm py-1"
+					>
+						-{value}
+					</button>
+					<button
+						on:click={() => handleVCChange(value)}
+						class="btn variant-filled-surface text-sm py-1"
+					>
+						+{value}
+					</button>
+				{/each}
+			</div>
 		</div>
 	</aside>
 </main>
