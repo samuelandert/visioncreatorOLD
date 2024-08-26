@@ -138,6 +138,13 @@
 						<span class="text-xs mt-1 text-surface-200"
 							>{milestone.provisionPercentage.toFixed(2)}%</span
 						>
+						{#if milestone.value >= 987}
+							<span class="text-xs mt-1 text-surface-200">
+								Startup Fund: {formatCurrency(
+									((milestone.poolAmount * (100 - milestone.provisionPercentage)) / 100) * 0.5
+								).split('.')[0]}
+							</span>
+						{/if}
 					</div>
 				{:else if states[index] === 'in-progress'}
 					<div
@@ -163,6 +170,13 @@
 							<span class="text-xs mt-1 text-surface-200"
 								>{milestone.provisionPercentage.toFixed(2)}%</span
 							>
+							{#if milestone.value >= 987}
+								<span class="text-xs mt-1 text-surface-200">
+									Startup Fund: {formatCurrency(
+										((milestone.poolAmount * (100 - milestone.provisionPercentage)) / 100) * 0.5
+									).split('.')[0]}
+								</span>
+							{/if}
 						</div>
 					</div>
 				{:else}
@@ -179,6 +193,13 @@
 								<span class="text-xs mt-1 text-surface-400"
 									>{milestone.provisionPercentage.toFixed(2)}%</span
 								>
+								{#if milestone.value >= 987}
+									<span class="text-xs mt-1 text-surface-400">
+										Startup Fund: {formatCurrency(
+											((milestone.poolAmount * (100 - milestone.provisionPercentage)) / 100) * 0.5
+										).split('.')[0]}
+									</span>
+								{/if}
 							</div>
 						{:else}
 							<div class="flex flex-col items-center w-full">
@@ -198,6 +219,13 @@
 										(milestone.poolAmount * (100 - milestone.provisionPercentage)) / 100
 									).split('.')[0]}
 								</span>
+								{#if milestone.value >= 987}
+									<span class="text-xs mt-1 text-surface-400">
+										Startup Fund: {formatCurrency(
+											((milestone.poolAmount * (100 - milestone.provisionPercentage)) / 100) * 0.5
+										).split('.')[0]}
+									</span>
+								{/if}
 							</div>
 						{/if}
 					</div>
