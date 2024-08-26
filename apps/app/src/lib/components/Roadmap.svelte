@@ -165,8 +165,7 @@
 								<span class="text-2xl font-bold text-surface-400"
 									>{milestone.value.toLocaleString()}</span
 								>
-								<span class="text-xs mt-1 text-surface-300">+{milestone.daysSincePremainious}d</span
-								>
+								<span class="text-xs mt-1 text-surface-300">+{milestone.daysSincePrevious}d</span>
 							</div>
 							<div class="flex flex-col items-end">
 								<span class="text-sm text-surface-400"
