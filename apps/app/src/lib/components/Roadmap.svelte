@@ -1,5 +1,8 @@
 <script lang="ts">
-	import { ProgressBar } from '@skeletonlabs/skeleton';
+	import { writable } from 'svelte/store';
+
+	let gridColumns = 6;
+	let visioncreators = writable(1);
 
 	type Milestone = {
 		value: number;
@@ -57,20 +60,25 @@
 		fibonacciMilestones.push({ value, date, poolAmount, daysSincePrevious });
 	});
 
-	let gridColumns = 6;
-	let states = fibonacciMilestones.map((milestone, index) => {
-		if (index < 15) return 'completed';
-		if (index === 15) return 'in-progress';
+	$: states = fibonacciMilestones.map((milestone, index) => {
+		if (milestone.value <= $visioncreators) return 'completed';
+		if (
+			milestone.value > $visioncreators &&
+			fibonacciMilestones[index - 1]?.value <= $visioncreators
+		)
+			return 'in-progress';
 		return 'open';
 	});
 
-	let currentProgress = 987;
+	$: currentProgress = $visioncreators;
 
-	function getProgressPercentage(milestone: number): number {
-		if (milestone <= currentProgress) return 100;
-		if (milestone > fibonacciMilestones[15].value) return 0;
-		return Math.floor((currentProgress / milestone) * 100);
-	}
+	$: getProgressPercentage = (milestone: number, previousMilestone: number): number => {
+		if ($visioncreators >= milestone) return 100;
+		if ($visioncreators <= previousMilestone) return 0;
+		return Math.floor(
+			(($visioncreators - previousMilestone) / (milestone - previousMilestone)) * 100
+		);
+	};
 
 	function getCardClass(state: string): string {
 		switch (state) {
@@ -104,6 +112,15 @@
 </script>
 
 <main class="w-screen h-screen bg-surface-900 text-surface-50 overflow-auto p-4">
+	<div class="mb-4">
+		<label for="visioncreators" class="text-surface-200">VisionCreators:</label>
+		<input
+			id="visioncreators"
+			type="number"
+			bind:value={$visioncreators}
+			class="ml-2 p-2 bg-surface-700 text-surface-50 rounded"
+		/>
+	</div>
 	<div
 		class="grid gap-4 w-full box-border"
 		style="grid-template-columns: repeat({gridColumns}, 1fr);"
@@ -118,7 +135,10 @@
 					<div class="w-full h-6 absolute top-0 left-0 bg-surface-700/50 rounded-t-lg">
 						<div
 							class="h-full bg-success-500/30 rounded-t-lg transition-all duration-300 ease-in-out flex items-center justify-start pl-2"
-							style="width: {getProgressPercentage(milestone.value)}%"
+							style="width: {getProgressPercentage(
+								milestone.value,
+								fibonacciMilestones[index - 1]?.value || 0
+							)}%"
 						>
 							<span class="text-xs font-medium uppercase {getStateColor(states[index])} opacity-80"
 								>{states[index]}</span
