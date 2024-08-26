@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
+
 	let gridColumns = 6;
 	let visioncreators = writable(1);
+	const startProvision = 70;
+	const endProvision = 7;
 
 	type Milestone = {
 		value: number;
@@ -20,9 +23,6 @@
 	];
 
 	const fibonacciMilestones: Milestone[] = [];
-
-	const startProvision = 70;
-	const endProvision = 5;
 
 	fibonacciSequence.forEach((value, index) => {
 		const startDate = new Date('2024-09-21');
@@ -176,9 +176,6 @@
 								<span class="text-2xl font-bold text-surface-400"
 									>{milestone.value.toLocaleString()}</span
 								>
-								<span class="text-sm mt-2 text-surface-400"
-									>{formatCurrency(milestone.poolAmount).split('.')[0]}</span
-								>
 								<span class="text-xs mt-1 text-surface-400"
 									>{milestone.provisionPercentage.toFixed(2)}%</span
 								>
@@ -189,8 +186,18 @@
 								<span class="text-sm text-surface-400">+{milestone.daysSincePrevious}d</span>
 								<span class="text-sm text-surface-400">{formatDate(milestone.date)}</span>
 								<span class="text-xs mt-1 text-surface-400"
-									>{milestone.provisionPercentage.toFixed(2)}%</span
+									>Total netto: {formatCurrency(milestone.poolAmount).split('.')[0]}</span
 								>
+								<span class="text-xs mt-1 text-surface-400">
+									Provisions: {formatCurrency(
+										(milestone.poolAmount * milestone.provisionPercentage) / 100
+									).split('.')[0]}
+								</span>
+								<span class="text-xs mt-1 text-surface-400">
+									Platform Budget: {formatCurrency(
+										(milestone.poolAmount * (100 - milestone.provisionPercentage)) / 100
+									).split('.')[0]}
+								</span>
 							</div>
 						{/if}
 					</div>
@@ -207,18 +214,18 @@
 			class="w-full p-2 bg-surface-700 text-surface-50 rounded text-center mb-4"
 		/>
 		<div class="grid grid-cols-2 gap-2 w-full">
-			{#each [10, 100, 1000, 10000] as value}
-				<button
-					on:click={() => ($visioncreators += value)}
-					class="btn variant-filled-primary text-sm py-1"
-				>
-					+{value}
-				</button>
+			{#each [1, 10, 100, 1000, 10000] as value}
 				<button
 					on:click={() => ($visioncreators = Math.max(0, $visioncreators - value))}
-					class="btn variant-filled-secondary text-sm py-1"
+					class="btn variant-filled-surface text-sm py-1"
 				>
 					-{value}
+				</button>
+				<button
+					on:click={() => ($visioncreators += value)}
+					class="btn variant-filled-surface text-sm py-1"
+				>
+					+{value}
 				</button>
 			{/each}
 		</div>
