@@ -35,7 +35,7 @@
 		'grown through passion fueled income streams that flow to me each month',
 		'As a Visioncreator',
 		'I am part of a global movement that is reshaping our world.',
-		'Every day, we invest €1 in our collective future.',
+		'Every day, every Visioncreator invest 1€ into our collective future.',
 		'This small, consistent action unlocks the full potential in each one of us.',
 		'We discover, develop and create society-shaping startups every day',
 		'uplifting humanity as a whole',
@@ -54,7 +54,6 @@
 		'and I am about to throw myself into the party crowd.',
 		'Thank you for believing in myself back then',
 		'and for deciding to be a Visioncreator.',
-		'becoming a Visioncreator was the best decision I ever made.',
 		'With deep gratitude, your Visioncreator xyz'
 	];
 
