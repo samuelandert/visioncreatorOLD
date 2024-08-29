@@ -44,6 +44,7 @@
 	];
 
 	const targetAudiences = [
+		'founder',
 		'employee',
 		'student',
 		'freelancer',
@@ -53,11 +54,13 @@
 		'father',
 		'visionary',
 		'designer',
+		'lost soul',
 		'writer',
 		'creator',
 		'business owner',
 		'entrepreneur',
 		'artist',
+		'digital nomad',
 		'developer',
 		'student',
 		'dreamer'
@@ -66,29 +69,27 @@
 	const labels = {
 		welcome: {
 			heading: 'to every',
-			description: 'craving more than a job to survive',
-			subline: 'There is a better life - with fire in the belly every day - waiting for you',
-			buttonText: 'I want this'
+			description: 'a life with fire in the belly - every day - is waiting for us',
+			subline:
+				'make history - discover, build and own society shaping ventures serving humanity - creating autonomy for millions and yourself, while earning independent income streams',
+			buttonText: "Let's go"
 		},
 		nameInput: {
 			placeholder: "What's your name?",
-			buttonText: "Let's go",
+			buttonText: "I'am in!",
 			persuasiveText:
-				'Unlock your true potential: Becoming a Visioncreator is your gateway to discovering your passion and turning it into a sustainable fulltime income, while mastering skills you love.',
+				'Unlock your true potential: Becoming a Visioncreator is your gateway to discovering your passion and turning it into sustainable income streams, while serving humanity at earth scale',
 			callToActionPrefix: 'are you ready to',
 			callToActionOptions: [
 				'design a purposeful life you love',
-				'create multiple streams of meaningful income',
-				'build society-shaping startups and visions',
 				'become a master of a craft you enjoy',
-				'build prosperity for your family and the world',
-				'own your lifes tracetory towards abundance'
+				'build prosperity and abundance on earth'
 			]
 		},
 		greeting: {
 			title: 'Wonderful to have you around, {name}!',
 			description: "Let's look into your future and dive into your new life",
-			buttonText: 'Start Video'
+			buttonText: 'Show me my future'
 		},
 		story: {
 			muteButtonText: 'mute',
@@ -162,9 +163,9 @@
 		<source src="wald.mp4" type="video/mp4" />
 	</video>
 
-	{#if state !== 4 && state !== 5}
+	<!-- {#if state !== 4 && state !== 5}
 		<StartNewsTicker {names} bind:totalVisioncreators />
-	{/if}
+	{/if} -->
 
 	<div class="h-full overlay">
 		<div class="@container h-full">

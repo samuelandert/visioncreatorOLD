@@ -28,7 +28,7 @@
 <h1 class="text-xl @md:text-3xl @4xl:text-4xl @5xl:text-5xl font-bold text-center">
 	{heading} <span class="font-bold text-primary-500">{targetAudience}</span>
 </h1>
-<p class="text-xl @md:text-3xl @4xl:text-4xl @5xl:text-5xl mb-6 text-center">
+<p class="text-xl @md:text-2xl @4xl:text-3xl @5xl:text-4xl mb-6 text-center">
 	{description}
 </p>
 <p class="text-md @md:text-lg @4xl:text-xl mb-8 text-center text-tertiary-300">
