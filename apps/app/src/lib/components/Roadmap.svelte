@@ -4,9 +4,9 @@
 
 	let gridColumns = 6;
 	let visioncreators = writable(0);
-	const startProvision = 80;
+	const startProvision = 70;
 	const endProvision = 20;
-	const platformFee = 11;
+	const platformFee = 20;
 
 	type Milestone = {
 		value: number;
@@ -216,9 +216,6 @@
 							>{milestone.value.toLocaleString()}</span
 						>
 						<span class="text-sm mt-2 text-surface-100">{formatDate(milestone.date)}</span>
-						<span class="text-xs mt-1 text-surface-200"
-							>{milestone.provisionPercentage.toFixed(2)}%</span
-						>
 					</div>
 				{:else if states[index] === 'in-progress'}
 					<div
@@ -243,9 +240,11 @@
 									Milestone Reached
 								{/if}
 							</span>
-							<span class="text-xs mt-1 text-surface-200"
-								>{milestone.provisionPercentage.toFixed(2)}%</span
-							>
+							<span class="text-xs text-center mt-1 text-surface-200">
+								earn <span class="text-success-500"
+									>+{formatCurrency((milestone.vcPool || 0) / milestone.value)}/m</span
+								> <br />per invite
+							</span>
 						</div>
 					</div>
 				{:else}
@@ -259,9 +258,17 @@
 								<span class="text-2xl font-bold text-surface-400"
 									>{milestone.value.toLocaleString()}</span
 								>
-								<span class="text-xs mt-1 text-surface-400"
-									>{milestone.provisionPercentage.toFixed(2)}%</span
-								>
+								{#if index > 0}
+									{@const activeMilestone = fibonacciMilestones.find(
+										(m) => states[fibonacciMilestones.indexOf(m)] === 'in-progress'
+									)}
+									{#if activeMilestone}
+										<span class="text-xs text-center mt-1 text-surface-400">
+											earn {formatCurrency((milestone.vcPool || 0) / milestone.value)}/m <br />per
+											invite
+										</span>
+									{/if}
+								{/if}
 							</div>
 						{:else}
 							<div class="flex flex-col items-center w-full">
@@ -282,6 +289,9 @@
 								>
 								<span class="text-xs mt-1 text-surface-400"
 									>VC pool: {formatCurrency(milestone.vcPool || 0).split('.')[0]}</span
+								>
+								<span class="text-xs mt-1 text-surface-400"
+									>VC percentage: {milestone.provisionPercentage.toFixed(2)}%</span
 								>
 							</div>
 						{/if}
