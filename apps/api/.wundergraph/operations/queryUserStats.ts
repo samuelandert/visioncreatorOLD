@@ -27,10 +27,12 @@ export default createOperation.query({
         const userRank = leaderboardData.profiles.findIndex((entry) => entry.id === input.id) + 1 || null;
         const userEntry = leaderboardData.profiles.find((entry) => entry.id === input.id);
         const streamPotential = userEntry ? userEntry.suminvites * 5 : 0;
+        const suminvites = userEntry ? userEntry.suminvites : 0;
 
         return {
             userRank,
             streamPotential,
+            suminvites,
         };
     },
 });

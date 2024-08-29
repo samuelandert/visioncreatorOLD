@@ -24,25 +24,16 @@ export const view = {
                     prop: "full_name"
                 },
                 description: "wonderful to have you around",
-                stats: [
-                    {
-                        label: "Waiting Position",
-                        value: {
-                            query: "queryUserStats",
-                            input: { id: 'authID' },
-                            prop: "userRank",
-                        }
-                    },
-                    {
-                        label: "Streaming Potential",
-                        value: {
-                            query: "queryUserStats",
-                            input: { id: 'authID' },
-                            prop: "streamPotential",
-                            display: "prop.streamPotential €/m"
-                        }
-                    }
-                ]
+                invites: {
+                    query: "queryUserStats",
+                    input: { id: 'authID' },
+                    prop: "suminvites"
+                },
+                waitingPosition: {
+                    query: "queryUserStats",
+                    input: { id: 'authID' },
+                    prop: "userRank"
+                }
             }
         },
         {
@@ -58,7 +49,6 @@ export const view = {
                 list: {
                     query: 'queryLeaderboard',
                     prop: 'profiles',
-
                     mapProps: {
                         primaryText: "prop.name",
                         identifier: "prop.id",
@@ -67,7 +57,7 @@ export const view = {
                 },
                 stats: [
                     {
-                        label: "Invites",
+                        label: "Inspirations",
                         value: "prop.suminvites"
                     },
                     {

@@ -71,7 +71,7 @@
 			heading: 'to every',
 			description: 'a life with fire in the belly - every day - is waiting for us',
 			subline:
-				'make history - discover, build and own society shaping ventures serving humanity - creating autonomy for millions and yourself, while earning independent income streams',
+				'make history - discover, build and own society-shaping ventures serving humanity - create autonomy for millions and yourself, while earning independent income streams',
 			buttonText: "Let's go"
 		},
 		nameInput: {

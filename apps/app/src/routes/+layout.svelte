@@ -80,7 +80,7 @@
 			{#if dev}
 				<div class="fixed z-50 transform -translate-x-1/2 bottom-4 left-1/2">
 					<a
-						href="http://127.0.0.1:54324/"
+						href="http://127.0.0.1:54324/monitor"
 						target="_blank"
 						rel="noopener noreferrer"
 						class="btn btn-sm variant-ghost-secondary"

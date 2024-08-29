@@ -49,7 +49,7 @@
 			on:click={copyInvitationLink}
 			disabled={$linkCopied}
 		>
-			{$linkCopied ? 'Link Copied!' : 'Copy Invitation Link'}
+			{$linkCopied ? 'Link Copied!' : 'Copy Invite Link'}
 		</button>
 		<button
 			type="button"

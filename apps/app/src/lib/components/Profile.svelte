@@ -6,11 +6,19 @@
 	export let me;
 	const query = $me.query;
 
+	function getLevel(invites) {
+		invites = Number(invites) || 0;
+		if (invites >= 3) return 3;
+		if (invites >= 2) return 2;
+		if (invites >= 1) return 1;
+		return 0;
+	}
+
 	async function handleUpdateMe() {
 		await $query.refetch();
 	}
 
-	onMount(async () => {
+	onMount(() => {
 		eventBus.on('updateMe', handleUpdateMe);
 	});
 
@@ -22,7 +30,7 @@
 <div class="w-full max-w-6xl bg-surface-800 rounded-3xl">
 	<div
 		class="relative text-center bg-center bg-cover rounded-t-3xl"
-		style="background-image: url('/sun.jpeg');"
+		style="background-image: url('/profile-bg.jpg');"
 	>
 		<div class="absolute inset-0 bg-opacity-40 bg-surface-900" />
 
@@ -47,13 +55,23 @@
 	</div>
 
 	<div class="flex items-center justify-evenly p-4 @3xl:p-8 space-x-4">
-		{#each $query.data.stats as stat}
-			<div class="text-center">
-				<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">
-					{stat.label === 'Streaming Potential' ? stat.value || 0 : stat.value || 'calculating...'}
-				</p>
-				<p class="text-tertiary-600 text-sm @3xl:text-lg">{stat.label}</p>
-			</div>
-		{/each}
+		<div class="text-center">
+			<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">
+				{$query.data.invites}
+			</p>
+			<p class="text-tertiary-600 text-sm @3xl:text-lg">Inspirations</p>
+		</div>
+		<div class="text-center">
+			<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">
+				{getLevel($query.data.invites)}
+			</p>
+			<p class="text-tertiary-600 text-sm @3xl:text-lg">My Level</p>
+		</div>
+		<div class="text-center">
+			<p class="text-xl @3xl:text-4xl font-semibold text-tertiary-400">
+				{$query.data.waitingPosition}
+			</p>
+			<p class="text-tertiary-600 text-sm @3xl:text-lg">Waiting Position</p>
+		</div>
 	</div>
 </div>
